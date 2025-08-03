@@ -85,14 +85,17 @@
                                     {{ $item->status === 'rejected' ? $item->rejected_reason : '-' }}
                                 </td>
                                 <td class="px-4 py-3 border text-blue-600 dark:text-blue-300 text-sm space-y-1">
-                                    @if ($item->file_surat_keterangan_tanah)
-                                        <div><a href="{{ asset('storage/' . $item->file_surat_keterangan_tanah) }}" target="_blank">📄 Surat Keterangan Tanah</a></div>
+                                    @if ($item->file_permohonan)
+                                        <div><a href="{{ asset('storage/' . $item->file_permohonan) }}" target="_blank">📄 Surat Permohonan SKT</a></div>
+                                    @endif
+                                    @if ($item->file_alas_hak)
+                                        <div><a href="{{ asset('storage/' . $item->file_alas_hak) }}" target="_blank">📄 Surat Keterangan Tanah / Alas Hak</a></div>
                                     @endif
                                     @if ($item->file_ktp)
                                         <div><a href="{{ asset('storage/' . $item->file_ktp) }}" target="_blank">📄 KTP</a></div>
                                     @endif
-                                    @if ($item->file_pengantar_desa)
-                                        <div><a href="{{ asset('storage/' . $item->file_pengantar_desa) }}" target="_blank">📄 Pengantar Desa</a></div>
+                                    @if ($item->file_kk)
+                                        <div><a href="{{ asset('storage/' . $item->file_kk) }}" target="_blank">📄 Kartu Keluarga</a></div>
                                     @endif
                                     @if ($item->file_pbb)
                                         <div><a href="{{ asset('storage/' . $item->file_pbb) }}" target="_blank">📄 Bukti Lunas PBB</a></div>

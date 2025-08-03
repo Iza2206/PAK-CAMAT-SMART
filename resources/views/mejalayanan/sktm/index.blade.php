@@ -7,7 +7,6 @@
     <main class="flex-1 p-6">
         <h1 class="text-3xl font-bold mb-6 text-blue-700 dark:text-blue-300">📄 Daftar Pengajuan SKTM Dispensasi Cerai</h1>
 
-        {{-- Alert sukses dan nomor antrian --}}
         @if (session('antrian'))
             <div class="mb-6 p-4 bg-green-100 dark:bg-green-800/30 text-green-900 dark:text-green-100 rounded-lg border border-green-400 dark:border-green-600 shadow">
                 🎟️ Nomor Antrian Anda:
@@ -22,18 +21,18 @@
             </div>
         @endif
 
-
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 overflow-auto">
             <table class="min-w-full text-base border-collapse">
                 <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 uppercase text-sm">
                     <tr>
-                        <th class="px-4 py-3 border">#</th> {{-- Kolom antrian --}}
                         <th class="px-4 py-3 border">Nama</th>
                         <th class="px-4 py-3 border">NIK</th>
                         <th class="px-4 py-3 border">Status</th>
-                        <th class="px-4 py-3 border">Durasi Proses</th>
+                        <th class="px-4 py-3 border">Durasi</th>
                         <th class="px-4 py-3 border">Alasan Penolakan</th>
                         <th class="px-4 py-3 border">Dokumen</th>
+                        <th class="px-4 py-3 border">Jenis Kelamin</th>
+                        <th class="px-4 py-3 border">Pendidikan</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,10 +49,10 @@
                             if ($item->rejected_reason) {
                                 $totalAkhir = $verified;
                                 $ditolakOleh = 'Kasi Kesos';
-                            } elseif ($item->rejected_sekcam_reason) {
+                            } elseif ($item->rejected_sekcam_reason ?? false) {
                                 $totalAkhir = $sekcam;
                                 $ditolakOleh = 'Sekcam';
-                            } elseif ($item->rejected_camat_reason) {
+                            } elseif ($item->rejected_camat_reason ?? false) {
                                 $totalAkhir = $camat;
                                 $ditolakOleh = 'Camat';
                             } elseif ($camat) {
@@ -69,9 +68,6 @@
                             };
                         @endphp
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
-                            <td class="px-4 py-3 border text-center font-semibold text-blue-600 dark:text-blue-300">
-                                {{ $item->queue_number ?? '-' }}
-                            </td>
                             <td class="px-4 py-3 border">{{ $item->nama_pemohon }}</td>
                             <td class="px-4 py-3 border">{{ $item->nik_pemohon }}</td>
                             <td class="px-4 py-3 border">
@@ -81,44 +77,13 @@
                             </td>
                             <td class="px-4 py-3 border text-sm space-y-1">
                                 <div>📥 Diajukan: {{ $created->diffForHumans() }}</div>
-
-                                <div>
-                                    ✅ Kasi Kesos:
-                                    @if ($verified)
-                                        {{ $verified->diffForHumans($created, true) }}
-                                    @elseif ($item->rejected_reason)
-                                        <span class="text-red-500">❌ Ditolak oleh Kasi Kesos</span>
-                                    @else
-                                        <span class="text-gray-400">menunggu</span>
-                                    @endif
-                                </div>
-
-                                <div>
-                                    📝 Sekcam:
-                                    @if ($sekcam)
-                                        {{ $sekcam->diffForHumans($verified, true) }}
-                                    @elseif ($item->rejected_sekcam_reason)
-                                        <span class="text-red-500">❌ Ditolak oleh Sekcam</span>
-                                    @elseif ($verified)
-                                        <span class="text-gray-400">menunggu</span>
-                                    @endif
-                                </div>
-
-                                <div>
-                                    🖋️ Camat:
-                                    @if ($camat)
-                                        {{ $camat->diffForHumans($sekcam, true) }}
-                                    @elseif ($item->rejected_camat_reason)
-                                        <span class="text-red-500">❌ Ditolak oleh Camat</span>
-                                    @elseif ($sekcam)
-                                        <span class="text-gray-400">menunggu</span>
-                                    @endif
-                                </div>
+                                <div>✅ Kasi Kesos: {{ $verified ? $verified->diffForHumans($created, true) : 'menunggu' }}</div>
+                                <div>📝 Sekcam: {{ $sekcam ? $sekcam->diffForHumans($verified ?? $created, true) : 'menunggu' }}</div>
+                                <div>🖋️ Camat: {{ $camat ? $camat->diffForHumans($sekcam ?? $verified ?? $created, true) : 'menunggu' }}</div>
 
                                 @if ($totalAkhir)
                                     <div class="mt-2 font-semibold text-sm">
-                                        ⏱️ Total:
-                                        {{ $totalAkhir->diffForHumans($created, true) }}
+                                        ⏱️ Total: {{ $totalAkhir->diffForHumans($created, true) }}
                                         @if($ditolakOleh)
                                             <span class="text-red-500">(ditolak oleh {{ $ditolakOleh }})</span>
                                         @endif
@@ -126,25 +91,34 @@
                                 @endif
                             </td>
                             <td class="px-4 py-3 border text-sm text-red-500 dark:text-red-300">
-                                {{ $item->rejected_sekcam_reason ?? $item->rejected_camat_reason ?? '-' }}
+                                {{ $item->rejected_reason ?? $item->rejected_sekcam_reason ?? $item->rejected_camat_reason ?? '-' }}
                             </td>
                             <td class="px-4 py-3 border text-sm space-y-1 text-blue-600 dark:text-blue-300">
-                                <a href="{{ asset('storage/' . $item->sktm_desa) }}" target="_blank">📄 SKTM Desa</a>
-                                <a href="{{ asset('storage/' . $item->kk) }}" target="_blank">📄 KK</a>
-                                <a href="{{ asset('storage/' . $item->ktp) }}" target="_blank">📄 KTP</a>
-                                <a href="{{ asset('storage/' . $item->buku_nikah) }}" target="_blank">📄 Buku Nikah</a>
-                                <a href="{{ asset('storage/' . $item->tanda_lunas_pbb) }}" target="_blank">📄 PBB</a>
+                                @foreach ([
+                                    'sktm_desa' => 'SKTM Desa',
+                                    'kk' => 'Kartu Keluarga',
+                                    'ktp' => 'KTP',
+                                    'buku_nikah' => 'Buku Nikah',
+                                    'tanda_lunas_pbb' => 'PBB'
+                                ] as $field => $label)
+                                    @if ($item->$field)
+                                        <div>
+                                            <a href="{{ asset('storage/' . $item->$field) }}" target="_blank">📄 {{ $label }}</a>
+                                        </div>
+                                    @endif
+                                @endforeach
                             </td>
+                            <td class="px-4 py-3 border text-sm">{{ $item->jenis_kelamin ?? '-' }}</td>
+                            <td class="px-4 py-3 border text-sm">{{ $item->pendidikan ?? '-' }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center text-gray-500 dark:text-gray-400 py-6">Belum ada data pengajuan.</td>
+                            <td colspan="8" class="text-center text-gray-500 dark:text-gray-400 py-6">Belum ada data pengajuan.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
 
-            {{-- Pagination --}}
             <div class="mt-6">
                 {{ $data->links('vendor.pagination.tailwind') }}
                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">

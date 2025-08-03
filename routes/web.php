@@ -18,7 +18,7 @@ use App\Http\Controllers\AntrianController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', fn () => view('welcome'));
+Route::get('/', fn () => redirect()->route('login'));
 
 // ===================== AUTH =====================
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
