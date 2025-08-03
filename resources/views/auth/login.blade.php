@@ -25,10 +25,10 @@
     <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md animate-fade-in">
         <div class="flex flex-col items-center mb-6">
             <div class="logo-circle mb-3 shadow">
-                IKM
+                PAK CAMAT SMART
             </div>
             <h1 class="text-2xl font-semibold text-gray-800 text-center">
-                Login Aplikasi Penilaian IKM
+                Login Aplikasi PAK CAMAT SMART
             </h1>
             <p class="text-sm text-gray-500 text-center">Kecamatan Sei Bamban
             </p>
@@ -73,9 +73,9 @@
             </button>
         </form>
 
-        <p class="text-center text-sm text-gray-500 mt-6">
+        {{-- <p class="text-center text-sm text-gray-500 mt-6">
             Belum punya akun? <a href="#" class="text-blue-600 hover:underline">Hubungi Admin Kecamatan</a>
-        </p>
+        </p> --}}
     </div>
 
     <!-- Tailwind animation setup -->
