@@ -7,11 +7,21 @@
     <main class="flex-1 p-6">
         <h1 class="text-3xl font-bold mb-6 text-blue-700 dark:text-blue-300">📄 Daftar Pengajuan Catin TNI/Polri</h1>
 
+       {{-- Alert sukses dan nomor antrian --}}
+        @if (session('antrian'))
+            <div class="mb-6 p-4 bg-green-100 dark:bg-green-800/30 text-green-900 dark:text-green-100 rounded-lg border border-green-400 dark:border-green-600 shadow">
+                🎟️ Nomor Antrian Anda:
+                <span class="font-bold text-2xl text-green-800 dark:text-green-300">
+                    {{ session('antrian') }}
+                </span>
+            </div>
+        @endif
         @if (session('success'))
             <div class="mb-6 p-4 rounded-lg bg-green-100 text-green-800 dark:bg-green-600/20 dark:text-green-300 shadow-sm border border-green-200">
                 ✅ {{ session('success') }}
             </div>
         @endif
+
 
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 overflow-auto">
             <table class="min-w-full text-base border-collapse">
@@ -96,7 +106,6 @@
                             <td class="px-4 py-3 border text-sm text-red-500 dark:text-red-300">
                                 {{ $item->rejected_reason ?? $item->rejected_sekcam_reason ?? $item->rejected_camat_reason ?? '-' }}
                             </td>
-
                             <td class="px-4 py-3 border text-sm space-y-1 text-blue-600 dark:text-blue-300">
                                 @foreach ([
                                     'file_ktp_kk',
@@ -119,10 +128,36 @@
                                     'file_pbb'
                                 ] as $field)
                                     @if ($item->$field)
-                                        <a href="{{ asset('storage/' . $item->$field) }}" target="_blank">📄 {{ str_replace('_', ' ', $field) }}</a><br>
+                                        <div>
+                                            <a href="{{ asset('storage/' . $item->$field) }}" target="_blank">
+                                                📄 {{
+                                                    [
+                                                        'file_ktp_kk' => 'KTP & KK',
+                                                        'file_akta_kelahiran' => 'Akta Kelahiran',
+                                                        'file_pas_foto_3x4' => 'Pas Foto 3x4',
+                                                        'file_pas_foto_4x6' => 'Pas Foto 4x6',
+                                                        'file_pengantar_rt_rw' => 'Surat Pengantar RT/RW',
+                                                        'file_surat_n1' => 'Formulir N1 (Keterangan Nikah)',
+                                                        'file_surat_n2' => 'Formulir N2 (Asal Usul)',
+                                                        'file_surat_n3' => 'Formulir N3 (Persetujuan Mempelai)',
+                                                        'file_surat_n4' => 'Formulir N4 (Tentang Orang Tua)',
+                                                        'file_izin_orang_tua' => 'Izin Orang Tua (<21th)',
+                                                        'file_status_pernikahan' => 'Surat Belum Menikah / Akta Cerai',
+                                                        'file_surat_izin_kawin' => 'Surat Izin Kawin dari Komandan',
+                                                        'file_keterangan_belum_menikah_tni' => 'Surat Belum Menikah dari Kesatuan',
+                                                        'file_kta' => 'Fotokopi KTA',
+                                                        'file_sk_pangkat_terakhir' => 'SK Pangkat Terakhir',
+                                                        'file_pernyataan_kesediaan' => 'Pernyataan Kesediaan Mendampingi',
+                                                        'file_pas_foto_berdampingan' => 'Pas Foto Berdampingan',
+                                                        'file_pbb' => 'Tanda Lunas PBB',
+                                                    ][$field]
+                                                }}
+                                            </a>
+                                        </div>
                                     @endif
                                 @endforeach
                             </td>
+
 
                             <td class="px-4 py-3 border text-sm">{{ $item->jenis_kelamin ?? '-' }}</td>
                             <td class="px-4 py-3 border text-sm">{{ $item->pendidikan ?? '-' }}</td>

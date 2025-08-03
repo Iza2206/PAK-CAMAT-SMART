@@ -6,7 +6,7 @@
 
     <main class="flex-1 p-6">
         <h1 class="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-6">
-            📁 Riwayat Pengajuan Surat Keterangan Bersih Diri (SKBD)
+            📁 Riwayat CATIN TNI POLRI
         </h1>
 
         @if ($pengajuan->isEmpty())
@@ -87,10 +87,46 @@
                                     {{ $item->status === 'rejected' ? $item->rejected_reason : '-' }}
                                 </td>
                                 <td class="px-4 py-3 border text-blue-600 dark:text-blue-300 text-sm space-y-1">
-                                    <a href="{{ asset('storage/' . $item->skbd_desa) }}" target="_blank">📄 SKBD Desa</a><br>
-                                    <a href="{{ asset('storage/' . $item->ktp) }}" target="_blank">📄 KTP</a><br>
-                                    <a href="{{ asset('storage/' . $item->kk) }}" target="_blank">📄 KK</a><br>
-                                    <a href="{{ asset('storage/' . $item->tanda_lunas_pbb) }}" target="_blank">📄 PBB</a>
+                                    @php
+                                        $isSipilLengkap = $item->file_ktp && $item->file_kk && $item->file_surat_n1;
+                                        $isTniLengkap = $item->file_kta && $item->file_surat_izin_kawin && $item->file_pernyataan_kesediaan;
+                                    @endphp
+
+                                    {{-- 👤 Pihak SIPIL --}}
+                                    @if ($isSipilLengkap && !$isTniLengkap)
+                                        <div class="mb-1 font-semibold text-gray-800 dark:text-gray-200">👤 Sipil</div>
+                                        @if ($item->file_ktp) <div><a href="{{ asset('storage/' . $item->file_ktp) }}" target="_blank">📄 KTP</a></div> @endif
+                                        @if ($item->file_kk) <div><a href="{{ asset('storage/' . $item->file_kk) }}" target="_blank">📄 KK</a></div> @endif
+                                        @if ($item->file_akta_kelahiran) <div><a href="{{ asset('storage/' . $item->file_akta_kelahiran) }}" target="_blank">📄 Akta Kelahiran</a></div> @endif
+                                        @if ($item->file_pas_foto_3x4) <div><a href="{{ asset('storage/' . $item->file_pas_foto_3x4) }}" target="_blank">🖼️ Pas Foto 3x4</a></div> @endif
+                                        @if ($item->file_pas_foto_4x6) <div><a href="{{ asset('storage/' . $item->file_pas_foto_4x6) }}" target="_blank">🖼️ Pas Foto 4x6</a></div> @endif
+                                        @if ($item->file_pengantar_rt_rw) <div><a href="{{ asset('storage/' . $item->file_pengantar_rt_rw) }}" target="_blank">📄 Surat Pengantar RT/RW</a></div> @endif
+                                        @if ($item->file_surat_n1) <div><a href="{{ asset('storage/' . $item->file_surat_n1) }}" target="_blank">📄 Surat N1</a></div> @endif
+                                        @if ($item->file_surat_n2) <div><a href="{{ asset('storage/' . $item->file_surat_n2) }}" target="_blank">📄 Surat N2</a></div> @endif
+                                        @if ($item->file_surat_n3) <div><a href="{{ asset('storage/' . $item->file_surat_n3) }}" target="_blank">📄 Surat N3</a></div> @endif
+                                        @if ($item->file_surat_n4) <div><a href="{{ asset('storage/' . $item->file_surat_n4) }}" target="_blank">📄 Surat N4</a></div> @endif
+                                        @if ($item->file_izin_orang_tua) <div><a href="{{ asset('storage/' . $item->file_izin_orang_tua) }}" target="_blank">📄 Izin Orang Tua</a></div> @endif
+                                        @if ($item->file_status_pernikahan) <div><a href="{{ asset('storage/' . $item->file_status_pernikahan) }}" target="_blank">📄 Status Pernikahan / Cerai</a></div> @endif
+                                        @if ($item->file_pbb) <div class="mt-2"><a href="{{ asset('storage/' . $item->file_pbb) }}" target="_blank">📄 Bukti Lunas PBB</a></div> @endif
+                                    @endif
+
+                                    {{-- 🪖 Pihak TNI/POLRI --}}
+                                    @if ($isTniLengkap && !$isSipilLengkap)
+                                        <div class="mb-1 font-semibold text-gray-800 dark:text-gray-200">🪖 TNI / POLRI</div>
+                                        @if ($item->file_surat_izin_kawin) <div><a href="{{ asset('storage/' . $item->file_surat_izin_kawin) }}" target="_blank">📄 Surat Izin Kawin (SIK)</a></div> @endif
+                                        @if ($item->file_keterangan_belum_menikah_tni) <div><a href="{{ asset('storage/' . $item->file_keterangan_belum_menikah_tni) }}" target="_blank">📄 Keterangan Belum Menikah</a></div> @endif
+                                        @if ($item->file_kta) <div><a href="{{ asset('storage/' . $item->file_kta) }}" target="_blank">📄 KTA</a></div> @endif
+                                        @if ($item->file_sk_pangkat_terakhir) <div><a href="{{ asset('storage/' . $item->file_sk_pangkat_terakhir) }}" target="_blank">📄 SK Pangkat Terakhir</a></div> @endif
+                                        @if ($item->file_pernyataan_kesediaan) <div><a href="{{ asset('storage/' . $item->file_pernyataan_kesediaan) }}" target="_blank">📄 Pernyataan Kesediaan</a></div> @endif
+                                        @if ($item->file_pas_foto_berdampingan_dinas) <div><a href="{{ asset('storage/' . $item->file_pas_foto_berdampingan_dinas) }}" target="_blank">🖼️ Foto Dinas</a></div> @endif
+                                        @if ($item->file_pas_foto_berdampingan_formal) <div><a href="{{ asset('storage/' . $item->file_pas_foto_berdampingan_formal) }}" target="_blank">🖼️ Foto Formal</a></div> @endif
+                                        @if ($item->file_pbb) <div class="mt-2"><a href="{{ asset('storage/' . $item->file_pbb) }}" target="_blank">📄 Bukti Lunas PBB</a></div> @endif
+                                    @endif
+
+                                    {{-- Jika data belum lengkap dua-duanya --}}
+                                    @if (!$isSipilLengkap && !$isTniLengkap)
+                                        <div class="text-gray-500 italic">Tidak ada dokumen lengkap</div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

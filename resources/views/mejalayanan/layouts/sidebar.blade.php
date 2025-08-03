@@ -33,7 +33,12 @@
                         openBpjs: '{{ request()->routeIs('bpjs.*') ? 'true' : 'false' }}' === 'true',
                         openSktm: '{{ request()->routeIs('SKTMs.*') ? 'true' : 'false' }}' === 'true',
                         openSkbd: '{{ request()->routeIs('SKBDs.*') ? 'true' : 'false' }}' === 'true',
-                        openCatin: '{{ request()->routeIs('catin.tni.*') ? 'true' : 'false' }}' === 'true'
+                        openCatin: '{{ request()->routeIs('catin.tni.*') ? 'true' : 'false' }}' === 'true',
+                        openSengketa: '{{ request()->routeIs('sengketa.*') ? 'true' : 'false' }}' === 'true',
+                        openAgunan: '{{ request()->routeIs('agunan.*') ? 'true' : 'false' }}' === 'true',
+                        openAhliwaris: '{{ request()->routeIs('ahliwaris.*') ? 'true' : 'false' }}' === 'true',
+                        openSppatgr: '{{ request()->routeIs('sppat_gr.*') ? 'true' : 'false' }}' === 'true',
+                        openSkt: '{{ request()->routeIs('skt.*') ? 'true' : 'false' }}' === 'true'
                     }"
         >
             {{-- Dashboard --}}
@@ -104,6 +109,165 @@
                         📄 List Data
                     </a>
                 </div>
+            
+            {{-- SPPAT-GR --}}
+            <button @click="openSppatgr = !openSppatgr"
+                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                :class="openSppatgr ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
+                <span class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 10h18M3 6h18M3 14h18M3 18h18" />
+                    </svg>
+                    SPPAT-GR
+                </span>
+                <svg :class="{ 'rotate-180': openSppatgr }" class="w-4 h-4 transform transition-transform" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <div x-show="openSppatgr" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                <a href="{{ route('sppat_gr.create') }}"
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('sppat_gr.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    ➕ Registrasi SPPAT-GR
+                </a>
+                <a href="{{ route('sppat_gr.list') }}"
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('sppat_gr.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📄 List SPPAT-GR
+                </a>
+            </div>
+
+            {{-- Surat Keterangan Tanah (SKT) --}}
+            <button @click="openSkt = !openSkt"
+                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                :class="openSkt ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
+                <span class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 10h18M3 6h18M3 14h18M3 18h18" />
+                    </svg>
+                    SK Tanah
+                </span>
+                <svg :class="{ 'rotate-180': openSkt }" class="w-4 h-4 transform transition-transform" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <div x-show="openSkt" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                <a href="{{ route('skt.create') }}"
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('skt.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    ➕ Registrasi SKT
+                </a>
+                <a href="{{ route('skt.list') }}"
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('skt.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📄 List SKT
+                </a>
+            </div>
+
+
+
+            {{-- Ahli Waris --}}
+            <button @click="openAhliwaris = !openAhliwaris"
+                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                :class="openAhliwaris ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
+                <span class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 10h18M3 6h18M3 14h18M3 18h18" />
+                    </svg>
+                    Ahli Waris
+                </span>
+                <svg :class="{ 'rotate-180': openAhliwaris }" class="w-4 h-4 transform transition-transform" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <div x-show="openAhliwaris" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                <a href="{{ route('ahliwaris.create') }}"
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('ahliwaris.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    ➕ Tambah Data
+                </a>
+                <a href="{{ route('ahliwaris.list') }}"
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('ahliwaris.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📄 List Data
+                </a>
+            </div>
+
+
+            {{-- Agunan ke Bank --}}
+            <button @click="openAgunan = !openAgunan"
+                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                :class="openAgunan ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
+                <span class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 10h18M3 6h18M3 14h18M3 18h18" />
+                    </svg>
+                    Agunan ke Bank
+                </span>
+                <svg :class="{ 'rotate-180': openAgunan }" class="w-4 h-4 transform transition-transform" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <div x-show="openAgunan" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                <a href="{{ route('agunan.create') }}"
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('agunan.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    ➕ Tambah Data
+                </a>
+                <a href="{{ route('agunan.list') }}"
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('agunan.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📄 List Data
+                </a>
+            </div>
+
+            
+            {{-- Silang Sengketa --}}
+            <button @click="openSengketa = !openSengketa"
+                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                :class="openSengketa ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
+                <span class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A2 2 0 013 15.382V5.618a2 2 0 011.553-1.948L9 2m0 0l6 3m-6-3v18m6-15l5.447 2.724A2 2 0 0121 8.618v9.764a2 2 0 01-1.553 1.948L15 22m0 0V4" />
+                    </svg>
+                    Surat Silang Sengketa
+                </span>
+                <svg :class="{ 'rotate-180': openSengketa }" class="w-4 h-4 transform transition-transform" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <div x-show="openSengketa" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                <a href="{{ route('sengketa.create') }}"
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('sengketa.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    ➕ Tambah Data
+                </a>
+                <a href="{{ route('sengketa.list') }}"
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('sengketa.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📄 List Data
+                </a>
+            </div>
+
 
             {{-- Catin TNI/POLRI --}}
             <button @click="openCatin = !openCatin"

@@ -9,6 +9,11 @@ use App\Models\SktmDispensasiSubmission;
 use App\Models\SkbdSubmission;
 use Illuminate\Support\Str;
 use App\Models\CatinTniPolriSubmission;
+use App\Models\SengketaSubmission;
+use App\Models\AgunanSubmission;
+use App\Models\AhliwarisSubmission;
+use App\Models\SppatGrSubmission;
+use App\Models\SktSubmission;
 
 class MejaLayananController extends Controller
 {
@@ -233,66 +238,69 @@ class MejaLayananController extends Controller
         return back();
     }
 
-    // ---------------- SKBD ----------------
+    // ------------------- SKT -------------------
 
-    // List SKBD
-    public function SKBDsList()
+    // LIST
+    public function sktList()
     {
-        $data = SkbdSubmission::latest()->paginate(10);
-        return view('mejalayanan.skbd.index', compact('data'));
+        $data = SktSubmission::latest()->paginate(10);
+        return view('mejalayanan.skt.index', compact('data'));
     }
 
-    // Form tambah SKBD
-    public function SKBDsCreate()
+    // FORM INPUT
+    public function sktCreate()
     {
-        return view('mejalayanan.skbd.create');
+        return view('mejalayanan.skt.create');
     }
 
-    // Simpan SKBD
-    public function SKBDsStore(Request $request)
+    // SIMPAN
+    public function sktStore(Request $request)
     {
         $validated = $request->validate([
-        'nama_pemohon' => 'required|string|max:255',
-        'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-        'pendidikan' => 'required|in:SD,SMP,SMA,D1,D2,D3,S1,S2,S3',
-        'nik_pemohon' => 'required|digits:16',
+            'nama_pemohon'   => 'required|string|max:255',
+            'nik_pemohon'    => 'required|digits:16',
+            'jenis_kelamin'  => 'required|in:Laki-laki,Perempuan',
+            'pendidikan'     => 'required|in:SD,SMP,SMA,D1,D2,D3,S1,S2,S3',
 
-        'skbd_desa' => 'required|file|mimetypes:application/pdf',
-        'ktp' => 'required|file|mimetypes:application/pdf',
-        'kk' => 'required|file|mimetypes:application/pdf',
-        'tanda_lunas_pbb' => 'required|file|mimetypes:application/pdf',
-    ]);
+            'file_permohonan' => 'required|file|mimes:pdf',
+            'file_alas_hak'   => 'required|file|mimes:pdf',
+            'file_kk'         => 'required|file|mimes:pdf',
+            'file_ktp'        => 'required|file|mimes:pdf',
+            'file_pbb'        => 'required|file|mimes:pdf',
+        ]);
 
-    // Simpan file PDF ke storage/app/public/skbd/ dengan nama UUID
-    $paths = [
-        'skbd_desa' => $request->file('skbd_desa')->storeAs('skbd', Str::uuid() . '.pdf', 'public'),
-        'ktp' => $request->file('ktp')->storeAs('skbd', Str::uuid() . '.pdf', 'public'),
-        'kk' => $request->file('kk')->storeAs('skbd', Str::uuid() . '.pdf', 'public'),
-        'tanda_lunas_pbb' => $request->file('tanda_lunas_pbb')->storeAs('skbd', Str::uuid() . '.pdf', 'public'),
-    ];
+        // Simpan file
+        $permohonan = $request->file('file_permohonan')->storeAs('skt', Str::uuid() . '.pdf', 'public');
+        $alasHak    = $request->file('file_alas_hak')->storeAs('skt', Str::uuid() . '.pdf', 'public');
+        $kk         = $request->file('file_kk')->storeAs('skt', Str::uuid() . '.pdf', 'public');
+        $ktp        = $request->file('file_ktp')->storeAs('skt', Str::uuid() . '.pdf', 'public');
+        $pbb        = $request->file('file_pbb')->storeAs('skt', Str::uuid() . '.pdf', 'public');
 
-    $submission = SkbdSubmission::create([
-        'user_id' => auth()->id(),
-        'nama_pemohon' => $validated['nama_pemohon'],
-        'jenis_kelamin' => $validated['jenis_kelamin'],
-        'pendidikan' => $validated['pendidikan'],
-        'nik_pemohon' => $validated['nik_pemohon'],
-        'skbd_desa' => $paths['skbd_desa'],
-        'ktp' => $paths['ktp'],
-        'kk' => $paths['kk'],
-        'tanda_lunas_pbb' => $paths['tanda_lunas_pbb'],
-        'status' => 'diajukan',
-    ]);
-    return redirect()
-        ->route('SKBDs.list') // ganti sesuai route kamu
-        ->with('success', 'Pengajuan SKBD berhasil disimpan.')
-        ->with('antrian', $submission->queue_number);
+        $submission = SktSubmission::create([
+            'nama_pemohon'     => $validated['nama_pemohon'],
+            'nik_pemohon'      => $validated['nik_pemohon'],
+            'jenis_kelamin'    => $validated['jenis_kelamin'],
+            'pendidikan'       => $validated['pendidikan'],
+
+            'file_permohonan'  => $permohonan,
+            'file_alas_hak'    => $alasHak,
+            'file_kk'          => $kk,
+            'file_ktp'         => $ktp,
+            'file_pbb'         => $pbb,
+
+            'status' => 'diajukan',
+        ]);
+
+        return redirect()
+            ->route('skt.list')
+            ->with('success', 'Pengajuan SKT berhasil disimpan.')
+            ->with('antrian', $submission->queue_number);
     }
 
-    // Kirim ke Kasi Trantib
-    public function SKBDkirimKeKasi($id)
+    // KIRIM KE KASI
+    public function sktKirimKeKasi($id)
     {
-        $data = SkbdSubmission::findOrFail($id);
+        $data = SktSubmission::findOrFail($id);
 
         if ($data->status !== 'diajukan') {
             return back()->with('error', 'Data sudah diproses.');
@@ -303,10 +311,278 @@ class MejaLayananController extends Controller
             'verified_at' => now(),
         ]);
 
-        return back()->with('success', 'Pengajuan berhasil dikirim ke Kasi Trantib.');
+        return back()->with('success', 'Pengajuan SKT berhasil dikirim ke Kasi Pemerintahan.');
     }
 
-      // ---------------- Catin TNI POLRI ----------------
+
+     // ---------------- SPPAT GR ----------------
+
+    // LIST
+    public function sppatGrList()
+    {
+        $data = SppatGrSubmission::latest()->paginate(10);
+        return view('mejalayanan.sppat_gr.index', compact('data'));
+    }
+
+    // FORM INPUT
+    public function sppatGrCreate()
+    {
+        return view('mejalayanan.sppat_gr.create');
+    }
+
+    // SIMPAN
+    public function sppatGrStore(Request $request)
+    {
+        $validated = $request->validate([
+            'nama_pemohon' => 'required|string|max:255',
+            'nik_pemohon' => 'required|digits:16',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'pendidikan' => 'required|in:SD,SMP,SMA,D1,D2,D3,S1,S2,S3',
+
+            'file_permohonan' => 'required|file|mimes:pdf',
+            'file_pernyataan_ahli_waris' => 'required|file|mimes:pdf',
+            'file_akta_kematian' => 'required|file|mimes:pdf',
+            'file_ktp_ahli_waris' => 'required|file|mimes:pdf',
+            'file_kk_ahli_waris' => 'required|file|mimes:pdf',
+            'file_pbb' => 'required|file|mimes:pdf',
+        ]);
+
+        // Simpan file
+        $permohonan = $request->file('file_permohonan')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
+        $pernyataan = $request->file('file_pernyataan_ahli_waris')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
+        $akta = $request->file('file_akta_kematian')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
+        $ktp = $request->file('file_ktp_ahli_waris')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
+        $kk = $request->file('file_kk_ahli_waris')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
+        $pbb = $request->file('file_pbb')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
+
+        $submission = SppatGrSubmission::create([
+            'nama_pemohon' => $validated['nama_pemohon'],
+            'nik_pemohon' => $validated['nik_pemohon'],
+            'jenis_kelamin' => $validated['jenis_kelamin'],
+            'pendidikan' => $validated['pendidikan'],
+
+            'file_permohonan' => $permohonan,
+            'file_pernyataan_ahli_waris' => $pernyataan,
+            'file_akta_kematian' => $akta,
+            'file_ktp_ahli_waris' => $ktp,
+            'file_kk_ahli_waris' => $kk,
+            'file_pbb' => $pbb,
+
+            'status' => 'diajukan',
+        ]);
+
+        return redirect()
+            ->route('sppat_gr.list')
+            ->with('success', 'Pengajuan SPPAT-GR berhasil disimpan.')
+            ->with('antrian', $submission->queue_number);
+    }
+
+    // KIRIM KE KASI
+    public function sppatGrKirimKeKasi($id)
+    {
+        $data = SppatGrSubmission::findOrFail($id);
+
+        if ($data->status !== 'diajukan') {
+            return back()->with('error', 'Data sudah diproses.');
+        }
+
+        $data->update([
+            'status' => 'checked_by_kasi',
+            'verified_at' => now(),
+        ]);
+
+        return back()->with('success', 'Pengajuan berhasil dikirim ke Kasi Pemerintahan.');
+    }
+
+    // ---------------- Ahli Waris ----------------
+
+   // List pengajuan Ahli Waris
+    public function ahliwarisList()
+    {
+        $data = AhliwarisSubmission::latest()->paginate(10);
+        return view('mejalayanan.ahliwaris.index', compact('data'));
+    }
+
+    // Form input pengajuan Ahli Waris
+    public function ahliwarisCreate()
+    {
+        return view('mejalayanan.ahliwaris.create');
+    }
+
+    // Simpan pengajuan Ahli Waris
+    public function ahliwarisStore(Request $request)
+    {
+        $validated = $request->validate([
+            'nama_pemohon' => 'required|string|max:255',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'pendidikan' => 'required|in:SD,SMP,SMA,D1,D2,D3,S1,S2,S3',
+            'nik_pemohon' => 'required|digits:16',
+
+            'file_permohonan' => 'required|file|mimes:pdf',
+            'file_pernyataan_ahliwaris' => 'required|file|mimes:pdf',
+            'file_akta_kematian' => 'required|file|mimes:pdf',
+            'file_ktp' => 'required|file|mimes:pdf',
+            'file_kk' => 'required|file|mimes:pdf',
+            'file_pbb' => 'required|file|mimes:pdf',
+        ]);
+
+        // Simpan file PDF ke storage/app/public/ahliwaris
+        $folder = 'ahliwaris';
+        $file_permohonan            = $request->file('file_permohonan')->storeAs($folder, Str::uuid() . '.pdf', 'public');
+        $file_pernyataan_ahliwaris  = $request->file('file_pernyataan_ahliwaris')->storeAs($folder, Str::uuid() . '.pdf', 'public');
+        $file_akta_kematian         = $request->file('file_akta_kematian')->storeAs($folder, Str::uuid() . '.pdf', 'public');
+        $file_ktp                   = $request->file('file_ktp')->storeAs($folder, Str::uuid() . '.pdf', 'public');
+        $file_kk                    = $request->file('file_kk')->storeAs($folder, Str::uuid() . '.pdf', 'public');
+        $file_pbb                   = $request->file('file_pbb')->storeAs($folder, Str::uuid() . '.pdf', 'public');
+
+        $submission = AhliwarisSubmission::create([
+            'nama_pemohon' => $validated['nama_pemohon'],
+            'jenis_kelamin' => $validated['jenis_kelamin'],
+            'pendidikan' => $validated['pendidikan'],
+            'nik_pemohon' => $validated['nik_pemohon'],
+            'file_permohonan' => $file_permohonan,
+            'file_pernyataan_ahliwaris' => $file_pernyataan_ahliwaris,
+            'file_akta_kematian' => $file_akta_kematian,
+            'file_ktp' => $file_ktp,
+            'file_kk' => $file_kk,
+            'file_pbb' => $file_pbb,
+            'status' => 'diajukan',
+        ]);
+
+        return redirect()
+            ->route('ahliwaris.list')
+            ->with('success', 'Pengajuan Surat Pernyataan Ahli Waris berhasil disimpan.')
+            ->with('antrian', $submission->queue_number);
+    }
+
+    
+    // ---------------- Angunan Ke Bank----------------
+
+    // List pengajuan Agunan ke Bank
+    public function agunanList()
+    {
+        $data = AgunanSubmission::latest()->paginate(10);
+        return view('mejalayanan.agunan.index', compact('data'));
+    }
+    // Form input pengajuan Agunan ke Bank
+    public function agunanCreate()
+    {
+        return view('mejalayanan.agunan.create');
+    }
+    // Simpan pengajuan Agunan ke Bank
+    public function agunanStore(Request $request)
+    {
+        $validated = $request->validate([
+            'nama_pemohon' => 'required|string|max:255',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'pendidikan' => 'required|in:SD,SMP,SMA,D1,D2,D3,S1,S2,S3',
+            'nik' => 'required|digits:16',
+
+            'file_surat_tanah_asli' => 'required|file|mimes:pdf',
+            'file_ktp' => 'required|file|mimes:pdf',
+            'file_pengantar_desa' => 'required|file|mimes:pdf',
+            'file_surat_tidak_sengketa' => 'required|file|mimes:pdf',
+            'file_pbb' => 'required|file|mimes:pdf',
+        ]);
+
+        // Simpan file PDF ke storage/app/public/agunan
+        $file_surat_tanah_asli     = $request->file('file_surat_tanah_asli')->storeAs('agunan', Str::uuid() . '.pdf', 'public');
+        $file_ktp                  = $request->file('file_ktp')->storeAs('agunan', Str::uuid() . '.pdf', 'public');
+        $file_pengantar_desa       = $request->file('file_pengantar_desa')->storeAs('agunan', Str::uuid() . '.pdf', 'public');
+        $file_surat_tidak_sengketa = $request->file('file_surat_tidak_sengketa')->storeAs('agunan', Str::uuid() . '.pdf', 'public');
+        $file_pbb                  = $request->file('file_pbb')->storeAs('agunan', Str::uuid() . '.pdf', 'public');
+
+        $submission = AgunanSubmission::create([
+            'nama_pemohon' => $validated['nama_pemohon'],
+            'jenis_kelamin' => $validated['jenis_kelamin'],
+            'pendidikan' => $validated['pendidikan'],
+            'nik' => $validated['nik'],
+            'file_surat_tanah_asli' => $file_surat_tanah_asli,
+            'file_ktp' => $file_ktp,
+            'file_pengantar_desa' => $file_pengantar_desa,
+            'file_surat_tidak_sengketa' => $file_surat_tidak_sengketa,
+            'file_pbb' => $file_pbb,
+            'status' => 'diajukan',
+        ]);
+
+        return redirect()
+            ->route('agunan.list')
+            ->with('success', 'Pengajuan Agunan ke Bank berhasil disimpan.')
+            ->with('antrian', $submission->queue_number);
+    }
+
+
+    // ---------------- Silang Sengketa ----------------
+
+    // List pengajuan sengketa
+    public function sengketaList()
+    {
+        $data = SengketaSubmission::latest()->paginate(10);
+        return view('mejalayanan.sengketa.index', compact('data'));
+    }
+
+    // Form input pengajuan sengketa
+    public function sengketaCreate()
+    {
+        return view('mejalayanan.sengketa.create');
+    }
+
+
+    // simpan sengketa
+    public function sengketaStore(Request $request)
+    {
+        $validated = $request->validate([
+            'nama_pemohon' => 'required|string|max:255',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'pendidikan' => 'required|in:SD,SMP,SMA,D1,D2,D3,S1,S2,S3',
+            'nik_pemohon' => 'required|digits:16',
+
+            'surat_silang_sengketa' => 'required|file|mimes:pdf',
+            'foto_copy_surat_tanah' => 'required|file|mimes:pdf',
+            'bukti_lunas_pbb' => 'required|file|mimes:pdf',
+        ]);
+
+        // Simpan file PDF ke storage/app/public/sengketa
+        $surat = $request->file('surat_silang_sengketa')->storeAs('sengketa', Str::uuid() . '.pdf', 'public');
+        $tanah = $request->file('foto_copy_surat_tanah')->storeAs('sengketa', Str::uuid() . '.pdf', 'public');
+        $pbb   = $request->file('bukti_lunas_pbb')->storeAs('sengketa', Str::uuid() . '.pdf', 'public');
+
+        $submission = SengketaSubmission::create([
+            'nama_pemohon' => $validated['nama_pemohon'],
+            'jenis_kelamin' => $validated['jenis_kelamin'],
+            'pendidikan' => $validated['pendidikan'],
+            'nik_pemohon' => $validated['nik_pemohon'],
+            'surat_silang_sengketa' => $surat,
+            'foto_copy_surat_tanah' => $tanah,
+            'bukti_lunas_pbb' => $pbb,
+            'status' => 'diajukan',
+        ]);
+
+        return redirect()
+            ->route('sengketa.list')
+            ->with('success', 'Pengajuan Surat Silang Sengketa berhasil disimpan.')
+            ->with('antrian', $submission->queue_number);
+    }
+
+    // Kirim ke Kasi Pemerintahan
+    public function sengketaKirimKasi($id)
+    {
+        $data = SengketaSubmission::findOrFail($id);
+
+        if ($data->status !== 'diajukan') {
+            return back()->with('error', 'Data sudah diproses.');
+        }
+
+        $data->update([
+            'status' => 'checked_by_kasi',
+            'verified_at' => now(),
+        ]);
+
+        return back()->with('success', 'Pengajuan berhasil dikirim ke Kasi Pemerintahan.');
+    }
+
+
+    // ---------------- Catin TNI POLRI ----------------
 
     // list catin
     public function catinTniList()
@@ -390,7 +666,6 @@ class MejaLayananController extends Controller
             ->with('antrian', $submission->queue_number);
     }
 
-
     // kirim ke kasi trantib 
     public function catinTniKirimKasi($id)
     {
@@ -409,8 +684,78 @@ class MejaLayananController extends Controller
     }
 
 
+    // ---------------- SKBD ----------------
 
+    // List SKBD
+    public function SKBDsList()
+    {
+        $data = SkbdSubmission::latest()->paginate(10);
+        return view('mejalayanan.skbd.index', compact('data'));
+    }
 
+    // Form tambah SKBD
+    public function SKBDsCreate()
+    {
+        return view('mejalayanan.skbd.create');
+    }
+
+    // Simpan SKBD
+    public function SKBDsStore(Request $request)
+    {
+        $validated = $request->validate([
+        'nama_pemohon' => 'required|string|max:255',
+        'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+        'pendidikan' => 'required|in:SD,SMP,SMA,D1,D2,D3,S1,S2,S3',
+        'nik_pemohon' => 'required|digits:16',
+
+        'skbd_desa' => 'required|file|mimetypes:application/pdf',
+        'ktp' => 'required|file|mimetypes:application/pdf',
+        'kk' => 'required|file|mimetypes:application/pdf',
+        'tanda_lunas_pbb' => 'required|file|mimetypes:application/pdf',
+    ]);
+
+    // Simpan file PDF ke storage/app/public/skbd/ dengan nama UUID
+    $paths = [
+        'skbd_desa' => $request->file('skbd_desa')->storeAs('skbd', Str::uuid() . '.pdf', 'public'),
+        'ktp' => $request->file('ktp')->storeAs('skbd', Str::uuid() . '.pdf', 'public'),
+        'kk' => $request->file('kk')->storeAs('skbd', Str::uuid() . '.pdf', 'public'),
+        'tanda_lunas_pbb' => $request->file('tanda_lunas_pbb')->storeAs('skbd', Str::uuid() . '.pdf', 'public'),
+    ];
+
+    $submission = SkbdSubmission::create([
+        'user_id' => auth()->id(),
+        'nama_pemohon' => $validated['nama_pemohon'],
+        'jenis_kelamin' => $validated['jenis_kelamin'],
+        'pendidikan' => $validated['pendidikan'],
+        'nik_pemohon' => $validated['nik_pemohon'],
+        'skbd_desa' => $paths['skbd_desa'],
+        'ktp' => $paths['ktp'],
+        'kk' => $paths['kk'],
+        'tanda_lunas_pbb' => $paths['tanda_lunas_pbb'],
+        'status' => 'diajukan',
+    ]);
+    return redirect()
+        ->route('SKBDs.list') // ganti sesuai route kamu
+        ->with('success', 'Pengajuan SKBD berhasil disimpan.')
+        ->with('antrian', $submission->queue_number);
+    }
+
+    // Kirim ke Kasi Trantib
+    public function SKBDkirimKeKasi($id)
+    {
+        $data = SkbdSubmission::findOrFail($id);
+
+        if ($data->status !== 'diajukan') {
+            return back()->with('error', 'Data sudah diproses.');
+        }
+
+        $data->update([
+            'status' => 'checked_by_kasi',
+            'verified_at' => now(),
+        ]);
+
+        return back()->with('success', 'Pengajuan berhasil dikirim ke Kasi Trantib.');
+    }
 
     
     public function dispensasi() {

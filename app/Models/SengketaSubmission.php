@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasQueueNumber;
+
+class SengketaSubmission extends Model
+{
+    use HasFactory, HasQueueNumber;
+
+    protected $fillable = [
+        'user_id',
+        'queue_number',
+        'nama_pemohon',
+        'jenis_kelamin',
+        'pendidikan',
+        'nik_pemohon',
+        'surat_silang_sengketa',
+        'foto_copy_surat_tanah',
+        'bukti_lunas_pbb',
+        'status',
+        'verified_at',
+        'approved_sekcam_at',
+        'approved_camat_at',
+        'rejected_reason',
+        'rejected_sekcam_reason',
+        'rejected_camat_reason',
+    ];
+
+    protected $dates = [
+        'verified_at',
+        'approved_sekcam_at',
+        'approved_camat_at',
+    ];
+}
