@@ -14,6 +14,7 @@ use App\Models\AgunanSubmission;
 use App\Models\AhliwarisSubmission;
 use App\Models\SppatGrSubmission;
 use App\Models\SktSubmission;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class MejaLayananController extends Controller
 {
@@ -33,12 +34,25 @@ class MejaLayananController extends Controller
 
     // ---------------- BPJS ----------------
 
-    // list bpjs 
-    public function bpjsList()
-    {
-        $data = BpjsSubmission::latest()->paginate(10); // urut dari terbaru + paginate
-        return view('mejalayanan.bpjs.index', compact('data'));
+public function bpjsList(Request $request)
+{
+    $query = BpjsSubmission::query();
+
+    if ($request->filled('nik')) {
+        $query->where('nik_pemohon', 'like', '%' . $request->nik . '%');
     }
+
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    /** @var LengthAwarePaginator $data */
+    $data = $query->latest()->paginate(10);
+    $data = $data->withQueryString();
+
+
+    return view('mejalayanan.bpjs.index', compact('data'));
+}
 
     // tambah bpjs
     public function bpjsCreate()
@@ -132,6 +146,41 @@ class MejaLayananController extends Controller
         }
         return back();
     }
+
+    public function simpanPenilaianBpjs(Request $request, $id)
+    {
+        $request->validate([
+            'penilaian' => 'required|in:tidak_puas,cukup,puas,sangat_puas',
+        ]);
+
+        $data = \App\Models\BpjsSubmission::findOrFail($id);
+
+        if ($data->status !== 'approved_by_camat' || $data->penilaian) {
+            return back()->with('error', 'Pengajuan tidak valid untuk dinilai.');
+        }
+
+        $data->update([
+            'penilaian' => $request->penilaian,
+            'diambil_at' => now(),
+        ]);
+
+        return back()->with('success', 'Penilaian berhasil dikirim.');
+    }
+
+
+   public function cariPengajuanBpjsByNik(Request $request)
+    {
+        $request->validate([
+            'nik' => 'required',
+        ]);
+
+        $data = \App\Models\BpjsSubmission::where('nik_pemohon', $request->nik)->paginate(10);
+
+        return view('mejalayanan.bpjs.index', compact('data'));
+    }
+
+
+
 
 
     // ---------------- SKTM ----------------

@@ -5,7 +5,7 @@
     @include('mejalayanan.layouts.sidebar')
 
     <main class="flex-1 p-6">
-        <h1 class="text-3xl font-bold mb-6 text-blue-700 dark:text-blue-300">📄 Daftar Pengajuan SKTM Dispensasi Cerai</h1>
+        <h1 class="text-3xl font-bold mb-6 text-blue-700 dark:text-blue-300">📄 Daftar Pengajuan SKT</h1>
 
         @if (session('antrian'))
             <div class="mb-6 p-4 bg-green-100 dark:bg-green-800/30 text-green-900 dark:text-green-100 rounded-lg border border-green-400 dark:border-green-600 shadow">
@@ -47,13 +47,13 @@
                             $ditolakOleh = null;
 
                             if ($item->rejected_reason) {
-                                $totalAkhir = $verified;
-                                $ditolakOleh = 'Kasi Kesos';
-                            } elseif ($item->rejected_sekcam_reason ?? false) {
-                                $totalAkhir = $sekcam;
+                                $totalAkhir = $verified ?? $created;
+                                $ditolakOleh = 'Kasi Pemerintahan';
+                            } elseif ($item->rejected_sekcam_reason) {
+                                $totalAkhir = $sekcam ?? $verified ?? $created;
                                 $ditolakOleh = 'Sekcam';
-                            } elseif ($item->rejected_camat_reason ?? false) {
-                                $totalAkhir = $camat;
+                            } elseif ($item->rejected_camat_reason) {
+                                $totalAkhir = $camat ?? $sekcam ?? $verified ?? $created;
                                 $ditolakOleh = 'Camat';
                             } elseif ($camat) {
                                 $totalAkhir = $camat;
@@ -61,7 +61,7 @@
 
                             $statusColor = match($item->status) {
                                 'diajukan' => 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300',
-                                'diproses' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-400/20 dark:text-yellow-300',
+                                'checked_by_kasi' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-400/20 dark:text-yellow-300',
                                 'approved_by_camat' => 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300',
                                 'rejected_by_sekcam', 'rejected_by_camat' => 'bg-red-200 text-red-800 dark:bg-red-600/20 dark:text-red-400',
                                 default => 'bg-gray-100 text-gray-700 dark:bg-gray-700/50 dark:text-gray-300',
@@ -77,9 +77,39 @@
                             </td>
                             <td class="px-4 py-3 border text-sm space-y-1">
                                 <div>📥 Diajukan: {{ $created->diffForHumans() }}</div>
-                                <div>✅ Kasi Kesos: {{ $verified ? $verified->diffForHumans($created, true) : 'menunggu' }}</div>
-                                <div>📝 Sekcam: {{ $sekcam ? $sekcam->diffForHumans($verified ?? $created, true) : 'menunggu' }}</div>
-                                <div>🖋️ Camat: {{ $camat ? $camat->diffForHumans($sekcam ?? $verified ?? $created, true) : 'menunggu' }}</div>
+
+                                <div>
+                                    ✅ Kasi Pemerintahan:
+                                    @if ($verified)
+                                        {{ $verified->diffForHumans($created, true) }}
+                                    @elseif ($item->rejected_reason)
+                                        <span class="text-red-500">❌ Ditolak oleh Kasi</span>
+                                    @else
+                                        <span class="text-gray-400">menunggu</span>
+                                    @endif
+                                </div>
+
+                                <div>
+                                    📝 Sekcam:
+                                    @if ($sekcam)
+                                        {{ $sekcam->diffForHumans($verified ?? $created, true) }}
+                                    @elseif ($item->rejected_sekcam_reason)
+                                        <span class="text-red-500">❌ Ditolak oleh Sekcam</span>
+                                    @elseif ($verified)
+                                        <span class="text-gray-400">menunggu</span>
+                                    @endif
+                                </div>
+
+                                <div>
+                                    🖋️ Camat:
+                                    @if ($camat)
+                                        {{ $camat->diffForHumans($sekcam ?? $verified ?? $created, true) }}
+                                    @elseif ($item->rejected_camat_reason)
+                                        <span class="text-red-500">❌ Ditolak oleh Camat</span>
+                                    @elseif ($sekcam)
+                                        <span class="text-gray-400">menunggu</span>
+                                    @endif
+                                </div>
 
                                 @if ($totalAkhir)
                                     <div class="mt-2 font-semibold text-sm">
@@ -95,11 +125,10 @@
                             </td>
                             <td class="px-4 py-3 border text-sm space-y-1 text-blue-600 dark:text-blue-300">
                                 @foreach ([
-                                    'sktm_desa' => 'SKTM Desa',
-                                    'kk' => 'Kartu Keluarga',
-                                    'ktp' => 'KTP',
-                                    'buku_nikah' => 'Buku Nikah',
-                                    'tanda_lunas_pbb' => 'PBB'
+                                    'file_surat_keterangan_tanah' => 'Surat Keterangan Tanah',
+                                    'file_ktp' => 'KTP',
+                                    'file_pengantar_desa' => 'Surat Pengantar',
+                                    'file_pbb' => 'Tanda Lunas PBB'
                                 ] as $field => $label)
                                     @if ($item->$field)
                                         <div>

@@ -25,7 +25,9 @@ class BpjsSubmission extends Model
         'verified_at', 
         'approved_sekcam_at', 
         'approved_camat_at',
-        'queue_number' // pastikan field ini juga ada di DB & fillable
+        'queue_number', // pastikan field ini juga ada di DB & fillable
+        'penilaian',
+        'diambil_at'
     ];
 
     protected $casts = [
