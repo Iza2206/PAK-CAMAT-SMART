@@ -15,10 +15,6 @@
             {{-- Statistik --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Total Pengajuan</p>
-                    <p class="text-2xl font-bold">{{ $jumlahPengajuan }}</p>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
                     <p class="text-sm text-gray-600 dark:text-gray-400">Diajukan</p>
                     <p class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ $pengajuanDiajukan }}</p>
                 </div>

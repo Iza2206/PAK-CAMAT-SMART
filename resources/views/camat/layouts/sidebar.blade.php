@@ -30,9 +30,9 @@
         <nav 
             class="p-4 text-sm text-gray-700 dark:text-gray-300 font-medium space-y-2"
             x-data="{
-        openBpjs: '{{ request()->routeIs('bpjs.*') ? 'true' : 'false' }}' === 'true',
-        openSktm: '{{ request()->routeIs('SKTMs.*') ? 'true' : 'false' }}' === 'true'
-    }"
+                openBpjs: {{ request()->routeIs('camat.bpjs.*') ? 'true' : 'false' }},
+                openSktm: {{ request()->routeIs('camat.sktm.*') ? 'true' : 'false' }}
+            }"
         >
             {{-- Dashboard --}}
             <a href="{{ route('camat.dashboard') }}"
@@ -77,9 +77,9 @@
                     Riwayat Proses BPJS
                 </a>
             </div>  
-            
-                {{-- SKTM Menu --}}
-           <button @click="openSktm = !openSktm"
+
+            {{-- SKTM Menu --}}
+            <button @click="openSktm = !openSktm"
                 class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
                 :class="openSktm ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
                 <span class="flex items-center gap-2">
@@ -88,7 +88,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M5 13l4 4L19 7" />
                     </svg>
-                   SKTM Dispen Cerai
+                    SKTM Dispen Cerai
                 </span>
                 <svg :class="{ 'rotate-180': openSktm }" class="w-4 h-4 transform transition-transform" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
@@ -98,7 +98,7 @@
             </button>
 
             {{-- Submenu SKTM --}}
-            <div x-show="openSktm"  x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+            <div x-show="openSktm" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
                 <a href="{{ route('camat.sktm.index') }}"
                     class="block px-3 py-1 rounded transition-all 
                     {{ request()->routeIs('camat.sktm.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">

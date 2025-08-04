@@ -15,9 +15,11 @@ use App\Models\AhliwarisSubmission;
 use App\Models\SppatGrSubmission;
 use App\Models\SktSubmission;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Traits\HasNikStatusFilter;
 
 class MejaLayananController extends Controller
 {
+    use HasNikStatusFilter;
     public function index()
     {
         $submissions = IkmSubmission::with('user')->latest()->paginate(10);
@@ -34,25 +36,25 @@ class MejaLayananController extends Controller
 
     // ---------------- BPJS ----------------
 
-public function bpjsList(Request $request)
-{
-    $query = BpjsSubmission::query();
+    public function bpjsList(Request $request)
+    {
+        $query = BpjsSubmission::query();
 
-    if ($request->filled('nik')) {
-        $query->where('nik_pemohon', 'like', '%' . $request->nik . '%');
+        if ($request->filled('nik')) {
+            $query->where('nik_pemohon', 'like', '%' . $request->nik . '%');
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        /** @var LengthAwarePaginator $data */
+        $data = $query->latest()->paginate(10);
+        $data = $data->withQueryString();
+
+
+        return view('mejalayanan.bpjs.index', compact('data'));
     }
-
-    if ($request->filled('status')) {
-        $query->where('status', $request->status);
-    }
-
-    /** @var LengthAwarePaginator $data */
-    $data = $query->latest()->paginate(10);
-    $data = $data->withQueryString();
-
-
-    return view('mejalayanan.bpjs.index', compact('data'));
-}
 
     // tambah bpjs
     public function bpjsCreate()
@@ -168,16 +170,32 @@ public function bpjsList(Request $request)
     }
 
 
-   public function cariPengajuanBpjsByNik(Request $request)
+    // penilaian bpjs ikm
+    public function penilaianIndex(Request $request)
     {
-        $request->validate([
-            'nik' => 'required',
-        ]);
+        $filters = $request->only(['nik', 'penilaian']);
 
-        $data = \App\Models\BpjsSubmission::where('nik_pemohon', $request->nik)->paginate(10);
+        $data = \App\Models\BpjsSubmission::where('status', 'approved_by_camat')
+            ->filterNikStatus($filters) // ✅ menggunakan trait
+            ->latest('updated_at')
+            ->paginate(10)
+            ->withQueryString(); // agar pagination tetap bawa filter
 
-        return view('mejalayanan.bpjs.index', compact('data'));
+        return view('mejalayanan.bpjs.penilaian', compact('data'));
     }
+
+
+
+//    public function cariPengajuanBpjsByNik(Request $request)
+//     {
+//         $request->validate([
+//             'nik' => 'required',
+//         ]);
+
+//         $data = \App\Models\BpjsSubmission::where('nik_pemohon', $request->nik)->paginate(10);
+
+//         return view('mejalayanan.bpjs.index', compact('data'));
+//     }
 
 
 

@@ -6,10 +6,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasQueueNumber;
+use App\Traits\HasNikStatusFilter;
 
 class BpjsSubmission extends Model
 {
-    use HasFactory, HasQueueNumber;
+    use HasFactory, HasQueueNumber, HasNikStatusFilter;
+
+    // Menentukan nama field NIK yang digunakan untuk filtering
+    protected $nikField = 'nik_pemohon';
 
     protected $fillable = [
         'nama_pemohon', 
@@ -25,7 +29,7 @@ class BpjsSubmission extends Model
         'verified_at', 
         'approved_sekcam_at', 
         'approved_camat_at',
-        'queue_number', // pastikan field ini juga ada di DB & fillable
+        'queue_number', 
         'penilaian',
         'diambil_at'
     ];

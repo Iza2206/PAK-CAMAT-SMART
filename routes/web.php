@@ -45,7 +45,12 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::post('/layanan/bpjs/store', [MejaLayananController::class, 'bpjsStore'])->name('bpjs.store');  // Simpan
     Route::patch('/layanan/bpjs/{id}/kirim-kasi', [MejaLayananController::class, 'kirimKeKasi'])->name('bpjs.kirimkasi');
     Route::post('/bpjs/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianBpjs'])->name('bpjs.penilaian');
-    Route::get('/bpjs/cari', [MejaLayananController::class, 'cariPengajuanBpjsByNik'])->name('bpjs.cari');
+    Route::post('/bpjs/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianBpjs'])->name('bpjs.penilaian');
+
+    Route::get('/bpjs/penilaian', [MejaLayananController::class, 'penilaianIndex'])->name('bpjs.penilaian.index');
+
+
+    
 
     // SKTM
     Route::get('/layanan/SKTMs', [MejaLayananController::class, 'SKTMsList'])->name('SKTMs.list'); // List Data

@@ -24,7 +24,7 @@
 
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 overflow-auto">
             {{-- Form Cari berdasarkan NIK --}}
-            <form method="GET" action="{{ route('bpjs.list') }}" class="mb-6 flex flex-wrap gap-3 items-center">
+            {{-- <form method="GET" action="{{ route('bpjs.list') }}" class="mb-6 flex flex-wrap gap-3 items-center">
                 <input type="text" name="nik" value="{{ request('nik') }}"
                     placeholder="🔍 Cari NIK"
                     class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white"
@@ -39,7 +39,7 @@
                     <option value="rejected_by_sekcam" {{ request('status') == 'rejected_by_sekcam' ? 'selected' : '' }}>Ditolak Sekcam</option>
                     <option value="rejected_by_camat" {{ request('status') == 'rejected_by_camat' ? 'selected' : '' }}>Ditolak Camat</option>
                 </select>
-            </form>
+            </form> --}}
 
 
 
@@ -54,7 +54,7 @@
                         <th class="px-4 py-3 border">Dokumen</th>
                         <th class="px-4 py-3 border">Jenis Kelamin</th>
                         <th class="px-4 py-3 border">Pendidikan</th>
-                        <th class="px-4 py-3 border">Penilaian</th>
+                        {{-- <th class="px-4 py-3 border">Penilaian</th> --}}
                     </tr>
                 </thead>
                 <tbody>
@@ -165,7 +165,7 @@
                             </td>
                             <td class="px-4 py-3 border text-sm">{{ $item->jenis_kelamin ?? '-' }}</td>
                             <td class="px-4 py-3 border text-sm">{{ $item->pendidikan ?? '-' }}</td>
-                            <td class="px-4 py-3 border text-sm">
+                            {{-- <td class="px-4 py-3 border text-sm">
                                 @if ($item->status === 'approved_by_camat')
                                     @if (!$item->penilaian)
                                         <form action="{{ route('bpjs.penilaian', $item->id) }}" method="POST" class="flex flex-col space-y-2">
@@ -191,7 +191,7 @@
                                 @else
                                     <span class="text-gray-400">-</span>
                                 @endif
-                            </td>
+                            </td> --}}
 
                     @empty
                         <tr>

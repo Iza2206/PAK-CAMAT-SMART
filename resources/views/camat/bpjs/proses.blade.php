@@ -47,13 +47,15 @@
                     </thead>
                     <tbody>
                         @foreach ($pengajuan as $index => $item)
-                            @php
+                           @php
                                 $statusColor = match($item->status) {
                                     'approved_by_camat' => 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300',
                                     'rejected_by_camat' => 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300',
-                                    default => 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-300',
+                                    'approved_by_sekcam' => 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-300',
+                                    default => 'bg-gray-200 text-gray-800 dark:bg-gray-700/30 dark:text-gray-100',
                                 };
                             @endphp
+
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
                                 <td class="px-4 py-3 border">{{ $pengajuan->firstItem() + $index }}</td>
                                 <td class="px-4 py-3 border">{{ $item->nama_pemohon }}</td>
@@ -63,13 +65,19 @@
                                 <td class="px-4 py-3 border">{{ $item->pendidikan }}</td>
                                 <td class="px-4 py-3 border">
                                     <span class="px-2 py-1 text-sm font-semibold rounded-lg {{ $statusColor }}">
-                                        @if ($item->status === 'approved_by_camat')
-                                            Disetujui
-                                        @elseif ($item->status === 'rejected_by_camat')
-                                            Ditolak
-                                        @else
-                                            Menunggu
-                                        @endif
+                                        @switch($item->status)
+                                            @case('approved_by_camat')
+                                                Disetujui
+                                                @break
+                                            @case('rejected_by_camat')
+                                                Ditolak
+                                                @break
+                                            @case('approved_by_sekcam')
+                                                Menunggu Persetujuan
+                                                @break
+                                            @default
+                                                {{ ucfirst(str_replace('_', ' ', $item->status)) }}
+                                        @endswitch
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 border">

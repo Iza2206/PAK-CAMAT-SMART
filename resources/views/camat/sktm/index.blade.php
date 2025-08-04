@@ -17,6 +17,8 @@
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                         <p class="mb-1"><strong>👤 Nama:</strong> {{ $item->nama_pemohon }}</p>
                         <p class="mb-2"><strong>🆔 NIK:</strong> {{ $item->nik_pemohon }}</p>
+                        <p class="mb-1"><strong>👫 Jenis Kelamin:</strong> {{ $item->jenis_kelamin }}</p>
+                        <p class="mb-2"><strong>🎓 Pendidikan:</strong> {{ $item->pendidikan }}</p>
 
                         <p class="font-semibold mb-2">📎 Dokumen:</p>
                         <ul class="list-disc list-inside text-sm space-y-1 text-blue-600 dark:text-blue-300">
