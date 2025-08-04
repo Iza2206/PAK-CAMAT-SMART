@@ -5,12 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasQueueNumber;
+use App\Traits\HasNikStatusFilter;
 
 class SktmDispensasiSubmission extends Model
 {
-    use HasFactory, HasQueueNumber;
+    use HasFactory, HasQueueNumber, HasNikStatusFilter;
 
-     protected $fillable = [
+    // Menentukan nama field NIK yang digunakan untuk filtering
+    protected $nikField = 'nik_pemohon';
+
+    protected $fillable = [
         'nama_pemohon',
         'jenis_kelamin',
         'pendidikan',
@@ -27,6 +31,17 @@ class SktmDispensasiSubmission extends Model
         'rejected_reason',
         'rejected_sekcam_reason',
         'rejected_camat_reason',
-        'queue_number', // ⬅️ Tambahkan ini
+        'queue_number',
+        'penilaian',
+        'diambil_at'
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'verified_at' => 'datetime',
+        'approved_sekcam_at' => 'datetime',
+        'approved_camat_at' => 'datetime',
+        'diambil_at' => 'datetime',
     ];
 }

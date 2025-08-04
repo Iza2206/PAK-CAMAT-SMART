@@ -113,6 +113,11 @@
                         {{ request()->routeIs('SKTMs.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                         📄 List Data
                     </a>
+                    <a href="{{ route('sktm.penilaian.index') }}"
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('sktm.penilaian.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📝 Penilaian
+                </a>
                 </div>
             
             {{-- SPPAT-GR --}}

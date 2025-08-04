@@ -169,7 +169,6 @@ class MejaLayananController extends Controller
         return back()->with('success', 'Penilaian berhasil dikirim.');
     }
 
-
     // penilaian bpjs ikm
     public function penilaianIndex(Request $request)
     {
@@ -183,23 +182,6 @@ class MejaLayananController extends Controller
 
         return view('mejalayanan.bpjs.penilaian', compact('data'));
     }
-
-
-
-//    public function cariPengajuanBpjsByNik(Request $request)
-//     {
-//         $request->validate([
-//             'nik' => 'required',
-//         ]);
-
-//         $data = \App\Models\BpjsSubmission::where('nik_pemohon', $request->nik)->paginate(10);
-
-//         return view('mejalayanan.bpjs.index', compact('data'));
-//     }
-
-
-
-
 
     // ---------------- SKTM ----------------
 
@@ -303,6 +285,41 @@ class MejaLayananController extends Controller
             $data->update(['status' => 'disetujui_camat', 'approved_camat_at' => now()]);
         }
         return back();
+    }
+
+    // penilaian sktm ikm
+    public function sktmPenilaianIndex(Request $request)
+    {
+        $filters = $request->only(['nik', 'penilaian']);
+
+        $data = \App\Models\SktmDispensasiSubmission::where('status', 'approved_by_camat')
+            ->filterNikStatus($filters) // ✅ menggunakan trait
+            ->latest('updated_at')
+            ->paginate(10)
+            ->withQueryString(); // agar pagination tetap bawa filter
+
+        return view('mejalayanan.sktm.penilaian', compact('data'));
+    }
+
+    // SIMPAN PENILAIAN SKTM 
+    public function simpanPenilaianSktm(Request $request, $id)
+    {
+        $request->validate([
+            'penilaian' => 'required|in:tidak_puas,cukup,puas,sangat_puas',
+        ]);
+
+        $data = \App\Models\SktmDispensasiSubmission::findOrFail($id);
+
+        if ($data->status !== 'approved_by_camat' || $data->penilaian) {
+            return back()->with('error', 'Pengajuan tidak valid untuk dinilai.');
+        }
+
+        $data->update([
+            'penilaian' => $request->penilaian,
+            'diambil_at' => now(),
+        ]);
+
+        return back()->with('success', 'Penilaian berhasil dikirim.');
     }
 
     // ------------------- SKT -------------------

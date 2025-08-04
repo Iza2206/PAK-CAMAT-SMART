@@ -43,25 +43,26 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::get('/layanan/bpjs', [MejaLayananController::class, 'bpjsList'])->name('bpjs.list'); // List Data
     Route::get('/layanan/bpjs/create', [MejaLayananController::class, 'bpjsCreate'])->name('bpjs.create'); // Tambah
     Route::post('/layanan/bpjs/store', [MejaLayananController::class, 'bpjsStore'])->name('bpjs.store');  // Simpan
-    Route::patch('/layanan/bpjs/{id}/kirim-kasi', [MejaLayananController::class, 'kirimKeKasi'])->name('bpjs.kirimkasi');
-    Route::post('/bpjs/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianBpjs'])->name('bpjs.penilaian');
-    Route::post('/bpjs/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianBpjs'])->name('bpjs.penilaian');
-
-    Route::get('/bpjs/penilaian', [MejaLayananController::class, 'penilaianIndex'])->name('bpjs.penilaian.index');
-
-
-    
+    Route::patch('/layanan/bpjs/{id}/kirim-kasi', [MejaLayananController::class, 'kirimKeKasi'])->name('bpjs.kirimkasi'); //kirim ke kasi kesos
+    Route::post('/bpjs/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianBpjs'])->name('bpjs.penilaian'); // simpan penilaian ikm bpjs
+    Route::get('/bpjs/penilaian', [MejaLayananController::class, 'penilaianIndex'])->name('bpjs.penilaian.index'); // list penilaian bpjs
 
     // SKTM
     Route::get('/layanan/SKTMs', [MejaLayananController::class, 'SKTMsList'])->name('SKTMs.list'); // List Data
     Route::get('/layanan/SKTMs/create', [MejaLayananController::class, 'SKTMsCreate'])->name('SKTMs.create'); // Tambah
     Route::post('/layanan/SKTMs/store', [MejaLayananController::class, 'SKTMsStore'])->name('SKTMs.store');  // Simpan
-    Route::patch('/layanan/SKTMs/{id}/kirim-kasi', [MejaLayananController::class, 'SKTMkirimKeKasi'])->name('SKTMs.kirimkasi');
+    Route::patch('/layanan/SKTMs/{id}/kirim-kasi', [MejaLayananController::class, 'SKTMkirimKeKasi'])->name('SKTMs.kirimkasi'); // kirim ke kasi kesos
+    Route::post('/sktm/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianSktm'])->name('sktm.penilaian'); // simpan penilaian ikm sktm
+    Route::get('/sktm/penilaian', [MejaLayananController::class, 'sktmPenilaianIndex'])->name('sktm.penilaian.index'); // list penilaian sktm
+
+
+
     // SKT (Surat Keterangan Tanah)
     Route::get('/layanan/skt', [MejaLayananController::class, 'sktList'])->name('skt.list'); // List Data
     Route::get('/layanan/skt/create', [MejaLayananController::class, 'sktCreate'])->name('skt.create'); // Tambah
     Route::post('/layanan/skt/store', [MejaLayananController::class, 'sktStore'])->name('skt.store'); // Simpan
     Route::patch('/layanan/skt/{id}/kirim-kasi', [MejaLayananController::class, 'sktKirimKeKasi'])->name('skt.kirimkasi'); // Kirim ke Kasi
+
     // SPPAT-GR (Surat Penyerahan Penguasaan Tanah Ganti Rugi)
     Route::get('/layanan/sppat-gr', [MejaLayananController::class, 'sppatGrList'])->name('sppat_gr.list'); // List Data
     Route::get('/layanan/sppat-gr/create', [MejaLayananController::class, 'sppatGrCreate'])->name('sppat_gr.create'); // Tambah
