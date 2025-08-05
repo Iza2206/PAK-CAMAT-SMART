@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\BpjsSubmission;
 use App\Models\SktmDispensasiSubmission;
+use App\Models\SktSubmission;
+use App\Models\SkbdSubmission;
 
 class SekcamController extends Controller
 {
@@ -27,6 +29,7 @@ class SekcamController extends Controller
         ));
     }
 
+    // ================= BPJS =================
     // Tampilkan daftar pengajuan dari Kasi Kesos
     public function bpjsIndex()
     {
@@ -82,6 +85,7 @@ class SekcamController extends Controller
         ));
     }
 
+    // ================= SKTM =================
    // Tampilkan daftar pengajuan dari Kasi Kesos
     public function sktmIndex()
     {
@@ -136,5 +140,108 @@ class SekcamController extends Controller
             'pengajuanDitolak'
         ));
     }
+
+    // ================= SKT (Surat Keterangan Tanah) =================
+    public function sktIndex()
+    {
+        $pengajuan = SktSubmission::where('status', 'checked_by_kasi')->latest()->get();
+        return view('sekcam.skt.index', compact('pengajuan'));
+    }
+
+
+    public function sktApprove($id)
+    {
+        $item = SktSubmission::findOrFail($id);
+        $item->status = 'approved_by_sekcam';
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan SKT berhasil disetujui oleh Sekcam.');
+    }
+
+
+    public function sktReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = SktSubmission::findOrFail($id);
+        $item->status = 'rejected_by_sekcam';
+        $item->rejected_sekcam_reason = $request->reason;
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan SKT berhasil ditolak oleh Sekcam.');
+    }
+
+    public function sktProses()
+    {
+
+        $pengajuanDiterima  = SktSubmission::whereIn('status', ['checked_by_kasi', 'approved_by_sekcam', 'rejected_by_sekcam'])->count();
+        $pengajuanDisetujui = SktSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDitolak   = SktSubmission::where('status', 'rejected_by_sekcam')->count();
+
+        $pengajuan = SktSubmission::whereIn('status', ['approved_by_sekcam', 'rejected_by_sekcam'])
+                        ->latest()
+                        ->paginate(10);
+
+        return view('sekcam.skt.proses', compact(
+            'pengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+    // ================= SKBD =================
+    public function skbdIndex()
+    {
+        $pengajuan = SkbdSubmission::where('status', 'checked_by_kasi')->latest()->get();
+        return view('sekcam.skbd.index', compact('pengajuan'));
+    }
+
+
+    public function skbdApprove($id)
+    {
+        $item = SkbdSubmission::findOrFail($id);
+        $item->status = 'approved_by_sekcam';
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan SKBD berhasil disetujui oleh Sekcam.');
+    }
+
+
+    public function skbdReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = SkbdSubmission::findOrFail($id);
+        $item->status = 'rejected_by_sekcam';
+        $item->rejected_sekcam_reason = $request->reason;
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan SKBD berhasil ditolak oleh Sekcam.');
+    }
+
+    public function skbdProses()
+    {
+
+        $pengajuanDiterima  = SkbdSubmission::whereIn('status', ['checked_by_kasi', 'approved_by_sekcam', 'rejected_by_sekcam'])->count();
+        $pengajuanDisetujui = SkbdSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDitolak   = SkbdSubmission::where('status', 'rejected_by_sekcam')->count();
+
+        $pengajuan = SkbdSubmission::whereIn('status', ['approved_by_sekcam', 'rejected_by_sekcam'])
+                        ->latest()
+                        ->paginate(10);
+
+        return view('sekcam.skbd.proses', compact(
+            'pengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
 
 }

@@ -6,7 +6,7 @@
 
     <main class="flex-1 p-6">
         <h1 class="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-6">
-            📥 Verifikasi Pengajuan Surat Keterangan Bersih Diri (SKBD)
+            📥 Verifikasi Pengajuan Surat Keterangan Tanah (SKT)
         </h1>
 
         @if ($pengajuan->isEmpty())
@@ -22,22 +22,25 @@
 
                         <p class="font-semibold mt-2 mb-1">📎 Dokumen:</p>
                         <ul class="list-disc list-inside text-sm text-blue-600 dark:text-blue-300 space-y-1">
-                            @if ($item->skbd_desa)
-                                <li><a href="{{ asset('storage/' . $item->skbd_desa) }}" target="_blank">📄 SKBD Desa</a></li>
+                            @if ($item->file_permohonan)
+                                <li><a href="{{ asset('storage/' . $item->file_permohonan) }}" target="_blank">📄 Surat Permohonan SKT</a></li>
                             @endif
-                            @if ($item->ktp)
-                                <li><a href="{{ asset('storage/' . $item->ktp) }}" target="_blank">📄 KTP </a></li>
+                            @if ($item->file_alas_hak)
+                                <li><a href="{{ asset('storage/' . $item->file_alas_hak) }}" target="_blank">📄 Dokumen Alas Hak</a></li>
                             @endif
-                           @if ($item->kk)
-                                <li><a href="{{ asset('storage/' .$item->kk) }}" target="_blank">📄 Kartu Kekuarga</a></li>
+                            @if ($item->file_kk)
+                                <li><a href="{{ asset('storage/' . $item->file_kk) }}" target="_blank">📄 Fotokopi KK</a></li>
                             @endif
-                            @if ($item->tanda_lunas_pbb)
-                                <li><a href="{{ asset('storage/' . $item->tanda_lunas_pbb) }}" target="_blank">📄 Bukti Lunas PBB</a></li>
+                            @if ($item->file_ktp)
+                                <li><a href="{{ asset('storage/' . $item->file_ktp) }}" target="_blank">📄 Fotokopi KTP</a></li>
+                            @endif
+                            @if ($item->file_pbb)
+                                <li><a href="{{ asset('storage/' . $item->file_pbb) }}" target="_blank">📄 Bukti Lunas PBB</a></li>
                             @endif
                         </ul>
 
                         <div class="mt-4 flex gap-2">
-                            <form method="POST" action="{{ route('sekcam.skbd.approve', $item->id) }}">
+                            <form method="POST" action="{{ route('sekcam.skt.approve', $item->id) }}">
                                 @csrf
                                 <button type="submit"
                                     class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm shadow">
@@ -53,7 +56,7 @@
 
                         {{-- Modal Tolak --}}
                         <dialog id="rejectModal-{{ $item->id }}" class="rounded-xl backdrop:bg-black/30 p-6 w-full max-w-md">
-                            <form method="POST" action="{{ route('sekcam.skbd.reject', $item->id) }}">
+                            <form method="POST" action="{{ route('sekcam.skt.reject', $item->id) }}">
                                 @csrf
                                 <p class="font-semibold mb-2">Alasan Penolakan:</p>
                                 <textarea name="reason" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600"></textarea>

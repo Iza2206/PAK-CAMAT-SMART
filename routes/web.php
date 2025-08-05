@@ -55,13 +55,13 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::post('/sktm/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianSktm'])->name('sktm.penilaian'); // simpan penilaian ikm sktm
     Route::get('/sktm/penilaian', [MejaLayananController::class, 'sktmPenilaianIndex'])->name('sktm.penilaian.index'); // list penilaian sktm
 
-
-
     // SKT (Surat Keterangan Tanah)
     Route::get('/layanan/skt', [MejaLayananController::class, 'sktList'])->name('skt.list'); // List Data
     Route::get('/layanan/skt/create', [MejaLayananController::class, 'sktCreate'])->name('skt.create'); // Tambah
     Route::post('/layanan/skt/store', [MejaLayananController::class, 'sktStore'])->name('skt.store'); // Simpan
     Route::patch('/layanan/skt/{id}/kirim-kasi', [MejaLayananController::class, 'sktKirimKeKasi'])->name('skt.kirimkasi'); // Kirim ke Kasi
+    Route::post('/skt/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianSkt'])->name('skt.penilaian');
+    Route::get('/skt/penilaian', [MejaLayananController::class, 'sktPenilaianIndex'])->name('skt.penilaian.index'); // list penilaian skt
 
     // SPPAT-GR (Surat Penyerahan Penguasaan Tanah Ganti Rugi)
     Route::get('/layanan/sppat-gr', [MejaLayananController::class, 'sppatGrList'])->name('sppat_gr.list'); // List Data
@@ -186,6 +186,12 @@ Route::middleware(['auth', 'role:sekcam'])->prefix('sekcam')->group(function () 
     Route::post('/sktm/{id}/reject', [SekcamController::class, 'sktmReject'])->name('sekcam.sktm.reject');
     Route::get('/sktm/proses', [SekcamController::class, 'sktmProses'])->name('sekcam.sktm.proses');
 
+    // ===== Layanan SK TANAH =====
+    Route::get('/skt', [SekcamController::class, 'sktIndex'])->name('sekcam.skt.index');
+    Route::post('/skt/{id}/approve', [SekcamController::class, 'sktApprove'])->name('sekcam.skt.approve');
+    Route::post('/skt/{id}/reject', [SekcamController::class, 'sktReject'])->name('sekcam.skt.reject');
+    Route::get('/skt/proses', [SekcamController::class, 'sktProses'])->name('sekcam.skt.proses');
+
     // ===== Layanan SKBD =====
     Route::get('/skbd', [SekcamController::class, 'skbdIndex'])->name('sekcam.skbd.index');
     Route::post('/skbd/{id}/approve', [SekcamController::class, 'skbdApprove'])->name('sekcam.skbd.approve');
@@ -241,6 +247,20 @@ Route::middleware(['auth', 'role:camat'])->prefix('camat')->group(function () {
     Route::post('/sktm/{id}/approve', [CamatController::class, 'sktmApprove'])->name('camat.sktm.approve');
     Route::post('/sktm/{id}/reject', [CamatController::class, 'sktmReject'])->name('camat.sktm.reject');
     Route::get('/sktm/proses', [CamatController::class, 'sktmProses'])->name('camat.sktm.proses');
+
+    // ===== Layanan SK TANAH =====
+    Route::get('/skt', [CamatController::class, 'sktIndex'])->name('camat.skt.index');
+    Route::post('/skt/{id}/approve', [CamatController::class, 'sktApprove'])->name('camat.skt.approve');
+    Route::post('/skt/{id}/reject', [CamatController::class, 'sktReject'])->name('camat.skt.reject');
+    Route::get('/skt/proses', [CamatController::class, 'sktProses'])->name('camat.skt.proses');
+
+    // ===== Layanan SKBD =====
+    Route::get('/skbd', [CamatController::class, 'skbdIndex'])->name('camat.skbd.index');
+    Route::post('/skbd/{id}/approve', [CamatController::class, 'skbdApprove'])->name('camat.skbd.approve');
+    Route::post('/skbd/{id}/reject', [CamatController::class, 'skbdReject'])->name('camat.skbd.reject');
+    Route::get('/skbd/proses', [CamatController::class, 'skbdProses'])->name('camat.skbd.proses');
+
+
 });
 
 // ---------------- Kasubbag Umpeg ----------------

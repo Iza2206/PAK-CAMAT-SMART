@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasQueueNumber;
+use App\Traits\HasNikStatusFilter;
 
 class SktSubmission extends Model
 {
-    use HasFactory, HasQueueNumber;
-
+    use HasFactory, HasQueueNumber, HasNikStatusFilter;
+    
+     protected $nikField = 'nik_pemohon';
     protected $table = 'skt_submissions';
 
     protected $fillable = [
@@ -25,9 +27,12 @@ class SktSubmission extends Model
         'status',
         'verified_at',
         'approved_sekcam_at',
+        'rejected_sekcam_reason',
         'approved_camat_at',
         'rejected_reason',
         'queue_number',
+        'penilaian',
+        'diambil_at'
     ];
 
     protected $casts = [

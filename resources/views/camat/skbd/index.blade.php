@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="flex min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-    @include('sekcam.layouts.sidebar')
+<div class="flex flex-col md:flex-row min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+    @include('camat.layouts.sidebar')
 
     <main class="flex-1 p-6">
-        <h1 class="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-6">
-            📥 Verifikasi Pengajuan Surat Keterangan Bersih Diri (SKBD)
-        </h1>
+        <h1 class="text-3xl font-bold mb-6 text-blue-700 dark:text-blue-300">📄 Daftar Pengajuan Surat Keterangan Bersih Diri (SKBD)</h1>
 
         @if ($pengajuan->isEmpty())
-            <p class="text-gray-500 dark:text-gray-300">Tidak ada pengajuan baru.</p>
+            <div class="text-center text-gray-500 dark:text-gray-400 mt-10">
+                Tidak ada pengajuan baru.
+            </div>
         @else
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach ($pengajuan as $item)
@@ -19,9 +19,8 @@
                         <p class="mb-1"><strong>🆔 NIK:</strong> {{ $item->nik_pemohon }}</p>
                         <p class="mb-1"><strong>👫 Jenis Kelamin:</strong> {{ $item->jenis_kelamin }}</p>
                         <p class="mb-2"><strong>🎓 Pendidikan:</strong> {{ $item->pendidikan }}</p>
-
-                        <p class="font-semibold mt-2 mb-1">📎 Dokumen:</p>
-                        <ul class="list-disc list-inside text-sm text-blue-600 dark:text-blue-300 space-y-1">
+                        <p class="font-semibold mb-2">📎 Dokumen:</p>
+                        <ul class="list-disc list-inside text-sm space-y-1 text-blue-600 dark:text-blue-300">
                             @if ($item->skbd_desa)
                                 <li><a href="{{ asset('storage/' . $item->skbd_desa) }}" target="_blank">📄 SKBD Desa</a></li>
                             @endif
@@ -36,30 +35,37 @@
                             @endif
                         </ul>
 
-                        <div class="mt-4 flex gap-2">
-                            <form method="POST" action="{{ route('sekcam.skbd.approve', $item->id) }}">
+                        <div class="mt-4 flex gap-3">
+                            <form method="POST" action="{{ route('camat.skbd.approve', $item->id) }}">
                                 @csrf
                                 <button type="submit"
-                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm shadow">
+                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm shadow">
                                     ✅ Setujui
                                 </button>
                             </form>
 
                             <button @click="document.getElementById('rejectModal-{{ $item->id }}').showModal()"
-                                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm shadow">
+                                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm shadow">
                                 ❌ Tolak
                             </button>
                         </div>
 
                         {{-- Modal Tolak --}}
                         <dialog id="rejectModal-{{ $item->id }}" class="rounded-xl backdrop:bg-black/30 p-6 w-full max-w-md">
-                            <form method="POST" action="{{ route('sekcam.skbd.reject', $item->id) }}">
+                            <form method="POST" action="{{ route('camat.skbd.reject', $item->id) }}">
                                 @csrf
                                 <p class="font-semibold mb-2">Alasan Penolakan:</p>
                                 <textarea name="reason" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600"></textarea>
                                 <div class="flex justify-end mt-4 gap-2">
-                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm">Kirim</button>
-                                    <button type="button" onclick="document.getElementById('rejectModal-{{ $item->id }}').close()" class="px-4 py-2 border rounded text-sm dark:border-gray-500">Batal</button>
+                                    <button type="submit"
+                                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm">
+                                        Kirim
+                                    </button>
+                                    <button type="button"
+                                        onclick="document.getElementById('rejectModal-{{ $item->id }}').close()"
+                                        class="px-4 py-2 border rounded-lg text-sm dark:border-gray-500">
+                                        Batal
+                                    </button>
                                 </div>
                             </form>
                         </dialog>

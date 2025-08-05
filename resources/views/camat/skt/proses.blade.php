@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="flex min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-    @include('sekcam.layouts.sidebar')
+    @include('camat.layouts.sidebar')
 
     <main class="flex-1 p-6">
         <h1 class="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-6">
@@ -12,7 +12,6 @@
         @if ($pengajuan->isEmpty())
             <p class="text-gray-500 dark:text-gray-300">Belum ada pengajuan yang diproses.</p>
         @else
-            {{-- Statistik --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
                     <p class="text-sm text-gray-600 dark:text-gray-400">Diajukan</p>
@@ -28,7 +27,6 @@
                 </div>
             </div>
 
-            {{-- Tabel --}}
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 overflow-auto">
                 <table class="min-w-full text-base border-collapse">
                     <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 uppercase text-sm">
@@ -48,10 +46,21 @@
                     <tbody>
                         @foreach ($pengajuan as $index => $item)
                             @php
-                                $statusColor = match($item->status) {
-                                    'approved_by_sekcam' => 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300',
-                                    'rejected_by_sekcam' => 'bg-red-200 text-red-800 dark:bg-red-600/20 dark:text-red-400',
-                                    'checked_by_kasi' => 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-300',
+                                $statusLabel = match($item->status) {
+                                    'diajukan' => 'Diajukan',
+                                    'checked_by_kasi' => 'Disetujui Kasi',
+                                    'approved_sekcam' => 'Disetujui Sekcam',
+                                    'approved_camat' => 'Disetujui Camat',
+                                    'rejected_by_kasi' => 'Ditolak Kasi',
+                                    'rejected_by_sekcam' => 'Ditolak Sekcam',
+                                    'rejected' => 'Ditolak Camat',
+                                    default => ucfirst($item->status),
+                                };
+
+                                $statusColor = match(true) {
+                                    str_starts_with($item->status, 'approved') || $item->status === 'checked_by_kasi' => 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300',
+                                    str_starts_with($item->status, 'rejected') || $item->status === 'rejected' => 'bg-red-200 text-red-800 dark:bg-red-600/20 dark:text-red-400',
+                                    $item->status === 'diajukan' => 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-300',
                                     default => 'bg-gray-100 text-gray-700 dark:bg-gray-700/50 dark:text-gray-300',
                                 };
                             @endphp
@@ -64,39 +73,40 @@
                                 <td class="px-4 py-3 border">{{ $item->pendidikan }}</td>
                                 <td class="px-4 py-3 border">
                                     <span class="px-2 py-1 text-sm font-semibold rounded-lg {{ $statusColor }}">
-                                        {{
-                                            $item->status === 'approved_by_sekcam' ? 'Disetujui' :
-                                            ($item->status === 'rejected_by_sekcam' ? 'Ditolak' :
-                                            ($item->status === 'checked_by_kasi' ? 'Menunggu' :
-                                            ucfirst($item->status)))
-                                        }}
+                                        {{ $statusLabel }}
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 border">
-                                    @if ($item->approved_sekcam_at)
-                                        {{ \Carbon\Carbon::parse($item->approved_sekcam_at)->format('d M Y H:i') }}<br>
+                                    @if ($item->verified_at)
+                                        {{ optional($item->verified_at)->format('d M Y H:i') }}<br>
                                         <span class="text-sm text-gray-500 dark:text-gray-400">
-                                            ⏱️ Proses: {{ \Carbon\Carbon::parse($item->verified_at)->diffForHumans($item->approved_sekcam_at, true) }}
+                                            ⏱️ Proses: {{ \Carbon\Carbon::parse($item->created_at)->diffForHumans($item->verified_at, true) }}
                                         </span>
                                     @else
                                         -
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 border text-red-500 dark:text-red-300">
-                                    {{ $item->status === 'rejected_by_sekcam' ? $item->rejected_sekcam_reason : '-' }}
+                                    @php
+                                        $alasan = $item->rejected_reason ?? $item->rejected_sekcam_reason ?? '-';
+                                    @endphp
+                                    {{ $alasan }}
                                 </td>
                                 <td class="px-4 py-3 border text-blue-600 dark:text-blue-300 text-sm space-y-1">
-                                    @if ($item->skbd_desa)
-                                        <li><a href="{{ asset('storage/' . $item->skbd_desa) }}" target="_blank">📄 SKBD Desa</a></li>
+                                    @if ($item->file_permohonan)
+                                        <div><a href="{{ asset('storage/' . $item->file_permohonan) }}" target="_blank">📄 Surat Permohonan SKT</a></div>
                                     @endif
-                                    @if ($item->ktp)
-                                        <li><a href="{{ asset('storage/' . $item->ktp) }}" target="_blank">📄 KTP </a></li>
+                                    @if ($item->file_alas_hak)
+                                        <div><a href="{{ asset('storage/' . $item->file_alas_hak) }}" target="_blank">📄 Surat Alas Hak</a></div>
                                     @endif
-                                    @if ($item->kk)
-                                        <li><a href="{{ asset('storage/' .$item->kk) }}" target="_blank">📄 Kartu Kekuarga</a></li>
+                                    @if ($item->file_ktp)
+                                        <div><a href="{{ asset('storage/' . $item->file_ktp) }}" target="_blank">📄 KTP</a></div>
                                     @endif
-                                    @if ($item->tanda_lunas_pbb)
-                                        <li><a href="{{ asset('storage/' . $item->tanda_lunas_pbb) }}" target="_blank">📄 Bukti Lunas PBB</a></li>
+                                    @if ($item->file_kk)
+                                        <div><a href="{{ asset('storage/' . $item->file_kk) }}" target="_blank">📄 KK</a></div>
+                                    @endif
+                                    @if ($item->file_pbb)
+                                        <div><a href="{{ asset('storage/' . $item->file_pbb) }}" target="_blank">📄 Bukti Lunas PBB</a></div>
                                     @endif
                                 </td>
                             </tr>

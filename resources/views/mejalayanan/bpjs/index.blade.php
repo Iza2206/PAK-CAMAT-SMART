@@ -100,12 +100,12 @@
                             <td class="px-4 py-3 border text-sm space-y-1">
                                 <div>📥 Diajukan: {{ $created->diffForHumans() }}</div>
 
-                                {{-- Kasi Pemerintahan --}}
-                                <div>✅ Kasi Pemerintahan:
+                                {{-- Kasi kesos --}}
+                                <div>✅ Kasi kesos:
                                     @if ($verified)
                                         {{ $verified->diffForHumans($created, true) }}
                                     @elseif ($item->rejected_reason)
-                                        <span class="text-red-500">❌ Ditolak oleh Kasi Pemerintahan</span>
+                                        <span class="text-red-500">❌ Ditolak oleh Kasi kesos</span>
                                     @else
                                         <span class="text-gray-400">menunggu</span>
                                     @endif

@@ -86,17 +86,20 @@
                                     {{ $item->status === 'rejected_by_sekcam' ? $item->rejected_sekcam_reason : '-' }}
                                 </td>
                                 <td class="px-4 py-3 border text-blue-600 dark:text-blue-300 text-sm space-y-1">
-                                    @if ($item->skbd_desa)
-                                        <li><a href="{{ asset('storage/' . $item->skbd_desa) }}" target="_blank">📄 SKBD Desa</a></li>
+                                    @if ($item->file_permohonan)
+                                        <div><a href="{{ asset('storage/' . $item->file_permohonan) }}" target="_blank">📄 Surat Permohonan SKT</a></div>
                                     @endif
-                                    @if ($item->ktp)
-                                        <li><a href="{{ asset('storage/' . $item->ktp) }}" target="_blank">📄 KTP </a></li>
+                                    @if ($item->file_alas_hak)
+                                        <div><a href="{{ asset('storage/' . $item->file_alas_hak) }}" target="_blank">📄 Surat Keterangan Tanah / Alas Hak</a></div>
                                     @endif
-                                    @if ($item->kk)
-                                        <li><a href="{{ asset('storage/' .$item->kk) }}" target="_blank">📄 Kartu Kekuarga</a></li>
+                                    @if ($item->file_ktp)
+                                        <div><a href="{{ asset('storage/' . $item->file_ktp) }}" target="_blank">📄 KTP</a></div>
                                     @endif
-                                    @if ($item->tanda_lunas_pbb)
-                                        <li><a href="{{ asset('storage/' . $item->tanda_lunas_pbb) }}" target="_blank">📄 Bukti Lunas PBB</a></li>
+                                    @if ($item->file_kk)
+                                        <div><a href="{{ asset('storage/' . $item->file_kk) }}" target="_blank">📄 Kartu Keluarga</a></div>
+                                    @endif
+                                    @if ($item->file_pbb)
+                                        <div><a href="{{ asset('storage/' . $item->file_pbb) }}" target="_blank">📄 Bukti Lunas PBB</a></div>
                                     @endif
                                 </td>
                             </tr>
