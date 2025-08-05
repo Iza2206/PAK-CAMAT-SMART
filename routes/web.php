@@ -88,13 +88,15 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::get('/layanan/catin-tni-polri/create', [MejaLayananController::class, 'catinTniCreate'])->name('catin.tni.create');
     Route::post('/layanan/catin-tni-polri/store', [MejaLayananController::class, 'catinTniStore'])->name('catin.tni.store');
     Route::patch('/layanan/catin-tni-polri/{id}/kirim-kasi', [MejaLayananController::class, 'catinTniKirimKasi'])->name('catin.tni.kirimkasi');
+    Route::post('/catin/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaiancatin'])->name('catin.penilaian'); // simpan penilaian ikm catin
+    Route::get('/catin/penilaian', [MejaLayananController::class, 'penilaianIndexcatin'])->name('catins.penilaian.index'); // list penilaian catin
     // SKBD (Surat Keterangan Bersih Diri)
     Route::get('/layanan/SKBDs', [MejaLayananController::class, 'SKBDsList'])->name('SKBDs.list'); // List Data
     Route::get('/layanan/SKBDs/create', [MejaLayananController::class, 'SKBDsCreate'])->name('SKBDs.create'); // Tambah
     Route::post('/layanan/SKBDs/store', [MejaLayananController::class, 'SKBDsStore'])->name('SKBDs.store');  // Simpan
     Route::patch('/layanan/SKBDs/{id}/kirim-kasi', [MejaLayananController::class, 'SKBDkirimKeKasi'])->name('SKBDs.kirimkasi');
     Route::post('/skbd/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianskbd'])->name('skbd.penilaian'); // simpan penilaian ikm skbd
-    Route::get('/skbd/penilaian', [MejaLayananController::class, 'penilaianIndexSKBD'])->name('SKBDs.penilaian.index'); // list penilaian bpjs
+    Route::get('/skbd/penilaian', [MejaLayananController::class, 'penilaianIndexSKBD'])->name('SKBDs.penilaian.index'); // list penilaian skbd
 
     // === Dispensasi ===
     Route::get('/layanan/dispensasi', [MejaLayananController::class, 'dispensasi'])->name('layanan.dispensasi');
@@ -261,6 +263,12 @@ Route::middleware(['auth', 'role:camat'])->prefix('camat')->group(function () {
     Route::post('/skt/{id}/approve', [CamatController::class, 'sktApprove'])->name('camat.skt.approve');
     Route::post('/skt/{id}/reject', [CamatController::class, 'sktReject'])->name('camat.skt.reject');
     Route::get('/skt/proses', [CamatController::class, 'sktProses'])->name('camat.skt.proses');
+
+     // ===== Layanan CATIN TNI/POLRI =====
+    Route::get('/catin', [CamatController::class, 'catinIndex'])->name('camat.catin.index');
+    Route::post('/catin/{id}/approve', [CamatController::class, 'catinApprove'])->name('camat.catin.approve');
+    Route::post('/catin/{id}/reject', [CamatController::class, 'catinReject'])->name('camat.catin.reject');
+    Route::get('/catin/proses', [CamatController::class, 'catinProses'])->name('camat.catin.proses');
 
     // ===== Layanan SKBD =====
     Route::get('/skbd', [CamatController::class, 'skbdIndex'])->name('camat.skbd.index');

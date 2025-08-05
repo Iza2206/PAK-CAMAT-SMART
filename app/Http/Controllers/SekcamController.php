@@ -229,6 +229,7 @@ class SekcamController extends Controller
     {
 
         $pengajuanDiterima  = CatinTniPolriSubmission::whereIn('status', ['checked_by_kasi', 'approved_by_sekcam', 'rejected_by_sekcam'])->count();
+        $pengajuanmasuk  = CatinTniPolriSubmission::whereIn('status', ['checked_by_kasi'])->count();
         $pengajuanDisetujui = CatinTniPolriSubmission::where('status', 'approved_by_sekcam')->count();
         $pengajuanDitolak   = CatinTniPolriSubmission::where('status', 'rejected_by_sekcam')->count();
 
@@ -238,6 +239,7 @@ class SekcamController extends Controller
 
         return view('sekcam.catin-tni.proses', compact(
             'pengajuan',
+            'pengajuanmasuk',
             'pengajuanDiterima',
             'pengajuanDisetujui',
             'pengajuanDitolak'

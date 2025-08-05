@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasQueueNumber;
+use App\Traits\HasNikStatusFilter;
 
 class CatinTniPolriSubmission extends Model
 {
-    use HasFactory, HasQueueNumber;
+    use HasFactory, HasQueueNumber, HasNikStatusFilter;
     protected $fillable = [
         'user_id',
         'queue_number',
@@ -51,6 +52,8 @@ class CatinTniPolriSubmission extends Model
         'rejected_reason',
         'rejected_sekcam_reason',
         'rejected_camat_reason',
+        'penilaian',
+        'diambil_at',
     ];
 
     protected $casts = [

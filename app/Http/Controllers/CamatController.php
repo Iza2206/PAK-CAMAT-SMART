@@ -7,6 +7,7 @@ use App\Models\BpjsSubmission;
 use App\Models\SktmDispensasiSubmission;
 use App\Models\SktSubmission;
 use App\Models\SkbdSubmission;
+use App\Models\CatinTniPolriSubmission;
 
 class CamatController extends Controller
 {
@@ -182,6 +183,55 @@ class CamatController extends Controller
                             ->latest()->paginate(10);
 
         return view('camat.skt.proses', compact(
+            'pengajuan',
+            'jumlahPengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+    // ================= CATIN TNI/POLRI =================
+    public function catinIndex()
+    {
+        $pengajuan = CatinTniPolriSubmission::where('status', 'approved_by_sekcam')->latest()->get();
+        return view('camat.catin.index', compact('pengajuan'));
+    }
+
+    public function catinApprove($id)
+    {
+        $item = CatinTniPolriSubmission::findOrFail($id);
+        $item->status = 'approved_by_camat';
+        $item->approved_camat_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan catin disetujui oleh Camat.');
+    }
+
+    public function catinReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = CatinTniPolriSubmission::findOrFail($id);
+        $item->status = 'rejected_by_camat';
+        $item->rejected_camat_reason = $request->reason;
+        $item->approved_camat_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan catin ditolak oleh Camat.');
+    }
+
+    public function catinProses()
+    {
+        $jumlahPengajuan     = CatinTniPolriSubmission::count();
+        $pengajuanDiterima   = CatinTniPolriSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDisetujui  = CatinTniPolriSubmission::where('status', 'approved_by_camat')->count();
+        $pengajuanDitolak    = CatinTniPolriSubmission::where('status', 'rejected_by_camat')->count();
+
+        $pengajuan = CatinTniPolriSubmission::whereIn('status', ['approved_by_camat', 'rejected_by_camat'])
+                            ->latest()->paginate(10);
+
+        return view('camat.catin.proses', compact(
             'pengajuan',
             'jumlahPengajuan',
             'pengajuanDiterima',

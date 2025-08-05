@@ -29,6 +29,9 @@
                     <option value="sipil">Calon Pengantin Sipil (Non-TNI/Polri)</option>
                     <option value="tni">Calon Pengantin TNI/Polri</option>
                 </select>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    Wajib unggah dokumen dari salah satu pihak saja (Sipil atau TNI/Polri).
+                </p>
             </div>
 
             {{-- Formulir --}}
@@ -116,10 +119,11 @@
                             @foreach([
                                 'file_surat_izin_kawin' => 'Surat Izin Kawin dari Komandan',
                                 'file_keterangan_belum_menikah_tni' => 'Surat Belum Menikah dari Kesatuan',
+                                'file_pernyataan_kesediaan' => 'Surat Pernyataan Kesediaan Mendampingi',
                                 'file_kta' => 'Fotokopi KTA',
                                 'file_sk_pangkat_terakhir' => 'SK Pangkat Terakhir',
-                                'file_pernyataan_kesediaan' => 'Surat Pernyataan Kesediaan Mendampingi',
-                                'file_pas_foto_berdampingan' => 'Pas Foto Berdampingan',
+                                'file_pas_foto_berdampingan_dinas' => 'Pas Foto Berdampingan (Pakaian Dinas)',
+                                'file_pas_foto_berdampingan_formal' => 'Pas Foto Berdampingan (Pakaian Formal)',
                             ] as $name => $label)
                                 <div>
                                     <label class="block mb-1 font-semibold">{{ $label }} <span class="text-xs text-gray-500">(PDF)</span></label>

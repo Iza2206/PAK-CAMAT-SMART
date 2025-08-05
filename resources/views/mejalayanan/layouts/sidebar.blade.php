@@ -9,7 +9,7 @@
     </div>
 
     {{-- Sidebar --}}
-    <aside 
+    <aside
         class="fixed inset-y-0 left-0 z-30 w-64 bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border-r border-gray-200 dark:border-gray-700 shadow-xl transform md:relative md:translate-x-0 transition-transform duration-200 ease-in-out"
         :class="{ '-translate-x-full': !open }"
     >
@@ -27,7 +27,7 @@
         </div>
 
         {{-- Menu Navigasi --}}
-        <nav 
+        <nav
             class="p-4 text-sm text-gray-700 dark:text-gray-300 font-medium space-y-2"
              x-data="{
                         openBpjs: '{{ request()->routeIs('bpjs.*') ? 'true' : 'false' }}' === 'true',
@@ -43,7 +43,7 @@
         >
             {{-- Dashboard --}}
             <a href="{{ route('meja.dashboard') }}"
-                class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all 
+                class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all
                 {{ request()->routeIs('meja.dashboard') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                 🏠 Dashboard
             </a>
@@ -67,17 +67,17 @@
 
             <div x-show="openBpjs" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
                 <a href="{{ route('bpjs.create') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('bpjs.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     ➕ Tambah Data
                 </a>
                 <a href="{{ route('bpjs.list') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('bpjs.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     📄 List Data
                 </a>
                 <a href="{{ route('bpjs.penilaian.index') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('bpjs.penilaian.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     📝 Penilaian
                 </a>
@@ -110,22 +110,22 @@
 
                 <div x-show="openSktm" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
                     <a href="{{ route('SKTMs.create') }}"
-                        class="block px-3 py-1 rounded transition-all 
+                        class="block px-3 py-1 rounded transition-all
                         {{ request()->routeIs('SKTMs.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                         ➕ Tambah Data
                     </a>
                     <a href="{{ route('SKTMs.list') }}"
-                        class="block px-3 py-1 rounded transition-all 
+                        class="block px-3 py-1 rounded transition-all
                         {{ request()->routeIs('SKTMs.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                         📄 List Data
                     </a>
                     <a href="{{ route('sktm.penilaian.index') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('sktm.penilaian.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     📝 Penilaian
                     </a>
                 </div>
-            
+
             {{-- Surat Keterangan Tanah (SKT) --}}
             <button @click="openSkt = !openSkt"
                 class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
@@ -146,22 +146,22 @@
 
             <div x-show="openSkt" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
                 <a href="{{ route('skt.create') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('skt.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     ➕ Registrasi SKT
                 </a>
                 <a href="{{ route('skt.list') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('skt.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     📄 List SKT
                 </a>
                 <a href="{{ route('skt.penilaian.index') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('skt.penilaian.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     📝 Penilaian SK Tanah
                 </a>
             </div>
-            
+
             {{-- SPPAT-GR --}}
             <button @click="openSppatgr = !openSppatgr"
                 class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
@@ -182,12 +182,12 @@
 
             <div x-show="openSppatgr" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
                 <a href="{{ route('sppat_gr.create') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('sppat_gr.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     ➕ Registrasi SPPAT-GR
                 </a>
                 <a href="{{ route('sppat_gr.list') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('sppat_gr.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     📄 List SPPAT-GR
                 </a>
@@ -213,12 +213,12 @@
 
             <div x-show="openAhliwaris" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
                 <a href="{{ route('ahliwaris.create') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('ahliwaris.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     ➕ Tambah Data
                 </a>
                 <a href="{{ route('ahliwaris.list') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('ahliwaris.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     📄 List Data
                 </a>
@@ -245,18 +245,18 @@
 
             <div x-show="openAgunan" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
                 <a href="{{ route('agunan.create') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('agunan.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     ➕ Tambah Data
                 </a>
                 <a href="{{ route('agunan.list') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('agunan.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     📄 List Data
                 </a>
             </div>
 
-            
+
             {{-- Silang Sengketa --}}
             <button @click="openSengketa = !openSengketa"
                 class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
@@ -276,12 +276,12 @@
 
             <div x-show="openSengketa" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
                 <a href="{{ route('sengketa.create') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('sengketa.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     ➕ Tambah Data
                 </a>
                 <a href="{{ route('sengketa.list') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('sengketa.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     📄 List Data
                 </a>
@@ -307,18 +307,23 @@
 
             <div x-show="openCatin" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
                 <a href="{{ route('catin.tni.create') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('catin.tni.create') ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 font-semibold' : 'hover:bg-green-100 hover:text-green-700 dark:hover:bg-green-900/20 dark:hover:text-green-300' }}">
                     ➕ Tambah Data
                 </a>
                 <a href="{{ route('catin.tni.list') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('catin.tni.list') ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 font-semibold' : 'hover:bg-green-100 hover:text-green-700 dark:hover:bg-green-900/20 dark:hover:text-green-300' }}">
                     📄 List Data
                 </a>
+                <a href="{{ route('catins.penilaian.index') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('catins.penilaian.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📝 Penilaian
+                </a>
             </div>
 
-            
+
             {{-- SKBD --}}
             <button @click="openSkbd = !openSkbd"
                 class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
@@ -335,17 +340,17 @@
 
             <div x-show="openSkbd" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
                 <a href="{{ route('SKBDs.create') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('SKBDs.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     ➕ Tambah Data
                 </a>
                 <a href="{{ route('SKBDs.list') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('SKBDs.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     📄 List Data
                 </a>
                 <a href="{{ route('SKBDs.penilaian.index') }}"
-                    class="block px-3 py-1 rounded transition-all 
+                    class="block px-3 py-1 rounded transition-all
                     {{ request()->routeIs('SKBDs.penilaian.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     📝 Penilaian
                 </a>

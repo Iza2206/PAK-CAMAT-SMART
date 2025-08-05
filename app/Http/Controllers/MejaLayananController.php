@@ -61,7 +61,7 @@ class MejaLayananController extends Controller
     {
         return view('mejalayanan.bpjs.create');
     }
-    
+
     // simpan bpjs
     public function bpjsStore(Request $request)
     {
@@ -109,7 +109,7 @@ class MejaLayananController extends Controller
     public function kirimKeKasi($id)
     {
         $data = BpjsSubmission::findOrFail($id);
-        
+
         if ($data->status !== 'diajukan') {
             return back()->with('error', 'Data sudah diproses.');
         }
@@ -185,7 +185,7 @@ class MejaLayananController extends Controller
 
     // ---------------- SKTM ----------------
 
-     // list SKTM 
+     // list SKTM
     public function SKTMsList()
     {
         $data = SktmDispensasiSubmission::latest()->paginate(10); // urut dari terbaru + paginate
@@ -197,7 +197,7 @@ class MejaLayananController extends Controller
     {
         return view('mejalayanan.sktm.create');
     }
-    
+
     // simpan SKTM
     public function SKTMsStore(Request $request)
     {
@@ -206,7 +206,7 @@ class MejaLayananController extends Controller
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'pendidikan' => 'required|in:SD,SMP,SMA,D1,D2,D3,S1,S2,S3',
             'nik_pemohon' => 'required|digits:16',
-            
+
 
             // Semua file harus PDF
             'sktm_desa' => 'required|file|mimetypes:application/pdf',
@@ -247,7 +247,7 @@ class MejaLayananController extends Controller
     public function SKTMkirimKeKasi($id)
     {
         $data = SktmDispensasiSubmission::findOrFail($id);
-        
+
         if ($data->status !== 'diajukan') {
             return back()->with('error', 'Data sudah diproses.');
         }
@@ -301,7 +301,7 @@ class MejaLayananController extends Controller
         return view('mejalayanan.sktm.penilaian', compact('data'));
     }
 
-    // SIMPAN PENILAIAN SKTM 
+    // SIMPAN PENILAIAN SKTM
     public function simpanPenilaianSktm(Request $request, $id)
     {
         $request->validate([
@@ -412,7 +412,7 @@ class MejaLayananController extends Controller
         return view('mejalayanan.skt.penilaian', compact('data'));
     }
 
-    // SIMPAN PENILAIAN SKTM 
+    // SIMPAN PENILAIAN SKTM
     public function simpanPenilaianSkt(Request $request, $id)
     {
         $request->validate([
@@ -573,7 +573,7 @@ class MejaLayananController extends Controller
             ->with('antrian', $submission->queue_number);
     }
 
-    
+
     // ---------------- Angunan Ke Bank----------------
 
     // List pengajuan Agunan ke Bank
@@ -709,7 +709,7 @@ class MejaLayananController extends Controller
         return view('mejalayanan.catin_tni.index', compact('data'));
     }
 
-    // tambah data catin 
+    // tambah data catin
     public function catinTniCreate()
     {
         return view('mejalayanan.catin_tni.create');
@@ -784,7 +784,7 @@ class MejaLayananController extends Controller
             ->with('antrian', $submission->queue_number);
     }
 
-    // kirim ke kasi trantib 
+    // kirim ke kasi trantib
     public function catinTniKirimKasi($id)
     {
         $data = CatinTniPolriSubmission::findOrFail($id);
@@ -800,6 +800,42 @@ class MejaLayananController extends Controller
 
         return back()->with('success', 'Pengajuan berhasil dikirim ke Kasi Trantib.');
     }
+
+    // SIMPAN PENILAUAN catin
+    public function simpanPenilaiancatin(Request $request, $id)
+    {
+        $request->validate([
+            'penilaian' => 'required|in:tidak_puas,cukup,puas,sangat_puas',
+        ]);
+
+        $data = \App\Models\CatinTniPolriSubmission::findOrFail($id);
+
+        if ($data->status !== 'approved_by_camat' || $data->penilaian) {
+            return back()->with('error', 'Pengajuan tidak valid untuk dinilai.');
+        }
+
+        $data->update([
+            'penilaian' => $request->penilaian,
+            'diambil_at' => now(),
+        ]);
+
+        return back()->with('success', 'Penilaian berhasil dikirim.');
+    }
+
+    // penilaian catin ikm
+    public function penilaianIndexcatin (Request $request)
+    {
+        $filters = $request->only(['nik', 'penilaian']);
+
+        $data = \App\Models\CatinTniPolriSubmission::where('status', 'approved_by_camat')
+            ->filterNikStatus($filters) // ✅ menggunakan trait
+            ->latest('updated_at')
+            ->paginate(10)
+            ->withQueryString(); // agar pagination tetap bawa filter
+
+        return view('mejalayanan.catin_tni.penilaian', compact('data'));
+    }
+
 
 
     // ---------------- SKBD ----------------
@@ -874,7 +910,7 @@ class MejaLayananController extends Controller
 
         return back()->with('success', 'Pengajuan berhasil dikirim ke Kasi Trantib.');
     }
-    
+
     // SIMPAN PENILAUAN SKBD
     public function simpanPenilaianskbd(Request $request, $id)
     {
@@ -910,7 +946,7 @@ class MejaLayananController extends Controller
         return view('mejalayanan.skbd.penilaian', compact('data'));
     }
 
-    
+
     public function dispensasi() {
         return view('mejalayanan.dispensasi');
     }
