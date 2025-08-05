@@ -11,7 +11,7 @@ class SktSubmission extends Model
 {
     use HasFactory, HasQueueNumber, HasNikStatusFilter;
     
-     protected $nikField = 'nik_pemohon';
+    protected $nikField = 'nik_pemohon';
     protected $table = 'skt_submissions';
 
     protected $fillable = [

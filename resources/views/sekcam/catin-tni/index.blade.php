@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="flex flex-col md:flex-row min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-    @include('kasi_trantib.layouts.sidebar')
+    @include('sekcam.layouts.sidebar')
 
     <main class="flex-1 p-6">
         <h1 class="text-3xl font-bold mb-6 text-blue-700 dark:text-blue-300">
@@ -22,8 +22,7 @@
                         <p><strong>🆔 NIK:</strong> {{ $item->nik_pemohon }}</p>
                         <p><strong>🚻 Jenis Kelamin:</strong> {{ $item->jenis_kelamin }}</p>
                         <p><strong>🎓 Pendidikan:</strong> {{ $item->pendidikan }}</p>
-                        <p class="font-semibold mt-4 mb-2">📎 Dokumen Penting:</p>
-                        <div class="text-sm space-y-1 text-blue-600 dark:text-blue-300">
+                                                <div class="text-sm space-y-1 text-blue-600 dark:text-blue-300">
 
                             @php
                                 $isSipilLengkap = $item->file_ktp && $item->file_kk && $item->file_surat_n1;
@@ -66,7 +65,6 @@
                                 <div class="text-gray-500 italic">Tidak ada dokumen lengkap</div>
                             @endif
                         </div>
-
 
                         <div class="mt-4 flex gap-3">
                             <form method="POST" action="{{ route('kasi_trantib.catin_tni.approve', $item->id) }}">

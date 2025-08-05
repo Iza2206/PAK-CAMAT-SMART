@@ -93,6 +93,8 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::get('/layanan/SKBDs/create', [MejaLayananController::class, 'SKBDsCreate'])->name('SKBDs.create'); // Tambah
     Route::post('/layanan/SKBDs/store', [MejaLayananController::class, 'SKBDsStore'])->name('SKBDs.store');  // Simpan
     Route::patch('/layanan/SKBDs/{id}/kirim-kasi', [MejaLayananController::class, 'SKBDkirimKeKasi'])->name('SKBDs.kirimkasi');
+    Route::post('/skbd/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianskbd'])->name('skbd.penilaian'); // simpan penilaian ikm skbd
+    Route::get('/skbd/penilaian', [MejaLayananController::class, 'penilaianIndexSKBD'])->name('SKBDs.penilaian.index'); // list penilaian bpjs
 
     // === Dispensasi ===
     Route::get('/layanan/dispensasi', [MejaLayananController::class, 'dispensasi'])->name('layanan.dispensasi');
@@ -197,6 +199,12 @@ Route::middleware(['auth', 'role:sekcam'])->prefix('sekcam')->group(function () 
     Route::post('/skbd/{id}/approve', [SekcamController::class, 'skbdApprove'])->name('sekcam.skbd.approve');
     Route::post('/skbd/{id}/reject', [SekcamController::class, 'skbdReject'])->name('sekcam.skbd.reject');
     Route::get('/skbd/proses', [SekcamController::class, 'skbdProses'])->name('sekcam.skbd.proses');
+
+    // ===== Layanan Catin TNI/POLRI =====
+    Route::get('/catin-tni', [SekcamController::class, 'catintniIndex'])->name('sekcam.catin-tni.index');
+    Route::post('/catin-tni/{id}/approve', [SekcamController::class, 'catintnidApprove'])->name('sekcam.catin-tni.approve');
+    Route::post('/catin-tni/{id}/reject', [SekcamController::class, 'catintnidReject'])->name('sekcam.catin-tni.reject');
+    Route::get('/catin-tni/proses', [SekcamController::class, 'catintniProses'])->name('sekcam.catin-tni.proses');
 
     // ===== Layanan dari Kasi Pemerintahan =====
     // Route::get('/silang-sengketa', [KasiPemerintahanController::class, 'silangSengketaIndex'])->name('kasi_pemerintahan.silang_sengketa.index');

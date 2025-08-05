@@ -7,6 +7,7 @@ use App\Models\BpjsSubmission;
 use App\Models\SktmDispensasiSubmission;
 use App\Models\SktSubmission;
 use App\Models\SkbdSubmission;
+use App\Models\CatinTniPolriSubmission;
 
 class SekcamController extends Controller
 {
@@ -185,6 +186,57 @@ class SekcamController extends Controller
                         ->paginate(10);
 
         return view('sekcam.skt.proses', compact(
+            'pengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+    // ================= Catin TNI/POLRI  =================
+    public function catintniIndex()
+    {
+        $pengajuan = CatinTniPolriSubmission::where('status', 'checked_by_kasi')->latest()->get();
+        return view('sekcam.catin-tni.index', compact('pengajuan'));
+    }
+
+
+    public function catintnidApprove($id)
+    {
+        $item = CatinTniPolriSubmission::findOrFail($id);
+        $item->status = 'approved_by_sekcam';
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan catin TNI/Polri berhasil disetujui oleh Sekcam.');
+    }
+
+
+    public function catintnidReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = CatinTniPolriSubmission::findOrFail($id);
+        $item->status = 'rejected_by_sekcam';
+        $item->rejected_sekcam_reason = $request->reason;
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan catin TNI/Polri berhasil ditolak oleh Sekcam.');
+    }
+
+    public function catintniProses()
+    {
+
+        $pengajuanDiterima  = CatinTniPolriSubmission::whereIn('status', ['checked_by_kasi', 'approved_by_sekcam', 'rejected_by_sekcam'])->count();
+        $pengajuanDisetujui = CatinTniPolriSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDitolak   = CatinTniPolriSubmission::where('status', 'rejected_by_sekcam')->count();
+
+        $pengajuan = CatinTniPolriSubmission::whereIn('status', ['approved_by_sekcam', 'rejected_by_sekcam'])
+                        ->latest()
+                        ->paginate(10);
+
+        return view('sekcam.catin-tni.proses', compact(
             'pengajuan',
             'pengajuanDiterima',
             'pengajuanDisetujui',

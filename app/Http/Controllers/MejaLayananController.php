@@ -874,6 +874,41 @@ class MejaLayananController extends Controller
 
         return back()->with('success', 'Pengajuan berhasil dikirim ke Kasi Trantib.');
     }
+    
+    // SIMPAN PENILAUAN SKBD
+    public function simpanPenilaianskbd(Request $request, $id)
+    {
+        $request->validate([
+            'penilaian' => 'required|in:tidak_puas,cukup,puas,sangat_puas',
+        ]);
+
+        $data = \App\Models\SkbdSubmission::findOrFail($id);
+
+        if ($data->status !== 'approved_by_camat' || $data->penilaian) {
+            return back()->with('error', 'Pengajuan tidak valid untuk dinilai.');
+        }
+
+        $data->update([
+            'penilaian' => $request->penilaian,
+            'diambil_at' => now(),
+        ]);
+
+        return back()->with('success', 'Penilaian berhasil dikirim.');
+    }
+
+    // penilaian SKBD ikm
+    public function penilaianIndexSKBD (Request $request)
+    {
+        $filters = $request->only(['nik', 'penilaian']);
+
+        $data = \App\Models\SkbdSubmission::where('status', 'approved_by_camat')
+            ->filterNikStatus($filters) // ✅ menggunakan trait
+            ->latest('updated_at')
+            ->paginate(10)
+            ->withQueryString(); // agar pagination tetap bawa filter
+
+        return view('mejalayanan.skbd.penilaian', compact('data'));
+    }
 
     
     public function dispensasi() {
