@@ -83,6 +83,8 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::get('/meja/sengketa/create', [MejaLayananController::class, 'sengketaCreate'])->name('sengketa.create');
     Route::post('/meja/sengketa/store', [MejaLayananController::class, 'sengketaStore'])->name('sengketa.store');
     Route::post('/meja/sengketa/{id}/kirim-kasi', [MejaLayananController::class, 'sengketaKirimKasi'])->name('sengketa.kirimkasi');
+    Route::post('/sengketa/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaiansengketa'])->name('sengketa.penilaian'); // simpan penilaian ikm sengketa
+    Route::get('/sengketa/penilaian', [MejaLayananController::class, 'penilaianIndexSENGKETA'])->name('sengketa.penilaian.index'); // list penilaian bpjs
     // CATIN TNI/Polri
     Route::get('/layanan/catin-tni-polri', [MejaLayananController::class, 'catinTniList'])->name('catin.tni.list');
     Route::get('/layanan/catin-tni-polri/create', [MejaLayananController::class, 'catinTniCreate'])->name('catin.tni.create');
@@ -272,8 +274,8 @@ Route::middleware(['auth', 'role:camat'])->prefix('camat')->group(function () {
 
      // ===== Layanan Silang Sengketa =====
     Route::get('/silang_sengketa', [CamatController::class, 'sengketaIndex'])->name('camat.silang_sengketa.index');
-    Route::post('/silang_sengketa/{id}/approve', [CamatController::class, 'sengketadApprove'])->name('camat.silang_sengketa.approve');
-    Route::post('/silang_sengketa/{id}/reject', [CamatController::class, 'sengketadReject'])->name('camat.silang_sengketa.reject');
+    Route::post('/silang_sengketa/{id}/approve', [CamatController::class, 'sengketaApprove'])->name('camat.silang_sengketa.approve');
+    Route::post('/silang_sengketa/{id}/reject', [CamatController::class, 'sengketaReject'])->name('camat.silang_sengketa.reject');
     Route::get('/silang_sengketa/proses', [CamatController::class, 'sengketaProses'])->name('camat.silang_sengketa.proses');
 
      // ===== Layanan CATIN TNI/POLRI =====

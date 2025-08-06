@@ -699,6 +699,41 @@ class MejaLayananController extends Controller
         return back()->with('success', 'Pengajuan berhasil dikirim ke Kasi Pemerintahan.');
     }
 
+    // SIMPAN PENILAUAN SILANG SENGKETA
+    public function simpanPenilaiansengketa(Request $request, $id)
+    {
+        $request->validate([
+            'penilaian' => 'required|in:tidak_puas,cukup,puas,sangat_puas',
+        ]);
+
+        $data = \App\Models\SengketaSubmission::findOrFail($id);
+
+        if ($data->status !== 'approved_by_camat' || $data->penilaian) {
+            return back()->with('error', 'Pengajuan tidak valid untuk dinilai.');
+        }
+
+        $data->update([
+            'penilaian' => $request->penilaian,
+            'diambil_at' => now(),
+        ]);
+
+        return back()->with('success', 'Penilaian berhasil dikirim.');
+    }
+
+    // penilaian silang sengketa ikm
+    public function penilaianIndexSENGKETA (Request $request)
+    {
+        $filters = $request->only(['nik', 'penilaian']);
+
+        $data = \App\Models\SengketaSubmission::where('status', 'approved_by_camat')
+            ->filterNikStatus($filters) // ✅ menggunakan trait
+            ->latest('updated_at')
+            ->paginate(10)
+            ->withQueryString(); // agar pagination tetap bawa filter
+
+        return view('mejalayanan.sengketa.penilaian', compact('data'));
+    }
+
 
     // ---------------- Catin TNI POLRI ----------------
 

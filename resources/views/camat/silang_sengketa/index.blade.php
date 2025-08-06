@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="flex flex-col md:flex-row min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-    @include('sekcam.layouts.sidebar')
+    @include('camat.layouts.sidebar')
 
     <main class="flex-1 p-6">
         <h1 class="text-3xl font-bold mb-6 text-blue-700 dark:text-blue-300">
@@ -29,7 +29,7 @@
                             <li><a href="{{ asset('storage/' . $item->bukti_lunas_pbb) }}" target="_blank">📄 Bukti Lunas PBB</a></li>
                         </ul>
                         <div class="mt-4 flex gap-3">
-                            <form method="POST" action="{{ route('sekcam.silang_sengketa.approve', $item->id) }}">
+                            <form method="POST" action="{{ route('camat.silang_sengketa.approve', $item->id) }}">
                                 @csrf
                                 <button type="submit"
                                     class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm shadow">
@@ -45,7 +45,7 @@
 
                         {{-- Modal Tolak --}}
                         <dialog id="rejectModal-{{ $item->id }}" class="rounded-xl backdrop:bg-black/30 p-6 w-full max-w-md">
-                            <form method="POST" action="{{ route('sekcam.silang_sengketa.reject', $item->id) }}">
+                            <form method="POST" action="{{ route('camat.silang_sengketa.reject', $item->id) }}">
                                 @csrf
                                 <p class="font-semibold mb-2">Alasan Penolakan:</p>
                                 <textarea name="reason" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600"></textarea>
