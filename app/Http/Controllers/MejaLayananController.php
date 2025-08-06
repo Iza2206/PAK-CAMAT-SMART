@@ -629,6 +629,41 @@ class MejaLayananController extends Controller
             ->with('antrian', $submission->queue_number);
     }
 
+    // penilaian agunan ikm
+    public function penilaianIndexagunan(Request $request)
+    {
+        $filters = $request->only(['nik', 'penilaian']);
+
+        $data = \App\Models\AgunanSubmission::where('status', 'approved_by_camat')
+            ->filterNikStatus($filters) // ✅ menggunakan trait
+            ->latest('updated_at')
+            ->paginate(10)
+            ->withQueryString(); // agar pagination tetap bawa filter
+
+        return view('mejalayanan.agunan.penilaian', compact('data'));
+    }
+
+    // SIMPAN PENILAIAN SKTM
+    public function simpanPenilaianagunan(Request $request, $id)
+    {
+        $request->validate([
+            'penilaian' => 'required|in:tidak_puas,cukup,puas,sangat_puas',
+        ]);
+
+        $data = \App\Models\AgunanSubmission::findOrFail($id);
+
+        if ($data->status !== 'approved_by_camat' || $data->penilaian) {
+            return back()->with('error', 'Pengajuan tidak valid untuk dinilai.');
+        }
+
+        $data->update([
+            'penilaian' => $request->penilaian,
+            'diambil_at' => now(),
+        ]);
+
+        return back()->with('success', 'Penilaian berhasil dikirim.');
+    }
+
 
     // ---------------- Silang Sengketa ----------------
 

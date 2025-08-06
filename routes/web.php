@@ -78,6 +78,8 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::get('/meja/agunan/create', [MejaLayananController::class, 'agunanCreate'])->name('agunan.create');
     Route::post('/meja/agunan/store', [MejaLayananController::class, 'agunanStore'])->name('agunan.store');
     Route::post('/meja/agunan/{id}/kirim-kasi', [MejaLayananController::class, 'agunanKirimKasi'])->name('agunan.kirimkasi');
+    Route::post('/agunan/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianagunan'])->name('agunan.penilaian'); // simpan penilaian ikm agunan
+    Route::get('/agunan/penilaian', [MejaLayananController::class, 'penilaianIndexagunan'])->name('agunan.penilaian.index'); // list penilaian agunan
     // Sengketa
     Route::get('/meja/sengketa', [MejaLayananController::class, 'sengketaList'])->name('sengketa.list');
     Route::get('/meja/sengketa/create', [MejaLayananController::class, 'sengketaCreate'])->name('sengketa.create');
@@ -198,11 +200,17 @@ Route::middleware(['auth', 'role:sekcam'])->prefix('sekcam')->group(function () 
     Route::post('/skt/{id}/reject', [SekcamController::class, 'sktReject'])->name('sekcam.skt.reject');
     Route::get('/skt/proses', [SekcamController::class, 'sktProses'])->name('sekcam.skt.proses');
 
-    // ===== Layanan SKBD =====
-    Route::get('/skbd', [SekcamController::class, 'skbdIndex'])->name('sekcam.skbd.index');
-    Route::post('/skbd/{id}/approve', [SekcamController::class, 'skbdApprove'])->name('sekcam.skbd.approve');
-    Route::post('/skbd/{id}/reject', [SekcamController::class, 'skbdReject'])->name('sekcam.skbd.reject');
-    Route::get('/skbd/proses', [SekcamController::class, 'skbdProses'])->name('sekcam.skbd.proses');
+    // ===== Layanan Registrasi Ahli Waris  =====
+    Route::get('/ahliwaris', [SekcamController::class, 'ahliwarisIndex'])->name('sekcam.ahliwaris.index');
+    Route::post('/ahliwaris/{id}/approve', [SekcamController::class, 'ahliwarisdApprove'])->name('sekcam.ahliwaris.approve');
+    Route::post('/ahliwaris/{id}/reject', [SekcamController::class, 'ahliwarisdReject'])->name('sekcam.ahliwaris.reject');
+    Route::get('/ahliwaris/proses', [SekcamController::class, 'ahliwarisProses'])->name('sekcam.ahliwaris.proses');
+
+    // ===== Layanan Registrasi Agunan ke Bank  =====
+    Route::get('/agunan', [SekcamController::class, 'agunanIndex'])->name('sekcam.agunan.index');
+    Route::post('/agunan/{id}/approve', [SekcamController::class, 'agunandApprove'])->name('sekcam.agunan.approve');
+    Route::post('/agunan/{id}/reject', [SekcamController::class, 'agunandReject'])->name('sekcam.agunan.reject');
+    Route::get('/agunan/proses', [SekcamController::class, 'agunanProses'])->name('sekcam.agunan.proses');
 
     // ===== Layanan Silang Sengketa =====
     Route::get('/silang_sengketa', [SekcamController::class, 'sengketaIndex'])->name('sekcam.silang_sengketa.index');
@@ -215,6 +223,12 @@ Route::middleware(['auth', 'role:sekcam'])->prefix('sekcam')->group(function () 
     Route::post('/catin-tni/{id}/approve', [SekcamController::class, 'catintnidApprove'])->name('sekcam.catin-tni.approve');
     Route::post('/catin-tni/{id}/reject', [SekcamController::class, 'catintnidReject'])->name('sekcam.catin-tni.reject');
     Route::get('/catin-tni/proses', [SekcamController::class, 'catintniProses'])->name('sekcam.catin-tni.proses');
+
+    // ===== Layanan SKBD =====
+    Route::get('/skbd', [SekcamController::class, 'skbdIndex'])->name('sekcam.skbd.index');
+    Route::post('/skbd/{id}/approve', [SekcamController::class, 'skbdApprove'])->name('sekcam.skbd.approve');
+    Route::post('/skbd/{id}/reject', [SekcamController::class, 'skbdReject'])->name('sekcam.skbd.reject');
+    Route::get('/skbd/proses', [SekcamController::class, 'skbdProses'])->name('sekcam.skbd.proses');
 
     // ===== Layanan dari Kasi Pemerintahan =====
     // Route::get('/silang-sengketa', [KasiPemerintahanController::class, 'silangSengketaIndex'])->name('kasi_pemerintahan.silang_sengketa.index');
@@ -271,6 +285,12 @@ Route::middleware(['auth', 'role:camat'])->prefix('camat')->group(function () {
     Route::post('/skt/{id}/approve', [CamatController::class, 'sktApprove'])->name('camat.skt.approve');
     Route::post('/skt/{id}/reject', [CamatController::class, 'sktReject'])->name('camat.skt.reject');
     Route::get('/skt/proses', [CamatController::class, 'sktProses'])->name('camat.skt.proses');
+
+    // ===== Layanan agunan bank =====
+    Route::get('/agunan', [CamatController::class, 'agunanIndex'])->name('camat.agunan.index');
+    Route::post('/agunan/{id}/approve', [CamatController::class, 'agunanApprove'])->name('camat.agunan.approve');
+    Route::post('/agunan/{id}/reject', [CamatController::class, 'agunanReject'])->name('camat.agunan.reject');
+    Route::get('/agunan/proses', [CamatController::class, 'agunanProses'])->name('camat.agunan.proses');
 
      // ===== Layanan Silang Sengketa =====
     Route::get('/silang_sengketa', [CamatController::class, 'sengketaIndex'])->name('camat.silang_sengketa.index');

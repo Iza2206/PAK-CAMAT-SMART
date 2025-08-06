@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AgunanSubmission;
 use Illuminate\Http\Request;
 use App\Models\BpjsSubmission;
 use App\Models\SktmDispensasiSubmission;
@@ -184,6 +185,55 @@ class CamatController extends Controller
                             ->latest()->paginate(10);
 
         return view('camat.skt.proses', compact(
+            'pengajuan',
+            'jumlahPengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+    // ================= Agunan Bank =================
+    public function agunanIndex()
+    {
+        $pengajuan = AgunanSubmission::where('status', 'approved_by_sekcam')->latest()->get();
+        return view('camat.agunan.index', compact('pengajuan'));
+    }
+
+    public function agunanApprove($id)
+    {
+        $item = AgunanSubmission::findOrFail($id);
+        $item->status = 'approved_by_camat';
+        $item->approved_camat_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan SKT disetujui oleh Camat.');
+    }
+
+    public function agunanReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = AgunanSubmission::findOrFail($id);
+        $item->status = 'rejected_by_camat';
+        $item->rejected_camat_reason = $request->reason;
+        $item->approved_camat_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan SKT ditolak oleh Camat.');
+    }
+
+    public function agunanProses()
+    {
+        $jumlahPengajuan     = AgunanSubmission::count();
+        $pengajuanDiterima   = AgunanSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDisetujui  = AgunanSubmission::where('status', 'approved_by_camat')->count();
+        $pengajuanDitolak    = AgunanSubmission::where('status', 'rejected_by_camat')->count();
+
+        $pengajuan = AgunanSubmission::whereIn('status', ['approved_by_camat', 'rejected_by_camat'])
+                            ->latest()->paginate(10);
+
+        return view('camat.agunan.proses', compact(
             'pengajuan',
             'jumlahPengajuan',
             'pengajuanDiterima',

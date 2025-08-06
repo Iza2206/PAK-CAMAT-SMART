@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AgunanSubmission;
+use App\Models\AhliwarisSubmission;
 use Illuminate\Http\Request;
 use App\Models\BpjsSubmission;
 use App\Models\SktmDispensasiSubmission;
@@ -9,6 +11,7 @@ use App\Models\SktSubmission;
 use App\Models\SkbdSubmission;
 use App\Models\CatinTniPolriSubmission;
 use App\Models\SengketaSubmission;
+
 
 class SekcamController extends Controller
 {
@@ -194,7 +197,110 @@ class SekcamController extends Controller
         ));
     }
 
-     // ================= Silang Sengketa  =================
+    // ================= Ahli Waris =================
+    public function ahliwarisIndex()
+    {
+        $pengajuan = AhliwarisSubmission::where('status', 'checked_by_kasi')->latest()->get();
+        return view('sekcam.ahliwaris.index', compact('pengajuan'));
+    }
+
+
+    public function ahliwarisdApprove($id)
+    {
+        $item = AhliwarisSubmission::findOrFail($id);
+        $item->status = 'approved_by_sekcam';
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan ahliwaris berhasil disetujui oleh Sekcam.');
+    }
+
+
+    public function ahliwarisdReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = AhliwarisSubmission::findOrFail($id);
+        $item->status = 'rejected_by_sekcam';
+        $item->rejected_sekcam_reason = $request->reason;
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan ahliwaris berhasil ditolak oleh Sekcam.');
+    }
+
+    public function ahliwarisProses()
+    {
+
+        $pengajuanDiterima  = AhliwarisSubmission::whereIn('status', ['checked_by_kasi', 'approved_by_sekcam', 'rejected_by_sekcam'])->count();
+        $pengajuanDisetujui = AhliwarisSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDitolak   = AhliwarisSubmission::where('status', 'rejected_by_sekcam')->count();
+
+        $pengajuan = AhliwarisSubmission::whereIn('status', ['approved_by_sekcam', 'rejected_by_sekcam'])
+                        ->latest()
+                        ->paginate(10);
+
+        return view('sekcam.ahliwaris.proses', compact(
+            'pengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+    // ================= Registrasi Agunan ke Bank   =================
+    public function agunanIndex()
+    {
+        $pengajuan = AgunanSubmission::where('status', 'checked_by_kasi')->latest()->get();
+        return view('sekcam.agunan.index', compact('pengajuan'));
+    }
+
+
+    public function agunandApprove($id)
+    {
+        $item = AgunanSubmission::findOrFail($id);
+        $item->status = 'approved_by_sekcam';
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan agunan bank berhasil disetujui oleh Sekcam.');
+    }
+
+
+    public function agunandReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = AgunanSubmission::findOrFail($id);
+        $item->status = 'rejected_by_sekcam';
+        $item->rejected_sekcam_reason = $request->reason;
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan agunan bank berhasil ditolak oleh Sekcam.');
+    }
+
+    public function agunanProses()
+    {                                
+        $pengajuanDiterima  = AgunanSubmission::whereIn('status', ['checked_by_kasi', 'approved_by_sekcam', 'rejected_by_sekcam'])->count();
+        $pengajuanmasuk  = AgunanSubmission::whereIn('status', ['checked_by_kasi'])->count();
+        $pengajuanDisetujui = AgunanSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDitolak   = AgunanSubmission::where('status', 'rejected_by_sekcam')->count();
+
+        $pengajuan = AgunanSubmission::whereIn('status', ['approved_by_sekcam', 'rejected_by_sekcam'])
+                        ->latest()
+                        ->paginate(10);
+
+        return view('sekcam.agunan.proses', compact(
+            'pengajuan',
+            'pengajuanmasuk',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+    // ================= Silang Sengketa  =================
     public function sengketaIndex()
     {
         $pengajuan = SengketaSubmission::where('status', 'checked_by_kasi')->latest()->get();

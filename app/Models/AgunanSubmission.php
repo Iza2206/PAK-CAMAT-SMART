@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasQueueNumber;
+use App\Traits\HasNikStatusFilter;
 
 class AgunanSubmission extends Model
 {
-    use HasFactory, HasQueueNumber;
+    use HasFactory, HasQueueNumber, HasNikStatusFilter;
+
+    protected $nikField = 'nik';
 
     protected $fillable = [
         'user_id',
@@ -29,7 +32,9 @@ class AgunanSubmission extends Model
         'rejected_sekcam_reason',
         'rejected_camat_reason',
         'queue_number',
-         'rejected_reason', // pastikan ini ada
+        'rejected_reason',
+        'penilaian',
+        'diambil_at'
     ];
 
     protected $dates = [

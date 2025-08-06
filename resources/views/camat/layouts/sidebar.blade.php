@@ -33,6 +33,7 @@
                 openBpjs: {{ request()->routeIs('camat.bpjs.*') ? 'true' : 'false' }},
                 openSktm: {{ request()->routeIs('camat.sktm.*') ? 'true' : 'false' }},
                 openSkt: {{ request()->routeIs('camat.skt.*') ? 'true' : 'false' }},
+                openAgunan: {{ request()->routeIs('camat.agunan.*') ? 'true' : 'false' }},
                 openSengketa: {{ request()->routeIs('camat.silang_sengketa.*') ? 'true' : 'false' }},
                 openCatin: {{ request()->routeIs('camat.catin.*') ? 'true' : 'false' }},
                 openSkbd: {{ request()->routeIs('camat.skbd.*') ? 'true' : 'false' }}
@@ -126,7 +127,34 @@
                 </a>
             </div>
 
-            {{-- CATIN Menu --}}
+             {{-- Menu Agunan Bank --}}
+            <button @click="openAgunan = !openAgunan"
+                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                :class="openAgunan ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
+                <span class="flex items-center gap-2">
+                    🏦
+                    <span>Agunan Bank</span>
+                </span>
+                <svg :class="{ 'rotate-180': openAgunan }" class="w-4 h-4 transform transition-transform" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            <div x-show="openAgunan" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                <a href="{{ route('camat.agunan.index') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('camat.agunan.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📋 Verifikasi Agunan Bank
+                </a>
+                <a href="{{ route('camat.agunan.proses') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('camat.agunan.proses') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    🗂️ Riwayat Agunan Bank
+                </a>
+            </div>
+
+
+            {{-- Silang sengketa Menu --}}
             <button @click="openSengketa = !openSengketa"
                 class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
                 :class="openSengketa ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
