@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AgunanSubmission;
+use App\Models\AhliwarisSubmission;
 use Illuminate\Http\Request;
 use App\Models\BpjsSubmission;
 use App\Models\SktmDispensasiSubmission;
@@ -192,6 +193,56 @@ class CamatController extends Controller
             'pengajuanDitolak'
         ));
     }
+
+     // ================= Ahli Waris =================
+    public function ahliwarisIndex()
+    {
+        $pengajuan = AhliwarisSubmission::where('status', 'approved_by_sekcam')->latest()->get();
+        return view('camat.ahliwaris.index', compact('pengajuan'));
+    }
+
+    public function ahliwarisApprove($id)
+    {
+        $item = AhliwarisSubmission::findOrFail($id);
+        $item->status = 'approved_by_camat';
+        $item->approved_camat_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan ahli waris disetujui oleh Camat.');
+    }
+
+    public function ahliwarisReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = AhliwarisSubmission::findOrFail($id);
+        $item->status = 'rejected_by_camat';
+        $item->rejected_camat_reason = $request->reason;
+        $item->approved_camat_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan ahli waris ditolak oleh Camat.');
+    }
+
+    public function ahliwarisProses()
+    {
+        $jumlahPengajuan     = AhliwarisSubmission::count();
+        $pengajuanDiterima   = AhliwarisSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDisetujui  = AhliwarisSubmission::where('status', 'approved_by_camat')->count();
+        $pengajuanDitolak    = AhliwarisSubmission::where('status', 'rejected_by_camat')->count();
+
+        $pengajuan = AhliwarisSubmission::whereIn('status', ['approved_by_camat', 'rejected_by_camat'])
+                            ->latest()->paginate(10);
+
+        return view('camat.ahliwaris.proses', compact(
+            'pengajuan',
+            'jumlahPengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
 
     // ================= Agunan Bank =================
     public function agunanIndex()

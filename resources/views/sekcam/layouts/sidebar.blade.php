@@ -33,6 +33,7 @@
                 openBpjs: {{ request()->routeIs('sekcam.bpjs.*') ? 'true' : 'false' }},
                 openSktm: {{ request()->routeIs('sekcam.sktm.*') ? 'true' : 'false' }},
                 openSkt: {{ request()->routeIs('sekcam.skt.*') ? 'true' : 'false' }},
+                openahliwaris: {{ request()->routeIs('sekcam.ahliwaris.*') ? 'true' : 'false' }},
                 openAgunan: {{ request()->routeIs('sekcam.agunan.*') ? 'true' : 'false' }},
                 openSengketa: {{ request()->routeIs('sekcam.sengketa.*') ? 'true' : 'false' }},
                 openCatin: {{ request()->routeIs('sekcam.catin-tni.*') ? 'true' : 'false' }},
@@ -87,6 +88,20 @@
             <div x-show="openSkt" x-collapse class="ml-6 space-y-1">
                 <a href="{{ route('sekcam.skt.index') }}" class="block px-3 py-1 rounded transition-all {{ request()->routeIs('sekcam.skt.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300' }}">📝 Verifikasi SKT</a>
                 <a href="{{ route('sekcam.skt.proses') }}" class="block px-3 py-1 rounded transition-all {{ request()->routeIs('sekcam.skt.proses') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300' }}">📁 Riwayat Proses SKT</a>
+            </div>
+
+            {{-- === Ahli Waris === --}}
+            <button @click="openahliwaris = !openahliwaris"
+                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                :class="openahliwaris ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
+                <span class="flex items-center gap-2">👨‍👩‍👧‍👦 Ahli Waris</span>
+                <svg :class="{ 'rotate-180': openahliwaris }" class="w-4 h-4 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            <div x-show="openahliwaris" x-collapse class="ml-6 space-y-1">
+                <a href="{{ route('sekcam.ahliwaris.index') }}" class="block px-3 py-1 rounded transition-all {{ request()->routeIs('sekcam.ahliwaris.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300' }}">📝 Verifikasi Ahli Waris</a>
+                <a href="{{ route('sekcam.ahliwaris.proses') }}" class="block px-3 py-1 rounded transition-all {{ request()->routeIs('sekcam.ahliwaris.proses') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300' }}">📁 Riwayat Proses Ahli Waris</a>
             </div>
 
             {{-- === Agunan Bank === --}}

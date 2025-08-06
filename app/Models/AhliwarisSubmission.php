@@ -5,10 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasQueueNumber;
+use App\Traits\HasNikStatusFilter;
 
 class AhliwarisSubmission extends Model
 {
-    use HasFactory, HasQueueNumber;
+    use HasFactory, HasQueueNumber, HasNikStatusFilter;
+    
+    // Menentukan nama field NIK yang digunakan untuk filtering
+    protected $nikField = 'nik_pemohon';
     
     protected $fillable = [
         'queue_number',
@@ -27,6 +31,10 @@ class AhliwarisSubmission extends Model
         'approved_sekcam_at',
         'approved_camat_at',
         'rejected_reason',
+        'rejected_sekcam_reason',
+        'rejected_camat_reason',
+        'penilaian',
+        'diambil_at'
     ];
 
     protected $dates = [

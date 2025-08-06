@@ -68,11 +68,15 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::get('/layanan/sppat-gr/create', [MejaLayananController::class, 'sppatGrCreate'])->name('sppat_gr.create'); // Tambah
     Route::post('/layanan/sppat-gr/store', [MejaLayananController::class, 'sppatGrStore'])->name('sppat_gr.store'); // Simpan
     Route::patch('/layanan/sppat-gr/{id}/kirim-kasi', [MejaLayananController::class, 'sppatGrKirimKeKasi'])->name('sppat_gr.kirimkasi'); // Kirim ke Kasi
+
     // ---------------- Ahli Waris ----------------
     Route::get('/meja/ahliwaris', [MejaLayananController::class, 'ahliWarisList'])->name('ahliwaris.list');
     Route::get('/meja/ahliwaris/create', [MejaLayananController::class, 'ahliWarisCreate'])->name('ahliwaris.create');
     Route::post('/meja/ahliwaris/store', [MejaLayananController::class, 'ahliWarisStore'])->name('ahliwaris.store');
     Route::post('/meja/ahliwaris/{id}/kirim-kasi', [MejaLayananController::class, 'ahliWarisKirimKasi'])->name('ahliwaris.kirimkasi');
+    Route::post('/ahliwaris/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianahliwaris'])->name('ahliwaris.penilaian');
+    Route::get('/ahliwaris/penilaian', [MejaLayananController::class, 'ahliwarisPenilaianIndex'])->name('ahliwaris.penilaian.index'); // list penilaian skt
+
     // Agunan ke Bank
     Route::get('/meja/agunan', [MejaLayananController::class, 'agunanList'])->name('agunan.list');
     Route::get('/meja/agunan/create', [MejaLayananController::class, 'agunanCreate'])->name('agunan.create');
@@ -80,6 +84,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::post('/meja/agunan/{id}/kirim-kasi', [MejaLayananController::class, 'agunanKirimKasi'])->name('agunan.kirimkasi');
     Route::post('/agunan/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianagunan'])->name('agunan.penilaian'); // simpan penilaian ikm agunan
     Route::get('/agunan/penilaian', [MejaLayananController::class, 'penilaianIndexagunan'])->name('agunan.penilaian.index'); // list penilaian agunan
+
     // Sengketa
     Route::get('/meja/sengketa', [MejaLayananController::class, 'sengketaList'])->name('sengketa.list');
     Route::get('/meja/sengketa/create', [MejaLayananController::class, 'sengketaCreate'])->name('sengketa.create');
@@ -87,6 +92,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::post('/meja/sengketa/{id}/kirim-kasi', [MejaLayananController::class, 'sengketaKirimKasi'])->name('sengketa.kirimkasi');
     Route::post('/sengketa/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaiansengketa'])->name('sengketa.penilaian'); // simpan penilaian ikm sengketa
     Route::get('/sengketa/penilaian', [MejaLayananController::class, 'penilaianIndexSENGKETA'])->name('sengketa.penilaian.index'); // list penilaian bpjs
+
     // CATIN TNI/Polri
     Route::get('/layanan/catin-tni-polri', [MejaLayananController::class, 'catinTniList'])->name('catin.tni.list');
     Route::get('/layanan/catin-tni-polri/create', [MejaLayananController::class, 'catinTniCreate'])->name('catin.tni.create');
@@ -94,6 +100,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::patch('/layanan/catin-tni-polri/{id}/kirim-kasi', [MejaLayananController::class, 'catinTniKirimKasi'])->name('catin.tni.kirimkasi');
     Route::post('/catin/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaiancatin'])->name('catin.penilaian'); // simpan penilaian ikm catin
     Route::get('/catin/penilaian', [MejaLayananController::class, 'penilaianIndexcatin'])->name('catins.penilaian.index'); // list penilaian catin
+
     // SKBD (Surat Keterangan Bersih Diri)
     Route::get('/layanan/SKBDs', [MejaLayananController::class, 'SKBDsList'])->name('SKBDs.list'); // List Data
     Route::get('/layanan/SKBDs/create', [MejaLayananController::class, 'SKBDsCreate'])->name('SKBDs.create'); // Tambah
@@ -285,6 +292,12 @@ Route::middleware(['auth', 'role:camat'])->prefix('camat')->group(function () {
     Route::post('/skt/{id}/approve', [CamatController::class, 'sktApprove'])->name('camat.skt.approve');
     Route::post('/skt/{id}/reject', [CamatController::class, 'sktReject'])->name('camat.skt.reject');
     Route::get('/skt/proses', [CamatController::class, 'sktProses'])->name('camat.skt.proses');
+
+    // ===== Layanan Ahli Waris =====
+    Route::get('/ahliwaris', [CamatController::class, 'ahliwarisIndex'])->name('camat.ahliwaris.index');
+    Route::post('/ahliwaris/{id}/approve', [CamatController::class, 'ahliwarisApprove'])->name('camat.ahliwaris.approve');
+    Route::post('/ahliwaris/{id}/reject', [CamatController::class, 'ahliwarisReject'])->name('camat.ahliwaris.reject');
+    Route::get('/ahliwaris/proses', [CamatController::class, 'ahliwarisProses'])->name('camat.ahliwaris.proses');
 
     // ===== Layanan agunan bank =====
     Route::get('/agunan', [CamatController::class, 'agunanIndex'])->name('camat.agunan.index');
