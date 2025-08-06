@@ -202,6 +202,12 @@ Route::middleware(['auth', 'role:sekcam'])->prefix('sekcam')->group(function () 
     Route::post('/skbd/{id}/reject', [SekcamController::class, 'skbdReject'])->name('sekcam.skbd.reject');
     Route::get('/skbd/proses', [SekcamController::class, 'skbdProses'])->name('sekcam.skbd.proses');
 
+    // ===== Layanan Silang Sengketa =====
+    Route::get('/silang_sengketa', [SekcamController::class, 'sengketaIndex'])->name('sekcam.silang_sengketa.index');
+    Route::post('/silang_sengketa/{id}/approve', [SekcamController::class, 'sengketadApprove'])->name('sekcam.silang_sengketa.approve');
+    Route::post('/silang_sengketa/{id}/reject', [SekcamController::class, 'sengketadReject'])->name('sekcam.silang_sengketa.reject');
+    Route::get('/silang_sengketa/proses', [SekcamController::class, 'sengketaProsesX'])->name('sekcam.silang_sengketa.proses');
+
     // ===== Layanan Catin TNI/POLRI =====
     Route::get('/catin-tni', [SekcamController::class, 'catintniIndex'])->name('sekcam.catin-tni.index');
     Route::post('/catin-tni/{id}/approve', [SekcamController::class, 'catintnidApprove'])->name('sekcam.catin-tni.approve');
@@ -263,6 +269,12 @@ Route::middleware(['auth', 'role:camat'])->prefix('camat')->group(function () {
     Route::post('/skt/{id}/approve', [CamatController::class, 'sktApprove'])->name('camat.skt.approve');
     Route::post('/skt/{id}/reject', [CamatController::class, 'sktReject'])->name('camat.skt.reject');
     Route::get('/skt/proses', [CamatController::class, 'sktProses'])->name('camat.skt.proses');
+
+     // ===== Layanan Silang Sengketa =====
+    Route::get('/silang_sengketa', [CamatController::class, 'sengketaIndex'])->name('camat.silang_sengketa.index');
+    Route::post('/silang_sengketa/{id}/approve', [CamatController::class, 'sengketadApprove'])->name('camat.silang_sengketa.approve');
+    Route::post('/silang_sengketa/{id}/reject', [CamatController::class, 'sengketadReject'])->name('camat.silang_sengketa.reject');
+    Route::get('/silang_sengketa/proses', [CamatController::class, 'sengketaProses'])->name('camat.silang_sengketa.proses');
 
      // ===== Layanan CATIN TNI/POLRI =====
     Route::get('/catin', [CamatController::class, 'catinIndex'])->name('camat.catin.index');

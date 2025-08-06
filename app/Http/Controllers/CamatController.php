@@ -8,6 +8,7 @@ use App\Models\SktmDispensasiSubmission;
 use App\Models\SktSubmission;
 use App\Models\SkbdSubmission;
 use App\Models\CatinTniPolriSubmission;
+use App\Models\SengketaSubmission;
 
 class CamatController extends Controller
 {
@@ -191,7 +192,56 @@ class CamatController extends Controller
         ));
     }
 
-    // ================= CATIN TNI/POLRI =================
+    // ================= Silang Sengketa =================
+    public function sengketaIndex()
+    {
+        $pengajuan = SengketaSubmission::where('status', 'approved_by_sekcam')->latest()->get();
+        return view('camat.silang_sengketa.index', compact('pengajuan'));
+    }
+
+    public function sengketaApprove($id)
+    {
+        $item = SengketaSubmission::findOrFail($id);
+        $item->status = 'approved_by_camat';
+        $item->approved_camat_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan sengketa disetujui oleh Camat.');
+    }
+
+    public function sengketaReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = SengketaSubmission::findOrFail($id);
+        $item->status = 'rejected_by_camat';
+        $item->rejected_camat_reason = $request->reason;
+        $item->approved_camat_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan sengketa ditolak oleh Camat.');
+    }
+
+    public function sengketaProses()
+    {
+        $jumlahPengajuan     = SengketaSubmission::count();
+        $pengajuanDiterima   = SengketaSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDisetujui  = SengketaSubmission::where('status', 'approved_by_camat')->count();
+        $pengajuanDitolak    = SengketaSubmission::where('status', 'rejected_by_camat')->count();
+
+        $pengajuan = SengketaSubmission::whereIn('status', ['approved_by_camat', 'rejected_by_camat'])
+                            ->latest()->paginate(10);
+
+        return view('camat.silang_sengketa.proses', compact(
+            'pengajuan',
+            'jumlahPengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+    // ================= Catin TNI/POLRI =================
     public function catinIndex()
     {
         $pengajuan = CatinTniPolriSubmission::where('status', 'approved_by_sekcam')->latest()->get();

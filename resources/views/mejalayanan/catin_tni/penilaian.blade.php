@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<div
+<div 
     x-data="{
         modalOpen: false,
         selectedId: null,
-        showToast: {{ json_encode(session('success') || session('error')) }},
+        showToast: {{ session('success') || session('error') ? 'true' : 'false' }},
         toastMessage: '{{ session('success') ?? session('error') }}',
         toastType: '{{ session('success') ? 'bg-green-200 text-green-800' : (session('error') ? 'bg-red-200 text-red-800' : '') }}',
         openModal(id) {
@@ -23,10 +23,10 @@
     @include('mejalayanan.layouts.sidebar')
 
     <main class="flex-1 p-6">
-        <h1 class="text-2xl font-bold mb-6 text-blue-700 dark:text-blue-300">📝 Daftar Penilaian Layanan BPJS</h1>
+        <h1 class="text-2xl font-bold mb-6 text-blue-700 dark:text-blue-300">📝 Daftar Penilaian Layanan CATIN Sipil, TNI/POLRI</h1>
 
         {{-- Filter --}}
-        <form method="GET" action="{{ route('bpjs.penilaian.index') }}" class="mb-4 flex flex-wrap gap-3 items-center">
+        <form method="GET" action="{{ route('catins.penilaian.index') }}" class="mb-4 flex flex-wrap gap-3 items-center">
             <input type="text" name="nik" value="{{ request('nik') }}"
                 placeholder="🔍 Cari NIK"
                 class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white">
@@ -42,12 +42,12 @@
             </select>
 
             @if(request('nik') || request('penilaian'))
-                <a href="{{ route('bpjs.penilaian.index') }}" class="text-sm text-red-600 hover:underline">❌ Reset</a>
+                <a href="{{ route('catins.penilaian.index') }}" class="text-sm text-red-600 hover:underline">❌ Reset</a>
             @endif
         </form>
 
         {{-- Toast --}}
-        <div
+        <div 
             x-show="showToast"
             x-transition.duration.500ms
             x-text="toastMessage"
@@ -69,19 +69,19 @@
                 </thead>
                 <tbody>
                     @forelse ($data as $item)
-                        @php
-                            $created = \Carbon\Carbon::parse($item->created_at);
-                            $approved = $item->approved_camat_at ?? $item->approved_sekcam_at ?? $item->verified_at;
-                            $durasi = $approved ? \Carbon\Carbon::parse($approved)->diffForHumans($created, true) : null;
-                            $emoji = ['tidak_puas'=>'😠', 'cukup'=>'😐', 'puas'=>'🙂', 'sangat_puas'=>'🤩'];
-                            $warna = ['tidak_puas'=>'text-red-500', 'cukup'=>'text-yellow-500', 'puas'=>'text-green-500', 'sangat_puas'=>'text-blue-500'];
-                        @endphp
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
                             <td class="px-4 py-3 border">{{ $item->nama_pemohon }}</td>
                             <td class="px-4 py-3 border">{{ $item->nik_pemohon }}</td>
-                            <td class="px-4 py-3 border text-sm">
-                                @if ($durasi)
-                                    ⏱️ {{ $durasi }}
+                            <td class="px-4 py-3 border text-sm text-gray-800 dark:text-gray-200">
+                                @php
+                                    $created = \Carbon\Carbon::parse($item->created_at);
+                                    $approved = $item->approved_camat_at 
+                                                ?? $item->approved_sekcam_at 
+                                                ?? $item->verified_at;
+                                @endphp
+
+                                @if ($approved)
+                                    ⏱️ {{ \Carbon\Carbon::parse($approved)->diffForHumans($created, true) }}
                                 @else
                                     <span class="text-gray-400">-</span>
                                 @endif
@@ -96,13 +96,17 @@
                             <td class="px-4 py-3 border text-sm">
                                 @if ($item->status === 'approved_by_camat')
                                     @if (!$item->penilaian)
-                                        <button
+                                        <button 
                                             @click="openModal({{ $item->id }})"
-                                            class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded text-sm font-semibold shadow"
+                                            class="bg-yellow-500 hover:bg-yellow-600 !text-white px-4 py-2 rounded text-sm font-semibold shadow"
                                         >
                                             ✨ Beri Penilaian
                                         </button>
                                     @else
+                                        @php
+                                            $emoji = ['tidak_puas'=>'😠', 'cukup'=>'😐', 'puas'=>'🙂', 'sangat_puas'=>'🤩'];
+                                            $warna = ['tidak_puas'=>'text-red-500', 'cukup'=>'text-yellow-500', 'puas'=>'text-green-500', 'sangat_puas'=>'text-blue-500'];
+                                        @endphp
                                         <div class="{{ $warna[$item->penilaian] ?? 'text-gray-500' }} font-semibold">
                                             {{ $emoji[$item->penilaian] ?? '' }} {{ ucfirst(str_replace('_', ' ', $item->penilaian)) }}
                                         </div>
@@ -117,8 +121,9 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center text-gray-500 dark:text-gray-400 py-6">
-                                Belum ada data penilaian yang bisa ditampilkan.
+                            <td colspan="5" class="text-center text-gray-500 dark:text-gray-400 py-10">
+                                <div class="text-2xl mb-2">😕</div>
+                                <div>Data tidak tersedia atau tidak ditemukan.</div>
                             </td>
                         </tr>
                     @endforelse
@@ -135,7 +140,7 @@
     </main>
 
     {{-- MODAL --}}
-    <div
+    <div 
         x-show="modalOpen"
         x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 scale-90"
@@ -150,7 +155,7 @@
             <h2 class="text-lg font-bold mb-4 text-center text-blue-600 dark:text-blue-300">📝 Pilih Penilaian</h2>
             <div class="grid grid-cols-2 gap-3">
                 @foreach (['tidak_puas'=>'😠 Tidak Puas', 'cukup'=>'😐 Cukup', 'puas'=>'🙂 Puas', 'sangat_puas'=>'🤩 Sangat Puas'] as $value => $label)
-                    <form method="POST" :action="`/meja-layanan/bpjs/${selectedId}/penilaian`">
+                    <form method="POST" :action="`/meja-layanan/catin/${selectedId}/penilaian`">
                         @csrf
                         <input type="hidden" name="penilaian" value="{{ $value }}">
                         <button type="submit"
@@ -163,13 +168,6 @@
                         </button>
                     </form>
                 @endforeach
-            </div>
-
-            <div class="mt-4 text-center">
-                <button @click="modalOpen = false"
-                    class="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 mt-2">
-                    ❌ Batal
-                </button>
             </div>
         </div>
     </div>

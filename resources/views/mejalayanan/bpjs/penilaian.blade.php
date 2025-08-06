@@ -41,12 +41,10 @@
                 <option value="sangat_puas" {{ request('penilaian') == 'sangat_puas' ? 'selected' : '' }}>🤩 Sangat Puas</option>
             </select>
 
-
             @if(request('nik') || request('penilaian'))
                 <a href="{{ route('bpjs.penilaian.index') }}" class="text-sm text-red-600 hover:underline">❌ Reset</a>
             @endif
         </form>
-
 
         {{-- Toast --}}
         <div 
@@ -104,7 +102,6 @@
                                         >
                                             ✨ Beri Penilaian
                                         </button>
-
                                     @else
                                         @php
                                             $emoji = ['tidak_puas'=>'😠', 'cukup'=>'😐', 'puas'=>'🙂', 'sangat_puas'=>'🤩'];
@@ -124,8 +121,9 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center text-gray-500 dark:text-gray-400 py-6">
-                                Belum ada data penilaian yang bisa ditampilkan.
+                            <td colspan="5" class="text-center text-gray-500 dark:text-gray-400 py-10">
+                                <div class="text-2xl mb-2">😕</div>
+                                <div>Data tidak tersedia atau tidak ditemukan.</div>
                             </td>
                         </tr>
                     @endforelse
@@ -170,14 +168,6 @@
                         </button>
                     </form>
                 @endforeach
-            </div>
-
-            <div class="mt-4 text-center">
-                <button @click="openModal({{ $item->id }})"
-                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm">
-                    ✨ Beri Penilaian
-                </button>
-
             </div>
         </div>
     </div>

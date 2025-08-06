@@ -8,6 +8,7 @@ use App\Models\SktmDispensasiSubmission;
 use App\Models\SktSubmission;
 use App\Models\SkbdSubmission;
 use App\Models\CatinTniPolriSubmission;
+use App\Models\SengketaSubmission;
 
 class SekcamController extends Controller
 {
@@ -187,6 +188,58 @@ class SekcamController extends Controller
 
         return view('sekcam.skt.proses', compact(
             'pengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+     // ================= Silang Sengketa  =================
+    public function sengketaIndex()
+    {
+        $pengajuan = SengketaSubmission::where('status', 'checked_by_kasi')->latest()->get();
+        return view('sekcam.silang_sengketa.index', compact('pengajuan'));
+    }
+
+
+    public function sengketadApprove($id)
+    {
+        $item = SengketaSubmission::findOrFail($id);
+        $item->status = 'approved_by_sekcam';
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan Silang Sengketa berhasil disetujui oleh Sekcam.');
+    }
+
+
+    public function sengketadReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = SengketaSubmission::findOrFail($id);
+        $item->status = 'rejected_by_sekcam';
+        $item->rejected_sekcam_reason = $request->reason;
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan Silang Sengketa berhasil ditolak oleh Sekcam.');
+    }
+
+    public function sengketaProsesX()
+    {                                
+        $pengajuanDiterima  = SengketaSubmission::whereIn('status', ['checked_by_kasi', 'approved_by_sekcam', 'rejected_by_sekcam'])->count();
+        $pengajuanmasuk  = SengketaSubmission::whereIn('status', ['checked_by_kasi'])->count();
+        $pengajuanDisetujui = SengketaSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDitolak   = SengketaSubmission::where('status', 'rejected_by_sekcam')->count();
+
+        $pengajuan = SengketaSubmission::whereIn('status', ['approved_by_sekcam', 'rejected_by_sekcam'])
+                        ->latest()
+                        ->paginate(10);
+
+        return view('sekcam.silang_sengketa.proses', compact(
+            'pengajuan',
+            'pengajuanmasuk',
             'pengajuanDiterima',
             'pengajuanDisetujui',
             'pengajuanDitolak'
