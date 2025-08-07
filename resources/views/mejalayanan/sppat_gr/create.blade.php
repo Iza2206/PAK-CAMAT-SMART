@@ -46,8 +46,8 @@
                         <select name="jenis_kelamin" required
                             class="w-full px-4 py-2 rounded-lg border bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600">
                             <option value="">Pilih</option>
-                            <option value="Laki-laki">Laki-laki</option>
-                            <option value="Perempuan">Perempuan</option>
+                            <option value="Laki-laki" {{ old('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="Perempuan" {{ old('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                         </select>
                     </div>
                     <div>
@@ -56,7 +56,7 @@
                             class="w-full px-4 py-2 rounded-lg border bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600">
                             <option value="">Pilih</option>
                             @foreach(['SD','SMP','SMA','D1','D2','D3','S1','S2','S3'] as $item)
-                                <option value="{{ $item }}">{{ $item }}</option>
+                                <option value="{{ $item }}" {{ old('pendidikan') == $item ? 'selected' : '' }}>{{ $item }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -69,10 +69,10 @@
 
                 @foreach([
                     'file_permohonan' => 'Surat Permohonan Registrasi Bermaterai',
-                    'file_pernyataan_ahli_waris' => 'Surat Pernyataan Ahli Waris',
-                    'file_akta_kematian' => 'Akta Kematian',
-                    'file_ktp_ahli_waris' => 'Fotokopi KTP Ahli Waris',
-                    'file_kk_ahli_waris' => 'Fotokopi KK Ahli Waris',
+                    'file_formulir' => 'Formulir Isian Permohonan',
+                    'file_alas_hak_tanah' => 'Bukti Alas Hak / Dokumen Tanah',
+                    'file_ktp' => 'Fotokopi KTP',
+                    'file_kk' => 'Fotokopi KK',
                     'file_pbb' => 'Tanda Lunas PBB',
                 ] as $field => $label)
                     <div>

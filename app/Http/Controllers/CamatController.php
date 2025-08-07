@@ -11,6 +11,7 @@ use App\Models\SktSubmission;
 use App\Models\SkbdSubmission;
 use App\Models\CatinTniPolriSubmission;
 use App\Models\SengketaSubmission;
+use App\Models\SppatGrSubmission;
 
 class CamatController extends Controller
 {
@@ -186,6 +187,55 @@ class CamatController extends Controller
                             ->latest()->paginate(10);
 
         return view('camat.skt.proses', compact(
+            'pengajuan',
+            'jumlahPengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+    // ================= SPPAT-GR =================
+    public function sppatgrIndex()
+    {
+        $pengajuan = SppatGrSubmission::where('status', 'approved_by_sekcam')->latest()->get();
+        return view('camat.sppatgr.index', compact('pengajuan'));
+    }
+
+    public function sppatgrApprove($id)
+    {
+        $item = SppatGrSubmission::findOrFail($id);
+        $item->status = 'approved_by_camat';
+        $item->approved_camat_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan SPPAT-GR disetujui oleh Camat.');
+    }
+
+    public function sppatgrReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = SppatGrSubmission::findOrFail($id);
+        $item->status = 'rejected_by_camat';
+        $item->rejected_camat_reason = $request->reason;
+        $item->approved_camat_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan SPPAT-GR ditolak oleh Camat.');
+    }
+
+    public function sppatgrProses()
+    {
+        $jumlahPengajuan     = SppatGrSubmission::count();
+        $pengajuanDiterima   = SppatGrSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDisetujui  = SppatGrSubmission::where('status', 'approved_by_camat')->count();
+        $pengajuanDitolak    = SppatGrSubmission::where('status', 'rejected_by_camat')->count();
+
+        $pengajuan = SppatGrSubmission::whereIn('status', ['approved_by_camat', 'rejected_by_camat'])
+                            ->latest()->paginate(10);
+
+        return view('camat.sppatgr.proses', compact(
             'pengajuan',
             'jumlahPengajuan',
             'pengajuanDiterima',

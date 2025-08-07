@@ -11,7 +11,7 @@ use App\Models\SktSubmission;
 use App\Models\SkbdSubmission;
 use App\Models\CatinTniPolriSubmission;
 use App\Models\SengketaSubmission;
-
+use App\Models\SppatGrSubmission;
 
 class SekcamController extends Controller
 {
@@ -190,6 +190,57 @@ class SekcamController extends Controller
                         ->paginate(10);
 
         return view('sekcam.skt.proses', compact(
+            'pengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+    // ================= SPPAT GR =================
+    public function sppatgrIndex()
+    {
+        $pengajuan = SppatGrSubmission::where('status', 'checked_by_kasi')->latest()->get();
+        return view('sekcam.sppatgr.index', compact('pengajuan'));
+    }
+
+
+    public function sppatgrApprove($id)
+    {
+        $item = SppatGrSubmission::findOrFail($id);
+        $item->status = 'approved_by_sekcam';
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan SPPAT-GR berhasil disetujui oleh Sekcam.');
+    }
+
+
+    public function sppatgrReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = SppatGrSubmission::findOrFail($id);
+        $item->status = 'rejected_by_sekcam';
+        $item->rejected_sekcam_reason = $request->reason;
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan SPPAT-GR berhasil ditolak oleh Sekcam.');
+    }
+
+    public function sppatgrProses()
+    {
+
+        $pengajuanDiterima  = SppatGrSubmission::whereIn('status', ['checked_by_kasi', 'approved_by_sekcam', 'rejected_by_sekcam'])->count();
+        $pengajuanDisetujui = SppatGrSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDitolak   = SppatGrSubmission::where('status', 'rejected_by_sekcam')->count();
+
+        $pengajuan = SppatGrSubmission::whereIn('status', ['approved_by_sekcam', 'rejected_by_sekcam'])
+                        ->latest()
+                        ->paginate(10);
+
+        return view('sekcam.sppatgr.proses', compact(
             'pengajuan',
             'pengajuanDiterima',
             'pengajuanDisetujui',

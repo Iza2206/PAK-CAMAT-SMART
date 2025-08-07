@@ -458,19 +458,19 @@ class MejaLayananController extends Controller
             'pendidikan' => 'required|in:SD,SMP,SMA,D1,D2,D3,S1,S2,S3',
 
             'file_permohonan' => 'required|file|mimes:pdf',
-            'file_pernyataan_ahli_waris' => 'required|file|mimes:pdf',
-            'file_akta_kematian' => 'required|file|mimes:pdf',
-            'file_ktp_ahli_waris' => 'required|file|mimes:pdf',
-            'file_kk_ahli_waris' => 'required|file|mimes:pdf',
+            'file_formulir' => 'required|file|mimes:pdf',
+            'file_alas_hak_tanah' => 'required|file|mimes:pdf',
+            'file_ktp' => 'required|file|mimes:pdf',
+            'file_kk' => 'required|file|mimes:pdf',
             'file_pbb' => 'required|file|mimes:pdf',
         ]);
 
         // Simpan file
         $permohonan = $request->file('file_permohonan')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
-        $pernyataan = $request->file('file_pernyataan_ahli_waris')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
-        $akta = $request->file('file_akta_kematian')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
-        $ktp = $request->file('file_ktp_ahli_waris')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
-        $kk = $request->file('file_kk_ahli_waris')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
+        $pernyataan = $request->file('file_formulir')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
+        $akta = $request->file('file_alas_hak_tanah')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
+        $ktp = $request->file('file_ktp')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
+        $kk = $request->file('file_kk')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
         $pbb = $request->file('file_pbb')->storeAs('sppat_gr', Str::uuid() . '.pdf', 'public');
 
         $submission = SppatGrSubmission::create([
@@ -480,10 +480,10 @@ class MejaLayananController extends Controller
             'pendidikan' => $validated['pendidikan'],
 
             'file_permohonan' => $permohonan,
-            'file_pernyataan_ahli_waris' => $pernyataan,
-            'file_akta_kematian' => $akta,
-            'file_ktp_ahli_waris' => $ktp,
-            'file_kk_ahli_waris' => $kk,
+            'file_formulir' => $pernyataan,
+            'file_alas_hak_tanah' => $akta,
+            'file_ktp' => $ktp,
+            'file_kk' => $kk,
             'file_pbb' => $pbb,
 
             'status' => 'diajukan',
@@ -511,6 +511,42 @@ class MejaLayananController extends Controller
 
         return back()->with('success', 'Pengajuan berhasil dikirim ke Kasi Pemerintahan.');
     }
+
+    // penilaian sppatgr 
+    public function sppatgrPenilaianIndex(Request $request)
+    {
+        $filters = $request->only(['nik', 'penilaian']);
+
+        $data = \App\Models\SppatGrSubmission::where('status', 'approved_by_camat')
+            ->filterNikStatus($filters) // ✅ menggunakan trait
+            ->latest('updated_at')
+            ->paginate(10)
+            ->withQueryString(); // agar pagination tetap bawa filter
+
+        return view('mejalayanan.sppat_gr.penilaian', compact('data'));
+    }
+
+    // SIMPAN PENILAIAN SKTM
+    public function simpanPenilaiansppatgr(Request $request, $id)
+    {
+        $request->validate([
+            'penilaian' => 'required|in:tidak_puas,cukup,puas,sangat_puas',
+        ]);
+
+        $data = \App\Models\SppatGrSubmission::findOrFail($id);
+
+        if ($data->status !== 'approved_by_camat' || $data->penilaian) {
+            return back()->with('error', 'Pengajuan tidak valid untuk dinilai.');
+        }
+
+        $data->update([
+            'penilaian' => $request->penilaian,
+            'diambil_at' => now(),
+        ]);
+
+        return back()->with('success', 'Penilaian berhasil dikirim.');
+    }
+
 
     // ---------------- Ahli Waris ----------------
 

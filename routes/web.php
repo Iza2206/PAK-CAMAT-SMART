@@ -68,6 +68,8 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::get('/layanan/sppat-gr/create', [MejaLayananController::class, 'sppatGrCreate'])->name('sppat_gr.create'); // Tambah
     Route::post('/layanan/sppat-gr/store', [MejaLayananController::class, 'sppatGrStore'])->name('sppat_gr.store'); // Simpan
     Route::patch('/layanan/sppat-gr/{id}/kirim-kasi', [MejaLayananController::class, 'sppatGrKirimKeKasi'])->name('sppat_gr.kirimkasi'); // Kirim ke Kasi
+    Route::post('/sppat_gr/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaiansppatgr'])->name('sppat_gr.penilaian');
+    Route::get('/sppat_gr/penilaian', [MejaLayananController::class, 'sppatgrPenilaianIndex'])->name('sppat_gr.penilaian.index'); // list penilaian skt
 
     // ---------------- Ahli Waris ----------------
     Route::get('/meja/ahliwaris', [MejaLayananController::class, 'ahliWarisList'])->name('ahliwaris.list');
@@ -156,26 +158,31 @@ Route::middleware(['auth', 'role:kasi_trantib'])->prefix('kasi-trantib')->group(
 // ---------------- Kasi Pemerintahan ----------------
 Route::middleware(['auth', 'role:kasi_pemerintahan'])->prefix('kasi-pemerintahan')->group(function () {
     Route::get('/dashboard', [KasiPemerintahanController::class, 'index'])->name('kasi_pemerintahan.dashboard');
+
     // Silang Sengketa - Kasi Pemerintahan
     Route::get('/silang-sengketa', [KasiPemerintahanController::class, 'silangSengketaIndex'])->name('kasi_pemerintahan.silang_sengketa.index');
     Route::get('/silang-sengketa/proses', [KasiPemerintahanController::class, 'silangSengketaProses'])->name('kasi_pemerintahan.silang_sengketa.proses');
     Route::post('/silang-sengketa/{id}/approve', [KasiPemerintahanController::class, 'silangSengketaApprove'])->name('kasi_pemerintahan.silang_sengketa.approve');
     Route::post('/silang-sengketa/{id}/reject', [KasiPemerintahanController::class, 'silangSengketaReject'])->name('kasi_pemerintahan.silang_sengketa.reject');
+
     // Agunan ke Bank - Kasi Pemerintahan
     Route::get('/agunan-bank', [KasiPemerintahanController::class, 'agunanBankIndex'])->name('kasi_pemerintahan.agunan_bank.index');
     Route::get('/agunan-bank/proses', [KasiPemerintahanController::class, 'agunanBankProses'])->name('kasi_pemerintahan.agunan_bank.proses');
     Route::post('/agunan-bank/{id}/approve', [KasiPemerintahanController::class, 'agunanBankApprove'])->name('kasi_pemerintahan.agunan_bank.approve');
     Route::post('/agunan-bank/{id}/reject', [KasiPemerintahanController::class, 'agunanBankReject'])->name('kasi_pemerintahan.agunan_bank.reject');
+
     // Surat Pernyataan Ahli Waris - Kasi Pemerintahan
     Route::get('/ahli-waris', [KasiPemerintahanController::class, 'ahliWarisIndex'])->name('kasi_pemerintahan.ahli_waris.index');
     Route::get('/ahli-waris/proses', [KasiPemerintahanController::class, 'ahliWarisProses'])->name('kasi_pemerintahan.ahli_waris.proses');
     Route::post('/ahli-waris/{id}/approve', [KasiPemerintahanController::class, 'ahliWarisApprove'])->name('kasi_pemerintahan.ahli_waris.approve');
     Route::post('/ahli-waris/{id}/reject', [KasiPemerintahanController::class, 'ahliWarisReject'])->name('kasi_pemerintahan.ahli_waris.reject');
+
     // Surat Penyerahan Penguasaan Tanah Ganti Rugi (SPPAT-GR) - Kasi Pemerintahan
     Route::get('/sppat-gr', [KasiPemerintahanController::class, 'sppatGrIndex'])->name('kasi_pemerintahan.sppat_gr.index');
     Route::get('/sppat-gr/proses', [KasiPemerintahanController::class, 'sppatGrProses'])->name('kasi_pemerintahan.sppat_gr.proses');
     Route::post('/sppat-gr/{id}/approve', [KasiPemerintahanController::class, 'sppatGrApprove'])->name('kasi_pemerintahan.sppat_gr.approve');
     Route::post('/sppat-gr/{id}/reject', [KasiPemerintahanController::class, 'sppatGrReject'])->name('kasi_pemerintahan.sppat_gr.reject');
+
     // Surat Keterangan Tanah (SKT) - Kasi Pemerintahan
     Route::get('/skt', [KasiPemerintahanController::class, 'sktIndex'])->name('kasi_pemerintahan.skt.index');
     Route::get('/skt/proses', [KasiPemerintahanController::class, 'sktProses'])->name('kasi_pemerintahan.skt.proses');
@@ -207,6 +214,12 @@ Route::middleware(['auth', 'role:sekcam'])->prefix('sekcam')->group(function () 
     Route::post('/skt/{id}/reject', [SekcamController::class, 'sktReject'])->name('sekcam.skt.reject');
     Route::get('/skt/proses', [SekcamController::class, 'sktProses'])->name('sekcam.skt.proses');
 
+    // =====  SPPAT-GR =====
+    Route::get('/sppatgr', [SekcamController::class, 'sppatgrIndex'])->name('sekcam.sppatgr.index');
+    Route::post('/sppatgr/{id}/approve', [SekcamController::class, 'sppatgrApprove'])->name('sekcam.sppatgr.approve');
+    Route::post('/sppatgr/{id}/reject', [SekcamController::class, 'sppatgrReject'])->name('sekcam.sppatgr.reject');
+    Route::get('/sppatgr/proses', [SekcamController::class, 'sppatgrProses'])->name('sekcam.sppatgr.proses');
+
     // ===== Layanan Registrasi Ahli Waris  =====
     Route::get('/ahliwaris', [SekcamController::class, 'ahliwarisIndex'])->name('sekcam.ahliwaris.index');
     Route::post('/ahliwaris/{id}/approve', [SekcamController::class, 'ahliwarisdApprove'])->name('sekcam.ahliwaris.approve');
@@ -237,37 +250,6 @@ Route::middleware(['auth', 'role:sekcam'])->prefix('sekcam')->group(function () 
     Route::post('/skbd/{id}/reject', [SekcamController::class, 'skbdReject'])->name('sekcam.skbd.reject');
     Route::get('/skbd/proses', [SekcamController::class, 'skbdProses'])->name('sekcam.skbd.proses');
 
-    // ===== Layanan dari Kasi Pemerintahan =====
-    // Route::get('/silang-sengketa', [KasiPemerintahanController::class, 'silangSengketaIndex'])->name('kasi_pemerintahan.silang_sengketa.index');
-    // Route::get('/silang-sengketa/proses', [KasiPemerintahanController::class, 'silangSengketaProses'])->name('kasi_pemerintahan.silang_sengketa.proses');
-    // Route::post('/silang-sengketa/{id}/approve', [KasiPemerintahanController::class, 'silangSengketaApprove'])->name('kasi_pemerintahan.silang_sengketa.approve');
-    // Route::post('/silang-sengketa/{id}/reject', [KasiPemerintahanController::class, 'silangSengketaReject'])->name('kasi_pemerintahan.silang_sengketa.reject');
-
-    // Route::get('/agunan-bank', [KasiPemerintahanController::class, 'agunanBankIndex'])->name('kasi_pemerintahan.agunan_bank.index');
-    // Route::get('/agunan-bank/proses', [KasiPemerintahanController::class, 'agunanBankProses'])->name('kasi_pemerintahan.agunan_bank.proses');
-    // Route::post('/agunan-bank/{id}/approve', [KasiPemerintahanController::class, 'agunanBankApprove'])->name('kasi_pemerintahan.agunan_bank.approve');
-    // Route::post('/agunan-bank/{id}/reject', [KasiPemerintahanController::class, 'agunanBankReject'])->name('kasi_pemerintahan.agunan_bank.reject');
-
-    // Route::get('/ahli-waris', [KasiPemerintahanController::class, 'ahliWarisIndex'])->name('kasi_pemerintahan.ahli_waris.index');
-    // Route::get('/ahli-waris/proses', [KasiPemerintahanController::class, 'ahliWarisProses'])->name('kasi_pemerintahan.ahli_waris.proses');
-    // Route::post('/ahli-waris/{id}/approve', [KasiPemerintahanController::class, 'ahliWarisApprove'])->name('kasi_pemerintahan.ahli_waris.approve');
-    // Route::post('/ahli-waris/{id}/reject', [KasiPemerintahanController::class, 'ahliWarisReject'])->name('kasi_pemerintahan.ahli_waris.reject');
-
-    // Route::get('/sppat-gr', [KasiPemerintahanController::class, 'sppatGrIndex'])->name('kasi_pemerintahan.sppat_gr.index');
-    // Route::get('/sppat-gr/proses', [KasiPemerintahanController::class, 'sppatGrProses'])->name('kasi_pemerintahan.sppat_gr.proses');
-    // Route::post('/sppat-gr/{id}/approve', [KasiPemerintahanController::class, 'sppatGrApprove'])->name('kasi_pemerintahan.sppat_gr.approve');
-    // Route::post('/sppat-gr/{id}/reject', [KasiPemerintahanController::class, 'sppatGrReject'])->name('kasi_pemerintahan.sppat_gr.reject');
-
-    // Route::get('/skt', [KasiPemerintahanController::class, 'sktIndex'])->name('kasi_pemerintahan.skt.index');
-    // Route::get('/skt/proses', [KasiPemerintahanController::class, 'sktProses'])->name('kasi_pemerintahan.skt.proses');
-    // Route::post('/skt/{id}/approve', [KasiPemerintahanController::class, 'sktApprove'])->name('kasi_pemerintahan.skt.approve');
-    // Route::post('/skt/{id}/reject', [KasiPemerintahanController::class, 'sktReject'])->name('kasi_pemerintahan.skt.reject');
-
-    // ===== Layanan dari Kasi Trantib =====
-    // Route::get('/catin-tni', [KasiTrantibController::class, 'catinTniIndex'])->name('kasi_trantib.catin_tni.index');
-    // Route::get('/catin-tni/proses', [KasiTrantibController::class, 'catinTniProses'])->name('kasi_trantib.catin_tni.proses');
-    // Route::post('/catin-tni/{id}/approve', [KasiTrantibController::class, 'catinTniApprove'])->name('kasi_trantib.catin_tni.approve');
-    // Route::post('/catin-tni/{id}/reject', [KasiTrantibController::class, 'catinTniReject'])->name('kasi_trantib.catin_tni.reject');
 });
 
 
@@ -292,6 +274,12 @@ Route::middleware(['auth', 'role:camat'])->prefix('camat')->group(function () {
     Route::post('/skt/{id}/approve', [CamatController::class, 'sktApprove'])->name('camat.skt.approve');
     Route::post('/skt/{id}/reject', [CamatController::class, 'sktReject'])->name('camat.skt.reject');
     Route::get('/skt/proses', [CamatController::class, 'sktProses'])->name('camat.skt.proses');
+
+     // =====  SPPAT-GR =====
+    Route::get('/sppatgr', [CamatController::class, 'sppatgrIndex'])->name('camat.sppatgr.index');
+    Route::post('/sppatgr/{id}/approve', [CamatController::class, 'sppatgrApprove'])->name('camat.sppatgr.approve');
+    Route::post('/sppatgr/{id}/reject', [CamatController::class, 'sppatgrReject'])->name('camat.sppatgr.reject');
+    Route::get('/sppatgr/proses', [CamatController::class, 'sppatgrProses'])->name('camat.sppatgr.proses');
 
     // ===== Layanan Ahli Waris =====
     Route::get('/ahliwaris', [CamatController::class, 'ahliwarisIndex'])->name('camat.ahliwaris.index');

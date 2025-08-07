@@ -15,6 +15,7 @@
                 </span>
             </div>
         @endif
+
         @if (session('success'))
             <div class="mb-6 p-4 rounded-lg bg-green-100 text-green-800 dark:bg-green-600/20 dark:text-green-300 shadow-sm border border-green-200">
                 ✅ {{ session('success') }}
@@ -95,12 +96,12 @@
                             </td>
                             <td class="px-4 py-3 border text-sm space-y-1 text-blue-600 dark:text-blue-300">
                                 @foreach ([
-                                    'file_permohonan' => 'Permohonan',
-                                    'file_pernyataan_ahli_waris' => 'Pernyataan Ahli Waris',
-                                    'file_akta_kematian' => 'Akta Kematian',
-                                    'file_ktp_ahli_waris' => 'KTP Ahli Waris',
-                                    'file_kk_ahli_waris' => 'KK Ahli Waris',
-                                    'file_pbb' => 'PBB'
+                                    'file_permohonan' => '📄 Permohonan',
+                                    'file_formulir' => '📄 Formulir',
+                                    'file_alas_hak_tanah' => '📄 Alas Hak Tanah',
+                                    'file_ktp' => '📄 KTP',
+                                    'file_kk' => '📄 KK',
+                                    'file_pbb' => '📄 PBB'
                                 ] as $field => $label)
                                     @if ($item->$field)
                                         <div>

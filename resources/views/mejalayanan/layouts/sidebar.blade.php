@@ -163,35 +163,54 @@
             </div>
 
             {{-- SPPAT-GR --}}
-            <button @click="openSppatgr = !openSppatgr"
-                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
-                :class="openSppatgr ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
-                <span class="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 10h18M3 6h18M3 14h18M3 18h18" />
-                    </svg>
-                    SPPAT-GR
-                </span>
-                <svg :class="{ 'rotate-180': openSppatgr }" class="w-4 h-4 transform transition-transform" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-            </button>
+<button @click="openSppatgr = !openSppatgr"
+    class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+    :class="openSppatgr 
+        ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' 
+        : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
+    <span class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 10h18M3 6h18M3 14h18M3 18h18" />
+        </svg>
+        SPPAT-GR
+    </span>
+    <svg :class="{ 'rotate-180': openSppatgr }" class="w-4 h-4 transform transition-transform" fill="none"
+        viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+    </svg>
+</button>
 
-            <div x-show="openSppatgr" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                <a href="{{ route('sppat_gr.create') }}"
-                    class="block px-3 py-1 rounded transition-all
-                    {{ request()->routeIs('sppat_gr.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
-                    ➕ Registrasi SPPAT-GR
-                </a>
-                <a href="{{ route('sppat_gr.list') }}"
-                    class="block px-3 py-1 rounded transition-all
-                    {{ request()->routeIs('sppat_gr.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
-                    📄 List SPPAT-GR
-                </a>
-            </div>
+<div x-show="openSppatgr" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+    {{-- Registrasi --}}
+    <a href="{{ route('sppat_gr.create') }}"
+        class="block px-3 py-1 rounded transition-all
+        {{ request()->routeIs('sppat_gr.create') 
+            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
+            : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+        ➕ Registrasi SPPAT-GR
+    </a>
+
+    {{-- List --}}
+    <a href="{{ route('sppat_gr.list') }}"
+        class="block px-3 py-1 rounded transition-all
+        {{ request()->routeIs('sppat_gr.list') 
+            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
+            : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+        📄 List SPPAT-GR
+    </a>
+
+    {{-- Penilaian --}}
+    <a href="{{ route('sppat_gr.penilaian.index') }}"
+        class="block px-3 py-1 rounded transition-all
+        {{ request()->routeIs('sppat_gr.penilaian.index') 
+            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
+            : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+        📝 Penilaian SPPAT-GR
+    </a>
+</div>
+
 
             {{-- Ahli Waris --}}
             <button @click="openAhliwaris = !openAhliwaris"

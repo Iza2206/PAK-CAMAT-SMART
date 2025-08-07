@@ -2,10 +2,10 @@
 
 @section('content')
 <div class="flex flex-col md:flex-row min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-    @include('kasi_pemerintahan.layouts.sidebar')
+    @include('camat.layouts.sidebar')
 
     <main class="flex-1 p-6">
-        <h1 class="text-3xl font-bold mb-6 text-blue-700 dark:text-blue-300">📄 Surat Penyerahan Penguasaan Tanah (SPPAT-GR)</h1>
+        <h1 class="text-3xl font-bold mb-6 text-blue-700 dark:text-blue-300">📥 Verifikasi Surat Penyerahan Penguasaan Tanah (SPPAT-GR)</h1>
 
         @if ($pengajuan->isEmpty())
             <div class="text-center text-gray-500 dark:text-gray-400 mt-10">
@@ -19,8 +19,9 @@
                         <p class="mb-1"><strong>🆔 NIK:</strong> {{ $item->nik_pemohon }}</p>
                         <p class="mb-1"><strong>👫 Jenis Kelamin:</strong> {{ $item->jenis_kelamin }}</p>
                         <p class="mb-2"><strong>🎓 Pendidikan:</strong> {{ $item->pendidikan }}</p>
+                        <p class="mb-2"><strong>🔢 Nomor Antrian:</strong> {{ $item->queue_number }}</p>
 
-                        <p class="font-semibold mb-2 mt-2">📎 Dokumen:</p>
+                        <p class="font-semibold mb-2">📎 Dokumen:</p>
                         <ul class="list-disc list-inside text-sm space-y-1 text-blue-600 dark:text-blue-300">
                             @foreach ([
                                     'file_permohonan' => '📄 Permohonan',
@@ -37,8 +38,7 @@
                         </ul>
 
                         <div class="mt-4 flex gap-3">
-                            {{-- Approve --}}
-                            <form method="POST" action="{{ route('kasi_pemerintahan.sppat_gr.approve', $item->id) }}">
+                            <form method="POST" action="{{ route('camat.sppatgr.approve', $item->id) }}">
                                 @csrf
                                 <button type="submit"
                                     class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm shadow">
@@ -46,7 +46,6 @@
                                 </button>
                             </form>
 
-                            {{-- Tolak --}}
                             <button @click="document.getElementById('rejectModal-{{ $item->id }}').showModal()"
                                 class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm shadow">
                                 ❌ Tolak
@@ -55,7 +54,7 @@
 
                         {{-- Modal Tolak --}}
                         <dialog id="rejectModal-{{ $item->id }}" class="rounded-xl backdrop:bg-black/30 p-6 w-full max-w-md">
-                            <form method="POST" action="{{ route('kasi_pemerintahan.sppat_gr.reject', $item->id) }}">
+                            <form method="POST" action="{{ route('camat.sppatgr.reject', $item->id) }}">
                                 @csrf
                                 <p class="font-semibold mb-2">Alasan Penolakan:</p>
                                 <textarea name="reason" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600"></textarea>
