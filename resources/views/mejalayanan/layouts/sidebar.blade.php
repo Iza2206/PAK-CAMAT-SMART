@@ -39,7 +39,8 @@
                         openAgunan: '{{ request()->routeIs('agunan.*') ? 'true' : 'false' }}' === 'true',
                         openAhliwaris: '{{ request()->routeIs('ahliwaris.*') ? 'true' : 'false' }}' === 'true',
                         openSppatgr: '{{ request()->routeIs('sppat_gr.*') ? 'true' : 'false' }}' === 'true',
-                        openSkt: '{{ request()->routeIs('skt.*') ? 'true' : 'false' }}' === 'true'
+                        openSkt: '{{ request()->routeIs('skt.*') ? 'true' : 'false' }}' === 'true',
+                        openIumk: '{{ request()->routeIs('iumk.*') ? 'true' : 'false' }}' === 'true'
                     }"
         >
             {{-- Dashboard --}}
@@ -117,10 +118,35 @@
             </div>
 
             {{-- IUMK --}}
-            <a href="{{ route('layanan.iumk') }}"
-                class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300">
-                🏪 Izin Usaha Mikro (IUMK)
-            </a>
+            <button @click="openIumk = !openIumk"
+                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                :class="openIumk ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300' : 'hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900/20 dark:hover:text-green-300'">
+                <span class="flex items-center gap-2">
+                    🏪 Izin Usaha Mikro 
+                </span>
+                <svg :class="{ 'rotate-180': openIumk }" class="w-4 h-4 transform transition-transform" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <div x-show="openIumk" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                <a href="{{ route('iumk.create') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('iumk.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    ➕ Tambah Persyaratan
+                <a href="{{ route('iumk.list') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('iumk.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📄 List Data 
+                </a>
+                <a href="{{ route('iumk.penilaian.index') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('iumk.penilaian.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📝 Penilaian
+                </a>
+            </div>
 
             {{-- sktm Dispensasi Nikah --}}
                 <button @click="openSktm = !openSktm"

@@ -18,7 +18,7 @@
             </div>
         @endif
         <h1 class="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-6">
-            📥 Verifikasi Pengajuan Dispensasi Nikah
+            📥 Verifikasi Pengajuan Izin Usaha Mikro
         </h1>
 
         @if ($pengajuan->isEmpty())
@@ -39,29 +39,23 @@
 
                         <p class="font-semibold mb-2">📎 Dokumen:</p>
                         <ul class="list-disc list-inside text-sm text-blue-600 dark:text-blue-300 space-y-1">
-                            @if ($item->file_na_pria)
-                                <li><a href="{{ asset('storage/' . $item->file_na_pria) }}" target="_blank">📄 NA Pria</a></li>
+                            @if ($item->surat_keterangan_usaha)
+                                <li><a href="{{ asset('storage/' . $item->surat_keterangan_usaha) }}" target="_blank">📄 Surat Keterangan Usaha dari Desa</a></li>
                             @endif
-                            @if ($item->file_na_wanita)
-                                <li><a href="{{ asset('storage/' . $item->file_na_wanita) }}" target="_blank">📄 NA Wanita</a></li>
+                            @if ($item->foto_tempat_usaha)
+                                <li><a href="{{ asset('storage/' . $item->foto_tempat_usaha) }}" target="_blank">📄 Foto/Gambar Tempat Usaha</a></li>
                             @endif
-                            @if ($item->file_kk_pria)
-                                <li><a href="{{ asset('storage/' . $item->file_kk_pria) }}" target="_blank">📄 Kartu Keluarga Pria</a></li>
+                            @if ($item->file_kk)
+                                <li><a href="{{ asset('storage/' . $item->file_kk) }}" target="_blank">📄 Fotokopi Kartu Keluarga</a></li>
                             @endif
-                            @if ($item->file_kk_wanita)
-                                <li><a href="{{ asset('storage/' . $item->file_kk_wanita) }}" target="_blank">📄 Kartu Keluarga Wanita</a></li>
+                            @if ($item->file_ktp)
+                                <li><a href="{{ asset('storage/' . $item->file_ktp) }}" target="_blank">📄 Fotokopi KTP</a></li>
                             @endif
-                            @if ($item->file_ktp_pria)
-                                <li><a href="{{ asset('storage/' . $item->file_ktp_pria) }}" target="_blank">📄 KTP Pria</a></li>
+                            @if ($item->pasphoto_3x4_1)
+                                <li><a href="{{ asset('storage/' . $item->pasphoto_3x4_1) }}" target="_blank">📄 Pasphoto 3x4 Warna (1)</a></li>
                             @endif
-                            @if ($item->file_ktp_wanita)
-                                <li><a href="{{ asset('storage/' . $item->file_ktp_wanita) }}" target="_blank">📄 KTP Wanita</a></li>
-                            @endif
-                            @if ($item->file_akte_cerai_pria)
-                                <li><a href="{{ asset('storage/' . $item->file_akte_cerai_pria) }}" target="_blank">📄 Akta Cerai Pria</a></li>
-                            @endif
-                            @if ($item->file_akte_cerai_wanita)
-                                <li><a href="{{ asset('storage/' . $item->file_akte_cerai_wanita) }}" target="_blank">📄 Akta Cerai Wanita</a></li>
+                            @if ($item->pasphoto_3x4_2)
+                                <li><a href="{{ asset('storage/' . $item->pasphoto_3x4_2) }}" target="_blank">📄 Pasphoto 3x4 Warna (2)</a></li>
                             @endif
                             @if ($item->file_pbb)
                                 <li><a href="{{ asset('storage/' . $item->file_pbb) }}" target="_blank">📄 Tanda Lunas PBB</a></li>
@@ -69,7 +63,7 @@
                         </ul>
 
                         <div class="mt-4 flex gap-2">
-                            <form method="GET" action="{{ route('kasi_kesos.dispencatin.prosesTTD', $item->id) }}">
+                            <form method="GET" action="{{ route('kasi_kesos.iumk.prosesTTD', $item->id) }}">
                                 <button 
                                     type="submit"
                                     class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm shadow disabled:opacity-50 disabled:cursor-not-allowed"
@@ -90,7 +84,7 @@
 
                         {{-- Modal Penolakan --}}
                         <dialog id="rejectModal-{{ $item->id }}" class="rounded-xl backdrop:bg-black/30 p-6 w-full max-w-md">
-                            <form method="POST" action="{{ route('kasi_kesos.dispencatin.reject', $item->id) }}">
+                            <form method="POST" action="{{ route('kasi_kesos.iumk.reject', $item->id) }}">
                                 @csrf
                                 <p class="font-semibold mb-2">Alasan Penolakan:</p>
                                 <textarea name="reason" required class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600"></textarea>

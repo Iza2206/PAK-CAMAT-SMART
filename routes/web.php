@@ -139,7 +139,12 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::get('/layanan/dispensasi', [MejaLayananController::class, 'dispensasi'])->name('layanan.dispensasi');
 
     // === IUMK ===
-    Route::get('/layanan/iumk', [MejaLayananController::class, 'iumk'])->name('layanan.iumk');
+    Route::get('/layanan/iumk', [MejaLayananController::class, 'iumkList'])->name('iumk.list'); // List Data
+    Route::get('/layanan/iumk/create', [MejaLayananController::class, 'iumkCreate'])->name('iumk.create'); // Tambah
+    Route::post('/layanan/iumk/store', [MejaLayananController::class, 'iumkStore'])->name('iumk.store');  // Simpan
+    Route::patch('/layanan/iumk/{id}/kirim-kasi', [MejaLayananController::class, 'kirimKeKasidispen'])->name('iumk.kirimkasi');
+    Route::post('/iumk/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianiumk'])->name('iumk.penilaian');
+    Route::get('/iumk/penilaian', [MejaLayananController::class, 'iumkpenilaianIndex'])->name('iumk.penilaian.index');
 
     // === Export ===
     Route::get('/layanan/export', [MejaLayananController::class, 'export'])->name('mejalayanan.export');
@@ -168,7 +173,7 @@ Route::middleware(['auth', 'role:kasi_kesos'])->prefix('kasi-kesos')->group(func
     ->name('kasi_kesos.dispencatin.prosesTTD');
 
 Route::post('/kasi-kesos/dispencatin/{id}/proses', [KasiKesosController::class, 'prosesStore'])
-    ->name('kasi_kesos.dispencatin.proses.storeTTD');
+    ->name('kasi_kesos.dispencatin.proses.storeFinal');
 
 
     // Layanan SKTM
@@ -176,6 +181,19 @@ Route::post('/kasi-kesos/dispencatin/{id}/proses', [KasiKesosController::class, 
     Route::post('/sktm/{id}/approve', [KasiKesosController::class, 'sktmApprove'])->name('kasi_kesos.sktm.approve');
     Route::post('/sktm/{id}/reject', [KasiKesosController::class, 'sktmReject'])->name('kasi_kesos.sktm.reject');
     Route::get('/sktm/proses', [KasiKesosController::class, 'sktmProses'])->name('kasi_kesos.sktm.proses');
+
+        // Layanan IUMK
+    Route::get('/iumk', [KasiKesosController::class, 'iumkIndex'])->name('kasi_kesos.iumk.index');
+    Route::post('/iumk/{id}/approve', [KasiKesosController::class, 'iumkApprove'])->name('kasi_kesos.iumk.approve');
+    Route::post('/iumk/{id}/reject', [KasiKesosController::class, 'iumkReject'])->name('kasi_kesos.iumk.reject');
+    Route::get('/iumk/proses', [KasiKesosController::class, 'iumkProses'])->name('kasi_kesos.iumk.proses');
+    Route::post('/iumk-nikah/{id}/upload-surat', [KasiKesosController::class, 'uploadSuratIumk'])
+    ->name('iumk.uploadSurat');
+     Route::get('/iumk/approveByCamat', [KasiKesosController::class, 'iumkApproveByCamatIndex'])->name('kasi_kesos.iumk.approveByCamat');
+     Route::get('/kasi-kesos/iumk/approve/{id}/proses', [KasiKesosController::class, 'prosesiumk'])
+    ->name('kasi_kesos.iumk.prosesTTD');
+    Route::post('/kasi-kesos/iumk/{id}/proses', [KasiKesosController::class, 'prosesStoreIumk'])
+    ->name('kasi_kesos.iumk.proses.storeFinal');
 
 });
 
@@ -295,6 +313,12 @@ Route::middleware(['auth', 'role:sekcam'])->prefix('sekcam')->group(function () 
     Route::post('/dispencatin/{id}/reject', [SekcamController::class, 'dispencatinReject'])->name('sekcam.dispencatin.reject');
     Route::get('/dispencatin/proses', [SekcamController::class, 'dispencatinProses'])->name('sekcam.dispencatin.proses');
 
+    // Layanan dispensasi nikah
+    Route::get('/iumk', [SekcamController::class, 'iumkIndex'])->name('sekcam.iumk.index');
+    Route::post('/iumk/{id}/approve', [SekcamController::class, 'iumkApprove'])->name('sekcam.iumk.approve');
+    Route::post('/iumk/{id}/reject', [SekcamController::class, 'iumkReject'])->name('sekcam.iumk.reject');
+    Route::get('/iumk/proses', [SekcamController::class, 'iumkProses'])->name('sekcam.iumk.proses');
+
 });
 
 
@@ -361,6 +385,12 @@ Route::middleware(['auth', 'role:camat'])->prefix('camat')->group(function () {
     Route::post('/dispencatin/{id}/approve', [CamatController::class, 'dispencatinApprove'])->name('camat.dispencatin.approve');
     Route::post('/dispencatin/{id}/reject', [CamatController::class, 'dispencatinReject'])->name('camat.dispencatin.reject');
     Route::get('/dispencatin/proses', [CamatController::class, 'dispencatinProses'])->name('camat.dispencatin.proses');
+
+    // Layanan Izin Usaha Mikro
+    Route::get('/iumk', [CamatController::class, 'iumkIndex'])->name('camat.iumk.index');
+    Route::post('/iumk/{id}/approve', [CamatController::class, 'iumkApprove'])->name('camat.iumk.approve');
+    Route::post('/iumk/{id}/reject', [CamatController::class, 'iumkReject'])->name('camat.iumk.reject');
+    Route::get('/iumk/proses', [CamatController::class, 'iumkProses'])->name('camat.iumk.proses');
 });
 
 // ---------------- Kasubbag Umpeg ----------------

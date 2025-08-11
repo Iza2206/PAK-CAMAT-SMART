@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\BpjsSubmission;
 use App\Models\CatinSubmission;
+use App\Models\IumkSubmission;
 use App\Models\SktmDispensasiSubmission;
 
 class KasiKesosController extends Controller
@@ -164,14 +165,16 @@ class KasiKesosController extends Controller
 
     public function dispencatinApproveByCamatIndex()
     {
-        $pengajuan = CatinSubmission::where('status', 'approved_by_camat')->get();
+        $pengajuan = CatinSubmission::with('camat')
+            ->where('status', 'approved_by_camat')
+            ->get();
 
         return view('kasi_kesos.dispencatin.approveByCamat', compact('pengajuan'));
     }
 
     public function proses($id)
     {
-        $item = CatinSubmission::findOrFail($id);
+        $item = CatinSubmission::with('camat')->findOrFail($id);
 
         // Pastikan pengajuan sudah disetujui Camat
         if ($item->status !== 'approved_by_camat') {
@@ -185,19 +188,24 @@ class KasiKesosController extends Controller
     {
         $item = CatinSubmission::findOrFail($id);
 
-        // Validasi input (misal tanda tangan digital)
+        // Validasi input file surat_final
         $request->validate([
-            'ttd' => 'required', // bisa file atau data base64 tanda tangan
+            'surat_final' => 'required|file|mimes:pdf,doc,docx|max:5120', // max 5MB
         ]);
 
-        // Simpan tanda tangan
-        $item->file_surat = $request->ttd; // kalau base64 / nama file
-        $item->status = 'approved_by_kasi_kesos';
-        $item->approved_kasi_kesos_at = now();
+        // Simpan file ke storage (misal folder 'surat_final')
+        if ($request->hasFile('surat_final')) {
+            $file = $request->file('surat_final');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('surat_final', $filename, 'public'); // simpan di storage/app/public/surat_final
+            $item->surat_final = $path; // simpan path relatif
+        }
+
         $item->save();
 
-        return redirect()->route('kasi_kesos.dashboard')->with('success', 'Surat berhasil ditandatangani dan pengajuan diproses.');
+        return redirect()->route('kasi_kesos.dispencatin.approveByCamat')->with('success', 'Surat final berhasil diunggah.');
     }
+
 
     // ---------------- SKTM ----------------
     public function sktmIndex()
@@ -249,5 +257,130 @@ class KasiKesosController extends Controller
             'pengajuanDisetujui',
             'pengajuanDitolak'
         ));
+    }
+
+       // ---------------- DISPENSASI IUMK ----------------
+
+    public function iumkIndex()
+    {
+        $pengajuan = IumkSubmission::where('status', 'diajukan')->get();
+
+        return view('kasi_kesos.iumk.index', compact('pengajuan'));
+    }
+
+    public function iumkApprove($id)
+    {
+        $item = IumkSubmission::findOrFail($id);
+        $item->status = 'checked_by_kasi';
+        $item->verified_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan berhasil diverifikasi oleh Kasi Kesos.');
+    }
+
+    public function iumkReject(Request $request, $id)
+    {
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
+
+        $item = IumkSubmission::findOrFail($id);
+        $item->status = 'rejected_by_kasi';
+        $item->rejected_reason = $request->reason;
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan berhasil ditolak oleh Kasi Kesos.');
+    }
+
+    public function iumkProses()
+    {
+        $jumlahPengajuan      = IumkSubmission::count();
+        $pengajuanDiajukan    = IumkSubmission::where('status', 'diajukan')->count();
+        $pengajuanDisetujui   = IumkSubmission::where('status', 'checked_by_kasi')->count();
+        $pengajuanDitolak     = IumkSubmission::where('status', 'rejected_by_kasi')->count();
+
+        $pengajuan = IumkSubmission::whereIn('status', ['checked_by_kasi', 'rejected_by_kasi'])
+            ->latest()
+            ->paginate(10);
+
+        return view('kasi_kesos.iumk.proses', compact(
+            'pengajuan',
+            'jumlahPengajuan',
+            'pengajuanDiajukan',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+    public function uploadSuratIumk(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'file_surat' => 'required|max:2048',
+            ]);
+
+            $pengajuan = IumkSubmission::findOrFail($id);
+
+            // Simpan file
+            $path = $request->file('file_surat')->store('Iumk/surat', 'public');
+
+            // Update ke database
+            $pengajuan->file_surat = $path;
+            $pengajuan->save();
+
+            return back()->with('success', 'Surat berhasil diupload.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Menangani error validasi
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Menangani jika data tidak ditemukan
+            return back()->with('error', 'Pengajuan tidak ditemukan.');
+        } catch (\Exception $e) {
+            // Menangani error umum lainnya
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    public function iumkApproveByCamatIndex()
+    {
+        $pengajuan = IumkSubmission::with('camat')
+            ->where('status', 'approved_by_camat')
+            ->get();
+
+        return view('kasi_kesos.iumk.approveByCamat', compact('pengajuan'));
+    }
+
+    public function prosesiumk($id)
+    {
+        $item = IumkSubmission::with('camat')->findOrFail($id);
+
+        // Pastikan pengajuan sudah disetujui Camat
+        if ($item->status !== 'approved_by_camat') {
+            return redirect()->back()->with('error', 'Pengajuan belum disetujui oleh Camat.');
+        }
+
+        return view('kasi_kesos.iumk.formapprovebyCamat', compact('item'));
+    }
+
+    public function prosesStoreIumk(Request $request, $id)
+    {
+        $item = IumkSubmission::findOrFail($id);
+
+        // Validasi input file surat_final
+        $request->validate([
+            'surat_final' => 'required|file|mimes:pdf,doc,docx|max:5120', // max 5MB
+        ]);
+
+        // Simpan file ke storage (misal folder 'surat_final')
+        if ($request->hasFile('surat_final')) {
+            $file = $request->file('surat_final');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('surat_final', $filename, 'public'); // simpan di storage/app/public/surat_final
+            $item->surat_final = $path; // simpan path relatif
+        }
+
+        $item->save();
+
+        return redirect()->route('kasi_kesos.iumk.approveByCamat')->with('success', 'Surat final berhasil diunggah.');
     }
 }

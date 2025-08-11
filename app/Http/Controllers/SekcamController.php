@@ -11,6 +11,7 @@ use App\Models\SktmDispensasiSubmission;
 use App\Models\SktSubmission;
 use App\Models\SkbdSubmission;
 use App\Models\CatinTniPolriSubmission;
+use App\Models\IumkSubmission;
 use App\Models\SengketaSubmission;
 use App\Models\SppatGrSubmission;
 
@@ -552,6 +553,57 @@ class SekcamController extends Controller
                         ->paginate(10);
 
         return view('sekcam.dispencatin.proses', compact(
+            'pengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+        // ---------------- Izin Usaha Mikro ----------------
+    public function iumkIndex()
+    {
+        $pengajuan = IumkSubmission::where('status', 'checked_by_kasi')->latest()->get();
+        return view('sekcam.iumk.index', compact('pengajuan'));
+    }
+
+
+    public function iumkApprove($id)
+    {
+        $item = IumkSubmission::findOrFail($id);
+        $item->status = 'approved_by_sekcam';
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan iumk berhasil disetujui oleh Sekcam.');
+    }
+
+
+    public function iumkReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = IumkSubmission::findOrFail($id);
+        $item->status = 'rejected_by_sekcam';
+        $item->rejected_sekcam_reason = $request->reason;
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan iumk berhasil ditolak oleh Sekcam.');
+    }
+
+    public function iumkProses()
+    {
+
+        $pengajuanDiterima  = IumkSubmission::whereIn('status', ['checked_by_kasi', 'approved_by_sekcam', 'rejected_by_sekcam'])->count();
+        $pengajuanDisetujui = IumkSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDitolak   = IumkSubmission::where('status', 'rejected_by_sekcam')->count();
+
+        $pengajuan = IumkSubmission::whereIn('status', ['approved_by_sekcam', 'rejected_by_sekcam'])
+                        ->latest()
+                        ->paginate(10);
+
+        return view('sekcam.iumk.proses', compact(
             'pengajuan',
             'pengajuanDiterima',
             'pengajuanDisetujui',

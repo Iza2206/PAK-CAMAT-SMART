@@ -40,7 +40,8 @@ class CatinSubmission extends Model
         'penilaian', 
         'diambil_at',
 
-        'file_surat'
+        'file_surat',
+        'surat_final',
     ];
 
     protected $casts = [
@@ -49,4 +50,9 @@ class CatinSubmission extends Model
         'approved_camat_at' => 'datetime',
         'diambil_at' => 'datetime',
     ];
+
+    public function camat()
+    {
+        return $this->belongsTo(User::class, 'camat_id');
+    }
 }

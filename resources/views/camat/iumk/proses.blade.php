@@ -6,7 +6,7 @@
 
     <main class="flex-1 p-6">
         <h1 class="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-6">
-            📁 Riwayat Pengajuan Dispensasi Nikah
+            📁 Riwayat Pengajuan Izin Usaha Mikro
         </h1>
 
         @if ($pengajuan->isEmpty())
@@ -93,33 +93,27 @@
                                     {{ $alasan }}
                                 </td>
                                 <td class="px-4 py-3 border text-blue-600 dark:text-blue-300 text-sm space-y-1">
-                                     @if ($item->file_na_pria)
-                                <li><a href="{{ asset('storage/' . $item->file_na_pria) }}" target="_blank">📄 NA Pria</a></li>
-                                @endif
-                                @if ($item->file_na_wanita)
-                                    <li><a href="{{ asset('storage/' . $item->file_na_wanita) }}" target="_blank">📄 NA Wanita</a></li>
-                                @endif
-                                @if ($item->file_kk_pria)
-                                    <li><a href="{{ asset('storage/' . $item->file_kk_pria) }}" target="_blank">📄 Kartu Keluarga Pria</a></li>
-                                @endif
-                                @if ($item->file_kk_wanita)
-                                    <li><a href="{{ asset('storage/' . $item->file_kk_wanita) }}" target="_blank">📄 Kartu Keluarga Wanita</a></li>
-                                @endif
-                                @if ($item->file_ktp_pria)
-                                    <li><a href="{{ asset('storage/' . $item->file_ktp_pria) }}" target="_blank">📄 KTP Pria</a></li>
-                                @endif
-                                @if ($item->file_ktp_wanita)
-                                    <li><a href="{{ asset('storage/' . $item->file_ktp_wanita) }}" target="_blank">📄 KTP Wanita</a></li>
-                                @endif
-                                @if ($item->file_akte_cerai_pria)
-                                    <li><a href="{{ asset('storage/' . $item->file_akte_cerai_pria) }}" target="_blank">📄 Akta Cerai Pria</a></li>
-                                @endif
-                                @if ($item->file_akte_cerai_wanita)
-                                    <li><a href="{{ asset('storage/' . $item->file_akte_cerai_wanita) }}" target="_blank">📄 Akta Cerai Wanita</a></li>
-                                @endif
-                                @if ($item->file_pbb)
-                                    <li><a href="{{ asset('storage/' . $item->file_pbb) }}" target="_blank">📄 Tanda Lunas PBB</a></li>
-                                @endif
+                                    @if ($item->surat_keterangan_usaha)
+                                <li><a href="{{ asset('storage/' . $item->surat_keterangan_usaha) }}" target="_blank">📄 Surat Keterangan Usaha dari Desa</a></li>
+                            @endif
+                            @if ($item->foto_tempat_usaha)
+                                <li><a href="{{ asset('storage/' . $item->foto_tempat_usaha) }}" target="_blank">📄 Foto/Gambar Tempat Usaha</a></li>
+                            @endif
+                            @if ($item->file_kk)
+                                <li><a href="{{ asset('storage/' . $item->file_kk) }}" target="_blank">📄 Fotokopi Kartu Keluarga</a></li>
+                            @endif
+                            @if ($item->file_ktp)
+                                <li><a href="{{ asset('storage/' . $item->file_ktp) }}" target="_blank">📄 Fotokopi KTP</a></li>
+                            @endif
+                            @if ($item->pasphoto_3x4_1)
+                                <li><a href="{{ asset('storage/' . $item->pasphoto_3x4_1) }}" target="_blank">📄 Pasphoto 3x4 Warna (1)</a></li>
+                            @endif
+                            @if ($item->pasphoto_3x4_2)
+                                <li><a href="{{ asset('storage/' . $item->pasphoto_3x4_2) }}" target="_blank">📄 Pasphoto 3x4 Warna (2)</a></li>
+                            @endif
+                            @if ($item->file_pbb)
+                                <li><a href="{{ asset('storage/' . $item->file_pbb) }}" target="_blank">📄 Tanda Lunas PBB</a></li>
+                            @endif
                                 </td>
                             </tr>
                         @endforeach

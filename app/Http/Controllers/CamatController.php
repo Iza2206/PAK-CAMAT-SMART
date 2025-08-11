@@ -11,8 +11,10 @@ use App\Models\SktmDispensasiSubmission;
 use App\Models\SktSubmission;
 use App\Models\SkbdSubmission;
 use App\Models\CatinTniPolriSubmission;
+use App\Models\IumkSubmission;
 use App\Models\SengketaSubmission;
 use App\Models\SppatGrSubmission;
+use Illuminate\Support\Facades\Auth;
 
 class CamatController extends Controller
 {
@@ -503,6 +505,7 @@ class CamatController extends Controller
         $item = CatinSubmission::findOrFail($id);
         $item->status = 'approved_by_camat';
         $item->approved_camat_at = now();
+        $item->camat_id = Auth::id();  // Simpan ID user login sebagai camat_id
         $item->save();
 
         return redirect()->back()->with('success', 'Pengajuan dispencatin disetujui oleh Camat.');
@@ -532,6 +535,56 @@ class CamatController extends Controller
                             ->latest()->paginate(10);
 
         return view('camat.dispencatin.proses', compact(
+            'pengajuan',
+            'jumlahPengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+    // ---------------- Izin Usaha Mikro ----------------
+    public function iumkIndex()
+    {
+        $pengajuan = IumkSubmission::where('status', 'approved_by_sekcam')->latest()->get();
+        return view('camat.iumk.index', compact('pengajuan'));
+    }
+
+    public function iumkApprove($id)
+    {
+        $item = IumkSubmission::findOrFail($id);
+        $item->status = 'approved_by_camat';
+        $item->approved_camat_at = now();
+        $item->camat_id = Auth::id();  // Simpan ID user login sebagai camat_id
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan iumk disetujui oleh Camat.');
+    }
+
+    public function iumkReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = IumkSubmission::findOrFail($id);
+        $item->status = 'rejected_by_camat';
+        $item->rejected_camat_reason = $request->reason;
+        $item->approved_camat_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan iumk ditolak oleh Camat.');
+    }
+
+    public function iumkProses()
+    {
+        $jumlahPengajuan     = IumkSubmission::count();
+        $pengajuanDiterima   = IumkSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDisetujui  = IumkSubmission::where('status', 'approved_by_camat')->count();
+        $pengajuanDitolak    = IumkSubmission::where('status', 'rejected_by_camat')->count();
+
+        $pengajuan = IumkSubmission::whereIn('status', ['approved_by_camat', 'rejected_by_camat'])
+                            ->latest()->paginate(10);
+
+        return view('camat.iumk.proses', compact(
             'pengajuan',
             'jumlahPengajuan',
             'pengajuanDiterima',

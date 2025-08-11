@@ -13,6 +13,7 @@ use App\Models\SengketaSubmission;
 use App\Models\AgunanSubmission;
 use App\Models\AhliwarisSubmission;
 use App\Models\CatinSubmission;
+use App\Models\IumkSubmission;
 use App\Models\SppatGrSubmission;
 use App\Models\SktSubmission;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -1264,7 +1265,150 @@ class MejaLayananController extends Controller
         return view('mejalayanan.dispensasi');
     }
 
-    public function iumk() {
-        return view('mejalayanan.iumk');
+    // IUMK
+     public function iumkList()
+    {
+        $data = IumkSubmission::latest()->paginate(10); // urut dari terbaru + paginate
+        return view('mejalayanan.iumk.index', compact('data'));
     }
+
+    // tambah IUMK
+    public function iumkCreate()
+    {
+        return view('mejalayanan.iumk.create');
+    }
+
+    // simpan IUMK
+    public function iumkStore(Request $request)
+    {
+        $validated = $request->validate([
+            'nama_pemohon' => 'required|string|max:255',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'pendidikan' => 'required|in:SD,SMP,SMA,D1,D2,D3,S1,S2,S3',
+            'nik_pemohon' => 'required|digits:16',
+            'alamat_usaha' => 'required|string|max:500',
+
+            'surat_keterangan_usaha' => 'required|file|mimes:pdf',
+            'foto_tempat_usaha' => 'required|file|image|mimes:jpeg,png,jpg',
+            'file_kk' => 'required|file|mimes:pdf',
+            'file_ktp' => 'required|file|mimes:pdf',
+            'pasphoto_3x4_1' => 'required|file|image|mimes:jpeg,png,jpg',
+            'pasphoto_3x4_2' => 'required|file|image|mimes:jpeg,png,jpg',
+            'file_pbb' => 'required|file|mimes:pdf',
+        ]);
+
+        $folder = 'iumk';
+
+        $paths = [
+            'surat_keterangan_usaha' => $request->file('surat_keterangan_usaha')->storeAs($folder, Str::uuid() . '.pdf', 'public'),
+            'foto_tempat_usaha' => $request->file('foto_tempat_usaha')->storeAs($folder, Str::uuid() . '.' . $request->file('foto_tempat_usaha')->extension(), 'public'),
+            'file_kk' => $request->file('file_kk')->storeAs($folder, Str::uuid() . '.pdf', 'public'),
+            'file_ktp' => $request->file('file_ktp')->storeAs($folder, Str::uuid() . '.pdf', 'public'),
+            'pasphoto_3x4_1' => $request->file('pasphoto_3x4_1')->storeAs($folder, Str::uuid() . '.' . $request->file('pasphoto_3x4_1')->extension(), 'public'),
+            'pasphoto_3x4_2' => $request->file('pasphoto_3x4_2')->storeAs($folder, Str::uuid() . '.' . $request->file('pasphoto_3x4_2')->extension(), 'public'),
+            'file_pbb' => $request->file('file_pbb')->storeAs($folder, Str::uuid() . '.pdf', 'public'),
+        ];
+
+        $submission = IumkSubmission::create([
+            'nama_pemohon' => $validated['nama_pemohon'],
+            'jenis_kelamin' => $validated['jenis_kelamin'],
+            'pendidikan' => $validated['pendidikan'],
+            'nik_pemohon' => $validated['nik_pemohon'],
+            'alamat_usaha' => $validated['alamat_usaha'],
+
+            'surat_keterangan_usaha' => $paths['surat_keterangan_usaha'],
+            'foto_tempat_usaha' => $paths['foto_tempat_usaha'],
+            'file_kk' => $paths['file_kk'],
+            'file_ktp' => $paths['file_ktp'],
+            'pasphoto_3x4_1' => $paths['pasphoto_3x4_1'],
+            'pasphoto_3x4_2' => $paths['pasphoto_3x4_2'],
+            'file_pbb' => $paths['file_pbb'],
+
+            'status' => 'diajukan',
+        ]);
+
+        return redirect()
+            ->route('dispencatin.list') // sesuaikan nama route list IUMK
+            ->with('success', 'Pengajuan Izin Usaha Mikro berhasil disimpan.');
+    }
+
+    // kirim ke kasi kesos (DISPENSASI)
+    public function kirimKeKasiIumk($id)
+    {
+        $data = IumkSubmission::findOrFail($id);
+
+        if ($data->status !== 'diajukan') {
+            return back()->with('error', 'Data sudah diproses.');
+        }
+
+        $data->update([
+            'status' => 'diproses',
+            'verified_at' => now(),
+        ]);
+
+        return back()->with('success', 'Pengajuan berhasil dikirim ke Kasi Kesos.');
+    }
+
+    // Verifikasi oleh Kasi (Iumk)
+    public function IumkverifikasiKasi($id) {
+        $data = IumkSubmission::findOrFail($id);
+        if ($data->status === 'diajukan') {
+            $data->update(['status' => 'verifikasi_kasi', 'verified_at' => now()]);
+        }
+        return back();
+    }
+
+    // Persetujuan Sekcam (Iumk)
+    public function IumkapproveSekcam($id) {
+        $data = IumkSubmission::findOrFail($id);
+        if ($data->status === 'verifikasi_kasi') {
+            $data->update(['status' => 'disetujui_sekcam', 'approved_sekcam_at' => now()]);
+        }
+        return back();
+    }
+
+    // Persetujuan Camat (Iumk)
+    public function IumkapproveCamat($id) {
+        $data = IumkSubmission::findOrFail($id);
+        if ($data->status === 'disetujui_sekcam') {
+            $data->update(['status' => 'disetujui_camat', 'approved_camat_at' => now()]);
+        }
+        return back();
+    }
+
+    // penilaian DISPENSAI IKM
+    public function iumkpenilaianIndex(Request $request)
+    {
+        $filters = $request->only(['nik', 'penilaian']);
+
+        $data = \App\Models\IumkSubmission::where('status', 'approved_by_camat')
+            ->filterNikStatus($filters) // ✅ menggunakan trait
+            ->latest('updated_at')
+            ->paginate(10)
+            ->withQueryString(); // agar pagination tetap bawa filter
+
+        return view('mejalayanan.iumk.penilaian', compact('data'));
+    }
+
+    // SIMPAN PENILAIAN DISPENSASI
+    public function simpanPenilaianiumk(Request $request, $id)
+    {
+        $request->validate([
+            'penilaian' => 'required|in:tidak_puas,cukup,puas,sangat_puas',
+        ]);
+
+        $data = \App\Models\IumkSubmission::findOrFail($id);
+
+        if ($data->status !== 'approved_by_camat' || $data->penilaian) {
+            return back()->with('error', 'Pengajuan tidak valid untuk dinilai.');
+        }
+
+        $data->update([
+            'penilaian' => $request->penilaian,
+            'diambil_at' => now(),
+        ]);
+
+        return back()->with('success', 'Penilaian berhasil dikirim.');
+    }
+
 }
