@@ -151,24 +151,27 @@ class MejaLayananController extends Controller
     }
 
     public function simpanPenilaianBpjs(Request $request, $id)
-    {
-        $request->validate([
-            'penilaian' => 'required|in:tidak_puas,cukup,puas,sangat_puas',
-        ]);
+{
+    $request->validate([
+        'penilaian'     => 'required|in:tidak_puas,cukup,puas,sangat_puas',
+        'saran_kritik'  => 'nullable|string|max:1000', // tambahkan validasi saran
+    ]);
 
-        $data = \App\Models\BpjsSubmission::findOrFail($id);
+    $data = \App\Models\BpjsSubmission::findOrFail($id);
 
-        if ($data->status !== 'approved_by_camat' || $data->penilaian) {
-            return back()->with('error', 'Pengajuan tidak valid untuk dinilai.');
-        }
-
-        $data->update([
-            'penilaian' => $request->penilaian,
-            'diambil_at' => now(),
-        ]);
-
-        return back()->with('success', 'Penilaian berhasil dikirim.');
+    // Cek status dan apakah sudah pernah dinilai
+    if ($data->status !== 'approved_by_camat' || $data->penilaian) {
+        return back()->with('error', 'Pengajuan tidak valid untuk dinilai.');
     }
+
+    $data->update([
+        'penilaian'     => $request->penilaian,
+        'saran_kritik'  => $request->saran_kritik, // simpan saran
+        'diambil_at'    => now(),
+    ]);
+
+    return back()->with('success', 'Penilaian berhasil dikirim.');
+}
 
     // penilaian bpjs ikm
     public function penilaianIndex(Request $request)
@@ -461,11 +464,11 @@ class MejaLayananController extends Controller
         return view('mejalayanan.sktm.penilaian', compact('data'));
     }
 
-    // SIMPAN PENILAIAN SKTM
     public function simpanPenilaianSktm(Request $request, $id)
     {
         $request->validate([
-            'penilaian' => 'required|in:tidak_puas,cukup,puas,sangat_puas',
+            'penilaian'    => 'required|in:tidak_puas,cukup,puas,sangat_puas',
+            'saran_kritik' => 'nullable|string|max:1000',
         ]);
 
         $data = \App\Models\SktmDispensasiSubmission::findOrFail($id);
@@ -475,12 +478,14 @@ class MejaLayananController extends Controller
         }
 
         $data->update([
-            'penilaian' => $request->penilaian,
-            'diambil_at' => now(),
+            'penilaian'    => $request->penilaian,
+            'saran_kritik' => $request->saran_kritik,
+            'diambil_at'   => now(),
         ]);
 
         return back()->with('success', 'Penilaian berhasil dikirim.');
     }
+
 
     // ------------------- SKT -------------------
 
@@ -572,11 +577,11 @@ class MejaLayananController extends Controller
         return view('mejalayanan.skt.penilaian', compact('data'));
     }
 
-    // SIMPAN PENILAIAN SKTM
     public function simpanPenilaianSkt(Request $request, $id)
     {
         $request->validate([
             'penilaian' => 'required|in:tidak_puas,cukup,puas,sangat_puas',
+            'saran_kritik' => 'nullable|string|max:1000',
         ]);
 
         $data = \App\Models\SktSubmission::findOrFail($id);
@@ -587,11 +592,13 @@ class MejaLayananController extends Controller
 
         $data->update([
             'penilaian' => $request->penilaian,
+            'saran_kritik' => $request->saran_kritik,
             'diambil_at' => now(),
         ]);
 
         return back()->with('success', 'Penilaian berhasil dikirim.');
     }
+
 
      // ---------------- SPPAT GR ----------------
 
@@ -686,11 +693,12 @@ class MejaLayananController extends Controller
         return view('mejalayanan.sppat_gr.penilaian', compact('data'));
     }
 
-    // SIMPAN PENILAIAN SKTM
+    // SIMPAN PENILAIAN SPPATGR
     public function simpanPenilaiansppatgr(Request $request, $id)
     {
         $request->validate([
             'penilaian' => 'required|in:tidak_puas,cukup,puas,sangat_puas',
+            'saran_kritik' => 'nullable|string|max:1000',
         ]);
 
         $data = \App\Models\SppatGrSubmission::findOrFail($id);
@@ -701,11 +709,13 @@ class MejaLayananController extends Controller
 
         $data->update([
             'penilaian' => $request->penilaian,
+            'saran_kritik' => $request->saran_kritik,
             'diambil_at' => now(),
         ]);
 
         return back()->with('success', 'Penilaian berhasil dikirim.');
     }
+
 
 
     // ---------------- Ahli Waris ----------------
@@ -783,6 +793,7 @@ class MejaLayananController extends Controller
 
         $data->update([
             'penilaian' => $request->penilaian,
+            'saran_kritik' => $request->saran_kritik,
             'diambil_at' => now(),
         ]);
 
@@ -888,6 +899,7 @@ class MejaLayananController extends Controller
 
         $data->update([
             'penilaian' => $request->penilaian,
+            'saran_kritik' => $request->saran_kritik,
             'diambil_at' => now(),
         ]);
 
@@ -979,6 +991,7 @@ class MejaLayananController extends Controller
 
         $data->update([
             'penilaian' => $request->penilaian,
+            'saran_kritik' => $request->saran_kritik,
             'diambil_at' => now(),
         ]);
 

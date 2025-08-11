@@ -34,7 +34,8 @@ class AgunanSubmission extends Model
         'queue_number',
         'rejected_reason',
         'penilaian',
-        'diambil_at'
+        'diambil_at',
+        'saran_kritik'
     ];
 
     protected $dates = [

@@ -31,7 +31,8 @@ class BpjsSubmission extends Model
         'approved_camat_at',
         'queue_number', 
         'penilaian',
-        'diambil_at'
+        'diambil_at',
+        'saran_kritik'
     ];
 
     protected $casts = [

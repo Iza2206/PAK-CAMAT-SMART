@@ -31,7 +31,8 @@ class SengketaSubmission extends Model
         'rejected_sekcam_reason',
         'rejected_camat_reason',
         'penilaian',
-        'diambil_at'
+        'diambil_at',
+        'saran_kritik'
     ];
 
     protected $dates = [

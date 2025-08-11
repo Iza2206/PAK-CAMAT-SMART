@@ -32,7 +32,8 @@ class SktSubmission extends Model
         'rejected_reason',
         'queue_number',
         'penilaian',
-        'diambil_at'
+        'diambil_at',
+        'saran_kritik'
     ];
 
     protected $casts = [

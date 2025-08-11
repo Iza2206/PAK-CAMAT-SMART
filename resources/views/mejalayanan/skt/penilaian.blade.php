@@ -106,6 +106,11 @@
                                         <div class="{{ $warna[$item->penilaian] ?? 'text-gray-500' }} font-semibold">
                                             {{ $emoji[$item->penilaian] ?? '' }} {{ ucfirst(str_replace('_', ' ', $item->penilaian)) }}
                                         </div>
+                                        @if($item->saran_kritik)
+                                            <div class="mt-1 text-sm italic text-gray-600 dark:text-gray-400 border-l-4 border-blue-500 pl-2">
+                                                💬 Saran & Kritik: {{ $item->saran_kritik }}
+                                            </div>
+                                        @endif
                                         <div class="text-sm text-blue-600 dark:text-blue-300 font-semibold mt-1">
                                             📦 Sudah diambil masyarakat
                                         </div>
@@ -147,23 +152,21 @@
         style="display: none;"
     >
         <div @click.outside="modalOpen = false" class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-sm shadow-lg">
-            <h2 class="text-lg font-bold mb-4 text-center text-blue-600 dark:text-blue-300">📝 Pilih Penilaian</h2>
-            <div class="grid grid-cols-2 gap-3">
-                @foreach (['tidak_puas'=>'😠 Tidak Puas', 'cukup'=>'😐 Cukup', 'puas'=>'🙂 Puas', 'sangat_puas'=>'🤩 Sangat Puas'] as $value => $label)
-                    <form method="POST" :action="`/meja-layanan/skt/${selectedId}/penilaian`">
-                        @csrf
-                        <input type="hidden" name="penilaian" value="{{ $value }}">
-                        <button type="submit"
-                            class="w-full px-4 py-2 rounded text-left hover:bg-gray-100 dark:hover:bg-gray-700
-                            {{ $value == 'tidak_puas' ? 'text-red-600' : '' }}
-                            {{ $value == 'cukup' ? 'text-yellow-600' : '' }}
-                            {{ $value == 'puas' ? 'text-green-600' : '' }}
-                            {{ $value == 'sangat_puas' ? 'text-blue-600' : '' }}">
-                            {{ $label }}
-                        </button>
-                    </form>
-                @endforeach
-            </div>
+            <h2 class="text-lg font-bold mb-4 text-center text-blue-600 dark:text-blue-300">📝 Beri Penilaian & Saran</h2>
+            @foreach (['tidak_puas'=>'😠 Tidak Puas', 'cukup'=>'😐 Cukup', 'puas'=>'🙂 Puas', 'sangat_puas'=>'🤩 Sangat Puas'] as $value => $label)
+                <form method="POST" :action="`/meja-layanan/skt/${selectedId}/penilaian`" class="mb-4">
+                    @csrf
+                    <input type="hidden" name="penilaian" value="{{ $value }}">
+
+                    <label class="block mb-1 font-semibold text-gray-700 dark:text-gray-300">📝 Saran & Kritik (opsional):</label>
+                    <textarea name="saran_kritik" rows="3" class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-gray-200" placeholder="Tuliskan saran dan kritik..."></textarea>
+
+                    <button type="submit"
+                        class="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold shadow">
+                        {{ $label }}
+                    </button>
+                </form>
+            @endforeach
         </div>
     </div>
 </div>

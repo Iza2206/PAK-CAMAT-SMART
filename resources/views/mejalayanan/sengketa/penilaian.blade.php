@@ -110,6 +110,19 @@
                                         <div class="{{ $warna[$item->penilaian] ?? 'text-gray-500' }} font-semibold">
                                             {{ $emoji[$item->penilaian] ?? '' }} {{ ucfirst(str_replace('_', ' ', $item->penilaian)) }}
                                         </div>
+                                        {{-- Saran & Kritik --}}
+                                        @if(!empty($item->saran_kritik))
+                                            <div class="mt-1 text-sm text-gray-700 dark:text-gray-300 italic">
+                                                <span x-data="{showFull: false}">
+                                                    <span x-show="!showFull" class="line-clamp-2">{{ $item->saran_kritik }}</span>
+                                                    <span x-show="showFull">{{ $item->saran_kritik }}</span>
+                                                    <button type="button" @click="showFull = !showFull" class="text-blue-500 hover:underline text-xs ml-1">
+                                                        <span x-show="!showFull">Lihat Selengkapnya</span>
+                                                        <span x-show="showFull">Tutup</span>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        @endif
                                         <div class="text-sm text-blue-600 dark:text-blue-300 font-semibold mt-1">
                                             📦 Sudah diambil masyarakat
                                         </div>
@@ -150,26 +163,62 @@
         x-transition:leave-end="opacity-0 scale-90"
         class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
         style="display: none;"
+        @keydown.escape.window="modalOpen = false"
     >
-        <div @click.outside="modalOpen = false" class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-sm shadow-lg">
+        <div @click.outside="modalOpen = false" class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-sm shadow-lg"
+            x-data="{ selectedRating: null, error: false }"
+            x-init="$watch('selectedRating', value => error = false)"
+        >
             <h2 class="text-lg font-bold mb-4 text-center text-blue-600 dark:text-blue-300">📝 Pilih Penilaian</h2>
-            <div class="grid grid-cols-2 gap-3">
-                @foreach (['tidak_puas'=>'😠 Tidak Puas', 'cukup'=>'😐 Cukup', 'puas'=>'🙂 Puas', 'sangat_puas'=>'🤩 Sangat Puas'] as $value => $label)
-                    <form method="POST" :action="`/meja-layanan/sengketa/${selectedId}/penilaian`">
-                        @csrf
-                        <input type="hidden" name="penilaian" value="{{ $value }}">
-                        <button type="submit"
-                            class="w-full px-4 py-2 rounded text-left hover:bg-gray-100 dark:hover:bg-gray-700
-                            {{ $value == 'tidak_puas' ? 'text-red-600' : '' }}
-                            {{ $value == 'cukup' ? 'text-yellow-600' : '' }}
-                            {{ $value == 'puas' ? 'text-green-600' : '' }}
-                            {{ $value == 'sangat_puas' ? 'text-blue-600' : '' }}">
+
+            <form 
+                method="POST" 
+                :action="`/meja-layanan/sengketa/${selectedId}/penilaian`" 
+                @submit.prevent="
+                    if (!selectedRating) { 
+                        error = true; 
+                        return; 
+                    }
+                    $el.submit();
+                "
+                class="space-y-4"
+            >
+                @csrf
+                <div class="grid grid-cols-2 gap-3">
+                    @foreach (['tidak_puas'=>'😠 Tidak Puas', 'cukup'=>'😐 Cukup', 'puas'=>'🙂 Puas', 'sangat_puas'=>'🤩 Sangat Puas'] as $value => $label)
+                        <button 
+                            type="button" 
+                            @click="selectedRating = '{{ $value }}'; error = false"
+                            :class="selectedRating === '{{ $value }}' ? 'bg-blue-600 text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100'"
+                            class="w-full px-4 py-2 rounded font-semibold transition-colors"
+                        >
                             {{ $label }}
                         </button>
-                    </form>
-                @endforeach
-            </div>
+                    @endforeach
+                </div>
+
+                <input type="hidden" name="penilaian" :value="selectedRating" required>
+
+                <textarea 
+                    name="saran_kritik" 
+                    rows="3" 
+                    placeholder="💬 Tulis saran dan kritik Anda..."
+                    class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white resize-none"
+                ></textarea>
+
+                <template x-if="error">
+                    <p class="text-red-600 text-sm">⚠️ Silakan pilih penilaian sebelum submit.</p>
+                </template>
+
+                <div class="mt-4 text-center">
+                    <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow font-semibold">
+                        ✅ Simpan Penilaian
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+
 </div>
 @endsection

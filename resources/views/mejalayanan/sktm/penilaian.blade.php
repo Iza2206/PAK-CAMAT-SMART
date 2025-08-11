@@ -69,7 +69,7 @@
                 </thead>
                 <tbody>
                     @forelse ($data as $item)
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 border-t border-gray-200 dark:border-gray-600" x-data="{ showFull: false }">
                             <td class="px-4 py-3 border">{{ $item->nama_pemohon }}</td>
                             <td class="px-4 py-3 border">{{ $item->nik_pemohon }}</td>
                             <td class="px-4 py-3 border text-sm text-gray-800 dark:text-gray-200">
@@ -110,6 +110,19 @@
                                         <div class="{{ $warna[$item->penilaian] ?? 'text-gray-500' }} font-semibold">
                                             {{ $emoji[$item->penilaian] ?? '' }} {{ ucfirst(str_replace('_', ' ', $item->penilaian)) }}
                                         </div>
+
+                                        {{-- Saran & Kritik --}}
+                                        @if(!empty($item->saran_kritik))
+                                            <div class="mt-1 text-sm text-gray-700 dark:text-gray-300 italic">
+                                                <span x-show="!showFull" class="line-clamp-2">{{ $item->saran_kritik }}</span>
+                                                <span x-show="showFull">{{ $item->saran_kritik }}</span>
+                                                <button type="button" @click="showFull = !showFull" class="text-blue-500 hover:underline text-xs ml-1">
+                                                    <span x-show="!showFull">Lihat Selengkapnya</span>
+                                                    <span x-show="showFull">Tutup</span>
+                                                </button>
+                                            </div>
+                                        @endif
+
                                         <div class="text-sm text-blue-600 dark:text-blue-300 font-semibold mt-1">
                                             📦 Sudah diambil masyarakat
                                         </div>
@@ -152,22 +165,35 @@
     >
         <div @click.outside="modalOpen = false" class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-sm shadow-lg">
             <h2 class="text-lg font-bold mb-4 text-center text-blue-600 dark:text-blue-300">📝 Pilih Penilaian</h2>
-            <div class="grid grid-cols-2 gap-3">
-                @foreach (['tidak_puas'=>'😠 Tidak Puas', 'cukup'=>'😐 Cukup', 'puas'=>'🙂 Puas', 'sangat_puas'=>'🤩 Sangat Puas'] as $value => $label)
-                    <form method="POST" :action="`/meja-layanan/sktm/${selectedId}/penilaian`">
-                        @csrf
-                        <input type="hidden" name="penilaian" value="{{ $value }}">
-                        <button type="submit"
-                            class="w-full px-4 py-2 rounded text-left hover:bg-gray-100 dark:hover:bg-gray-700
-                            {{ $value == 'tidak_puas' ? 'text-red-600' : '' }}
-                            {{ $value == 'cukup' ? 'text-yellow-600' : '' }}
-                            {{ $value == 'puas' ? 'text-green-600' : '' }}
-                            {{ $value == 'sangat_puas' ? 'text-blue-600' : '' }}">
-                            {{ $label }}
-                        </button>
-                    </form>
-                @endforeach
-            </div>
+
+            <form method="POST" :action="`/meja-layanan/sktm/${selectedId}/penilaian`">
+                @csrf
+                {{-- Pilihan Penilaian --}}
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    @foreach (['tidak_puas'=>'😠 Tidak Puas', 'cukup'=>'😐 Cukup', 'puas'=>'🙂 Puas', 'sangat_puas'=>'🤩 Sangat Puas'] as $value => $label)
+                        <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded">
+                            <input type="radio" name="penilaian" value="{{ $value }}" required>
+                            <span class="{{ $value == 'tidak_puas' ? 'text-red-600' : '' }}
+                                         {{ $value == 'cukup' ? 'text-yellow-600' : '' }}
+                                         {{ $value == 'puas' ? 'text-green-600' : '' }}
+                                         {{ $value == 'sangat_puas' ? 'text-blue-600' : '' }}">
+                                {{ $label }}
+                            </span>
+                        </label>
+                    @endforeach
+                </div>
+
+                {{-- Saran & Kritik --}}
+                <textarea name="saran_kritik" rows="3" placeholder="💬 Tulis saran dan kritik Anda..."
+                    class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"></textarea>
+
+                <div class="mt-4 text-center">
+                    <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow font-semibold">
+                        ✅ Simpan Penilaian
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

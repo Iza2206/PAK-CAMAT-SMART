@@ -34,6 +34,7 @@ class SppatGrSubmission extends Model
         'queue_number',
         'penilaian',
         'diambil_at',
+        'saran_kritik'
     ];
 
     protected $casts = [

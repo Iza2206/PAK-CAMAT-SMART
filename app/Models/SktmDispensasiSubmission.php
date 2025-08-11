@@ -33,7 +33,8 @@ class SktmDispensasiSubmission extends Model
         'rejected_camat_reason',
         'queue_number',
         'penilaian',
-        'diambil_at'
+        'diambil_at',
+        'saran_kritik'
     ];
 
     protected $casts = [
