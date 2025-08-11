@@ -39,7 +39,7 @@
                             <p class="mb-2 text-red-600 font-semibold">Alasan Penolakan:</p>
                             <ul class="list-disc list-inside text-sm text-red-600">
                                 @if($item->rejected_reason)
-                                    <li>Kasi Kesos: {{ $item->rejected_reason }}</li>
+                                    <li>Kasubbag Umpeg: {{ $item->rejected_reason }}</li>
                                 @endif
                                 @if($item->rejected_sekcam_reason)
                                     <li>Sekcam: {{ $item->rejected_sekcam_reason }}</li>

@@ -321,11 +321,17 @@ Route::middleware(['auth', 'role:sekcam'])->prefix('sekcam')->group(function () 
     Route::post('/dispencatin/{id}/reject', [SekcamController::class, 'dispencatinReject'])->name('sekcam.dispencatin.reject');
     Route::get('/dispencatin/proses', [SekcamController::class, 'dispencatinProses'])->name('sekcam.dispencatin.proses');
 
-    // Layanan dispensasi nikah
+    // Layanan izin usaha mikro
     Route::get('/iumk', [SekcamController::class, 'iumkIndex'])->name('sekcam.iumk.index');
     Route::post('/iumk/{id}/approve', [SekcamController::class, 'iumkApprove'])->name('sekcam.iumk.approve');
     Route::post('/iumk/{id}/reject', [SekcamController::class, 'iumkReject'])->name('sekcam.iumk.reject');
     Route::get('/iumk/proses', [SekcamController::class, 'iumkProses'])->name('sekcam.iumk.proses');
+
+    // Layanan SK Riset KKN
+    Route::get('/skrisetKKN', [SekcamController::class, 'skrisetKKNIndex'])->name('sekcam.skrisetKKN.index');
+    Route::post('/skrisetKKN/{id}/approve', [SekcamController::class, 'skrisetKKNApprove'])->name('sekcam.skrisetKKN.approve');
+    Route::post('/skrisetKKN/{id}/reject', [SekcamController::class, 'skrisetKKNReject'])->name('sekcam.skrisetKKN.reject');
+    Route::get('/skrisetKKN/proses', [SekcamController::class, 'skrisetKKNProses'])->name('sekcam.skrisetKKN.proses');
 
 });
 
@@ -399,6 +405,12 @@ Route::middleware(['auth', 'role:camat'])->prefix('camat')->group(function () {
     Route::post('/iumk/{id}/approve', [CamatController::class, 'iumkApprove'])->name('camat.iumk.approve');
     Route::post('/iumk/{id}/reject', [CamatController::class, 'iumkReject'])->name('camat.iumk.reject');
     Route::get('/iumk/proses', [CamatController::class, 'iumkProses'])->name('camat.iumk.proses');
+
+    // Layanan SK Riset KKN
+    Route::get('/skrisetKKN', [CamatController::class, 'skrisetKKNIndex'])->name('camat.skrisetKKN.index');
+    Route::post('/skrisetKKN/{id}/approve', [CamatController::class, 'skrisetKKNApprove'])->name('camat.skrisetKKN.approve');
+    Route::post('/skrisetKKN/{id}/reject', [CamatController::class, 'skrisetKKNReject'])->name('camat.skrisetKKN.reject');
+    Route::get('/skrisetKKN/proses', [CamatController::class, 'skrisetKKNProses'])->name('camat.skrisetKKN.proses');
 });
 
 // ---------------- Kasubbag Umpeg ----------------

@@ -13,6 +13,7 @@ use App\Models\SkbdSubmission;
 use App\Models\CatinTniPolriSubmission;
 use App\Models\IumkSubmission;
 use App\Models\SengketaSubmission;
+use App\Models\SkrisetKKNSubmission;
 use App\Models\SppatGrSubmission;
 use Illuminate\Support\Facades\Auth;
 
@@ -585,6 +586,57 @@ class CamatController extends Controller
                             ->latest()->paginate(10);
 
         return view('camat.iumk.proses', compact(
+            'pengajuan',
+            'jumlahPengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+
+     // ---------------- SK Riset KKN ----------------
+    public function skrisetKKNIndex()
+    {
+        $pengajuan = skrisetKKNSubmission::where('status', 'approved_by_sekcam')->latest()->get();
+        return view('camat.skrisetKKN.index', compact('pengajuan'));
+    }
+
+    public function skrisetKKNApprove($id)
+    {
+        $item = skrisetKKNSubmission::findOrFail($id);
+        $item->status = 'approved_by_camat';
+        $item->approved_camat_at = now();
+        $item->camat_id = Auth::id();  // Simpan ID user login sebagai camat_id
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan skrisetKKN disetujui oleh Camat.');
+    }
+
+    public function skrisetKKNReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = skrisetKKNSubmission::findOrFail($id);
+        $item->status = 'rejected_by_camat';
+        $item->rejected_camat_reason = $request->reason;
+        $item->approved_camat_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan skrisetKKN ditolak oleh Camat.');
+    }
+
+    public function skrisetKKNProses()
+    {
+        $jumlahPengajuan     = SkrisetKKNSubmission::count();
+        $pengajuanDiterima   = skrisetKKNSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDisetujui  = skrisetKKNSubmission::where('status', 'approved_by_camat')->count();
+        $pengajuanDitolak    = skrisetKKNSubmission::where('status', 'rejected_by_camat')->count();
+
+        $pengajuan = skrisetKKNSubmission::whereIn('status', ['approved_by_camat', 'rejected_by_camat'])
+                            ->latest()->paginate(10);
+
+        return view('camat.skrisetKKN.proses', compact(
             'pengajuan',
             'jumlahPengajuan',
             'pengajuanDiterima',
