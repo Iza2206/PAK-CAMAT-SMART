@@ -31,6 +31,7 @@
             class="p-4 text-sm text-gray-700 dark:text-gray-300 font-medium space-y-2"
              x-data="{
                         openBpjs: '{{ request()->routeIs('bpjs.*') ? 'true' : 'false' }}' === 'true',
+                        openDispenCatin: '{{ request()->routeIs('dispencatin.*') ? 'true' : 'false' }}' === 'true',
                         openSktm: '{{ request()->routeIs('SKTMs.*') ? 'true' : 'false' }}' === 'true',
                         openSkbd: '{{ request()->routeIs('SKBDs.*') ? 'true' : 'false' }}' === 'true',
                         openCatin: '{{ request()->routeIs('catin.tni.*') ? 'true' : 'false' }}' === 'true',
@@ -83,10 +84,42 @@
                 </a>
             </div>
 
+            {{-- Dispensasi Nikah --}}
+            <button @click="openDispenCatin = !openDispenCatin"
+                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                :class="openDispenCatin ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300' : 'hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900/20 dark:hover:text-green-300'">
+                <span class="flex items-center gap-2">
+                    👫
+                    Dispensasi Nikah
+                </span>
+                <svg :class="{ 'rotate-180': openDispenCatin }" class="w-4 h-4 transform transition-transform" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <div x-show="openDispenCatin" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                <a href="{{ route('dispencatin.create') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('dispencatin.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    ➕ Tambah Persyaratan
+                <a href="{{ route('dispencatin.list') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('dispencatin.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📄 List Data 
+                </a>
+                <a href="{{ route('dispencatin.penilaian.index') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('dispencatin.penilaian.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📝 Penilaian
+                </a>
+            </div>
+
             {{-- IUMK --}}
             <a href="{{ route('layanan.iumk') }}"
                 class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300">
-                🏢 Izin Usaha Mikro (IUMK)
+                🏪 Izin Usaha Mikro (IUMK)
             </a>
 
             {{-- sktm Dispensasi Nikah --}}
@@ -94,11 +127,7 @@
                     class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
                     :class="openSktm ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
                     <span class="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-400 dark:text-blue-300" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6M9 4h6m2 0a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2" />
-                        </svg>
+                        💔
                         SKTM Dispensasi Cerai
                     </span>
                     <svg :class="{ 'rotate-180': openSktm }" class="w-4 h-4 transform transition-transform" fill="none"
@@ -131,12 +160,7 @@
                 class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
                 :class="openSkt ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
                 <span class="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 10h18M3 6h18M3 14h18M3 18h18" />
-                    </svg>
-                    SK Tanah
+                    🗺️ SK Tanah
                 </span>
                 <svg :class="{ 'rotate-180': openSkt }" class="w-4 h-4 transform transition-transform" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
@@ -163,66 +187,55 @@
             </div>
 
             {{-- SPPAT-GR --}}
-<button @click="openSppatgr = !openSppatgr"
-    class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
-    :class="openSppatgr 
-        ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' 
-        : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
-    <span class="flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none"
-            viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 10h18M3 6h18M3 14h18M3 18h18" />
-        </svg>
-        SPPAT-GR
-    </span>
-    <svg :class="{ 'rotate-180': openSppatgr }" class="w-4 h-4 transform transition-transform" fill="none"
-        viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-    </svg>
-</button>
+            <button @click="openSppatgr = !openSppatgr"
+                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                :class="openSppatgr 
+                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' 
+                    : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
+                <span class="flex items-center gap-2">
+                    ✍️ SPPAT-GR
+                </span>
+                <svg :class="{ 'rotate-180': openSppatgr }" class="w-4 h-4 transform transition-transform" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
 
-<div x-show="openSppatgr" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
-    {{-- Registrasi --}}
-    <a href="{{ route('sppat_gr.create') }}"
-        class="block px-3 py-1 rounded transition-all
-        {{ request()->routeIs('sppat_gr.create') 
-            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
-            : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
-        ➕ Registrasi SPPAT-GR
-    </a>
+            <div x-show="openSppatgr" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                {{-- Registrasi --}}
+                <a href="{{ route('sppat_gr.create') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('sppat_gr.create') 
+                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
+                        : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    ➕ Registrasi SPPAT-GR
+                </a>
 
-    {{-- List --}}
-    <a href="{{ route('sppat_gr.list') }}"
-        class="block px-3 py-1 rounded transition-all
-        {{ request()->routeIs('sppat_gr.list') 
-            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
-            : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
-        📄 List SPPAT-GR
-    </a>
+                {{-- List --}}
+                <a href="{{ route('sppat_gr.list') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('sppat_gr.list') 
+                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
+                        : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📄 List SPPAT-GR
+                </a>
 
-    {{-- Penilaian --}}
-    <a href="{{ route('sppat_gr.penilaian.index') }}"
-        class="block px-3 py-1 rounded transition-all
-        {{ request()->routeIs('sppat_gr.penilaian.index') 
-            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
-            : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
-        📝 Penilaian SPPAT-GR
-    </a>
-</div>
-
+                {{-- Penilaian --}}
+                <a href="{{ route('sppat_gr.penilaian.index') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('sppat_gr.penilaian.index') 
+                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
+                        : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📝 Penilaian SPPAT-GR
+                </a>
+            </div>
 
             {{-- Ahli Waris --}}
             <button @click="openAhliwaris = !openAhliwaris"
                 class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
                 :class="openAhliwaris ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
                 <span class="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 10h18M3 6h18M3 14h18M3 18h18" />
-                    </svg>
-                    Ahli Waris
+                    📜 Ahli Waris
                 </span>
                 <svg :class="{ 'rotate-180': openAhliwaris }" class="w-4 h-4 transform transition-transform" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
@@ -254,12 +267,7 @@
                 class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
                 :class="openAgunan ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
                 <span class="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 10h18M3 6h18M3 14h18M3 18h18" />
-                    </svg>
-                    Agunan ke Bank
+                    🏦 Agunan ke Bank
                 </span>
                 <svg :class="{ 'rotate-180': openAgunan }" class="w-4 h-4 transform transition-transform" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
@@ -291,10 +299,7 @@
                 class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
                 :class="openSengketa ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
                 <span class="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A2 2 0 013 15.382V5.618a2 2 0 011.553-1.948L9 2m0 0l6 3m-6-3v18m6-15l5.447 2.724A2 2 0 0121 8.618v9.764a2 2 0 01-1.553 1.948L15 22m0 0V4" />
-                    </svg>
-                    Surat Silang Sengketa
+                    ⚔️ Surat Silang Sengketa
                 </span>
                 <svg :class="{ 'rotate-180': openSengketa }" class="w-4 h-4 transform transition-transform" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
@@ -327,10 +332,7 @@
                 class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
                 :class="openCatin ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300' : 'hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900/20 dark:hover:text-green-300'">
                 <span class="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-pink-400 dark:text-pink-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.364l-7.682-7.682a4.5 4.5 0 010-6.364z" />
-                    </svg>
-                    Catin TNI/POLRI
+                    💑 Catin TNI/POLRI
                 </span>
                 <svg :class="{ 'rotate-180': openCatin }" class="w-4 h-4 transform transition-transform" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
@@ -391,10 +393,10 @@
             </div>
 
             {{-- Export --}}
-            <a href="{{ route('admin.export') }}"
+            {{-- <a href="{{ route('admin.export') }}"
                 class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300">
                 📤 Export Laporan IKM
-            </a>
+            </a> --}}
         </nav>
     </aside>
 </div>

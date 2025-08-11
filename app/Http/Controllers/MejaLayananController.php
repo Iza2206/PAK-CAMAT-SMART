@@ -12,6 +12,7 @@ use App\Models\CatinTniPolriSubmission;
 use App\Models\SengketaSubmission;
 use App\Models\AgunanSubmission;
 use App\Models\AhliwarisSubmission;
+use App\Models\CatinSubmission;
 use App\Models\SppatGrSubmission;
 use App\Models\SktSubmission;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -183,6 +184,165 @@ class MejaLayananController extends Controller
         return view('mejalayanan.bpjs.penilaian', compact('data'));
     }
 
+    // ---------------- Dispensasi ----------------
+
+     // list dispensasi catin
+    public function DispencatinList()
+    {
+        $data = CatinSubmission::latest()->paginate(10); // urut dari terbaru + paginate
+        return view('mejalayanan.dispencatin.index', compact('data'));
+    }
+
+    // tambah dispensasi catin
+    public function DispencatinCreate()
+    {
+        return view('mejalayanan.dispencatin.create');
+    }
+
+    // simpan dispensasi catin
+    public function DispencatinStore(Request $request)
+    {
+            $validated = $request->validate([
+            'nama_pemohon' => 'required|string|max:255',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'pendidikan' => 'required|in:SD,SMP,SMA,D1,D2,D3,S1,S2,S3',
+            'nik_pemohon' => 'required|digits:16',
+
+            // Semua file wajib PDF, kecuali akta cerai bisa optional
+            'file_na_pria' => 'required|file|mimetypes:application/pdf',
+            'file_na_wanita' => 'required|file|mimetypes:application/pdf',
+            'file_kk_pria' => 'required|file|mimetypes:application/pdf',
+            'file_kk_wanita' => 'required|file|mimetypes:application/pdf',
+            'file_ktp_pria' => 'required|file|mimetypes:application/pdf',
+            'file_ktp_wanita' => 'required|file|mimetypes:application/pdf',
+            'file_akte_cerai_pria' => 'nullable|file|mimetypes:application/pdf',
+            'file_akte_cerai_wanita' => 'nullable|file|mimetypes:application/pdf',
+            'file_pbb' => 'required|file|mimetypes:application/pdf',
+        ]);
+
+        $folder = 'catin';
+
+        $paths = [
+            'file_na_pria' => $request->file('file_na_pria')->storeAs($folder, Str::uuid() . '.pdf', 'public'),
+            'file_na_wanita' => $request->file('file_na_wanita')->storeAs($folder, Str::uuid() . '.pdf', 'public'),
+            'file_kk_pria' => $request->file('file_kk_pria')->storeAs($folder, Str::uuid() . '.pdf', 'public'),
+            'file_kk_wanita' => $request->file('file_kk_wanita')->storeAs($folder, Str::uuid() . '.pdf', 'public'),
+            'file_ktp_pria' => $request->file('file_ktp_pria')->storeAs($folder, Str::uuid() . '.pdf', 'public'),
+            'file_ktp_wanita' => $request->file('file_ktp_wanita')->storeAs($folder, Str::uuid() . '.pdf', 'public'),
+            'file_akte_cerai_pria' => $request->hasFile('file_akte_cerai_pria') 
+                ? $request->file('file_akte_cerai_pria')->storeAs($folder, Str::uuid() . '.pdf', 'public') 
+                : null,
+            'file_akte_cerai_wanita' => $request->hasFile('file_akte_cerai_wanita') 
+                ? $request->file('file_akte_cerai_wanita')->storeAs($folder, Str::uuid() . '.pdf', 'public') 
+                : null,
+            'file_pbb' => $request->file('file_pbb')->storeAs($folder, Str::uuid() . '.pdf', 'public'),
+        ];
+
+        $submission = CatinSubmission::create([
+            'nama_pemohon' => $validated['nama_pemohon'],
+            'jenis_kelamin' => $validated['jenis_kelamin'],
+            'pendidikan' => $validated['pendidikan'],
+            'nik_pemohon' => $validated['nik_pemohon'],
+
+            'file_na_pria' => $paths['file_na_pria'],
+            'file_na_wanita' => $paths['file_na_wanita'],
+            'file_kk_pria' => $paths['file_kk_pria'],
+            'file_kk_wanita' => $paths['file_kk_wanita'],
+            'file_ktp_pria' => $paths['file_ktp_pria'],
+            'file_ktp_wanita' => $paths['file_ktp_wanita'],
+            'file_akte_cerai_pria' => $paths['file_akte_cerai_pria'],
+            'file_akte_cerai_wanita' => $paths['file_akte_cerai_wanita'],
+            'file_pbb' => $paths['file_pbb'],
+
+            'status' => 'diajukan',
+        ]);
+
+        return redirect()
+            ->route('dispencatin.list') // ganti sesuai nama route untuk list pengajuan catin
+            ->with('success', 'Pengajuan Catin berhasil disimpan.')
+            ->with('antrian', $submission->queue_number);
+    }
+
+    // kirim ke kasi kesos (DISPENSASI)
+    public function kirimKeKasidispen($id)
+    {
+        $data = CatinSubmission::findOrFail($id);
+
+        if ($data->status !== 'diajukan') {
+            return back()->with('error', 'Data sudah diproses.');
+        }
+
+        $data->update([
+            'status' => 'diproses',
+            'verified_at' => now(),
+        ]);
+
+        return back()->with('success', 'Pengajuan berhasil dikirim ke Kasi Kesos.');
+    }
+
+    // Verifikasi oleh Kasi (DISPENSASI)
+    public function dispensasiverifikasiKasi($id) {
+        $data = CatinSubmission::findOrFail($id);
+        if ($data->status === 'diajukan') {
+            $data->update(['status' => 'verifikasi_kasi', 'verified_at' => now()]);
+        }
+        return back();
+    }
+
+    // Persetujuan Sekcam (DISPENSASI)
+    public function dispensasiapproveSekcam($id) {
+        $data = CatinSubmission::findOrFail($id);
+        if ($data->status === 'verifikasi_kasi') {
+            $data->update(['status' => 'disetujui_sekcam', 'approved_sekcam_at' => now()]);
+        }
+        return back();
+    }
+
+    // Persetujuan Camat (DISPENSASI)
+    public function dispensasiapproveCamat($id) {
+        $data = CatinSubmission::findOrFail($id);
+        if ($data->status === 'disetujui_sekcam') {
+            $data->update(['status' => 'disetujui_camat', 'approved_camat_at' => now()]);
+        }
+        return back();
+    }
+
+    // penilaian DISPENSAI IKM
+    public function DispencatinpenilaianIndex(Request $request)
+    {
+        $filters = $request->only(['nik', 'penilaian']);
+
+        $data = \App\Models\CatinSubmission::where('status', 'approved_by_camat')
+            ->filterNikStatus($filters) // ✅ menggunakan trait
+            ->latest('updated_at')
+            ->paginate(10)
+            ->withQueryString(); // agar pagination tetap bawa filter
+
+        return view('mejalayanan.dispencatin.penilaian', compact('data'));
+    }
+
+    // SIMPAN PENILAIAN DISPENSASI
+    public function simpanPenilaianDispencatin(Request $request, $id)
+    {
+        $request->validate([
+            'penilaian' => 'required|in:tidak_puas,cukup,puas,sangat_puas',
+        ]);
+
+        $data = \App\Models\CatinSubmission::findOrFail($id);
+
+        if ($data->status !== 'approved_by_camat' || $data->penilaian) {
+            return back()->with('error', 'Pengajuan tidak valid untuk dinilai.');
+        }
+
+        $data->update([
+            'penilaian' => $request->penilaian,
+            'diambil_at' => now(),
+        ]);
+
+        return back()->with('success', 'Penilaian berhasil dikirim.');
+    }
+
+
     // ---------------- SKTM ----------------
 
      // list SKTM
@@ -262,7 +422,7 @@ class MejaLayananController extends Controller
 
     // Verifikasi oleh Kasi (SKTM)
     public function SKTMverifikasiKasi($id) {
-        $data = BpjsSubmission::findOrFail($id);
+        $data = SktmDispensasiSubmission::findOrFail($id);
         if ($data->status === 'diajukan') {
             $data->update(['status' => 'verifikasi_kasi', 'verified_at' => now()]);
         }
@@ -271,7 +431,7 @@ class MejaLayananController extends Controller
 
     // Persetujuan Sekcam (SKTM)
     public function SKTMapproveSekcam($id) {
-        $data = BpjsSubmission::findOrFail($id);
+        $data = SktmDispensasiSubmission::findOrFail($id);
         if ($data->status === 'verifikasi_kasi') {
             $data->update(['status' => 'disetujui_sekcam', 'approved_sekcam_at' => now()]);
         }
@@ -280,7 +440,7 @@ class MejaLayananController extends Controller
 
     // Persetujuan Camat (SKTM)
     public function SKTMapproveCamat($id) {
-        $data = BpjsSubmission::findOrFail($id);
+        $data = SktmDispensasiSubmission::findOrFail($id);
         if ($data->status === 'disetujui_sekcam') {
             $data->update(['status' => 'disetujui_camat', 'approved_camat_at' => now()]);
         }

@@ -31,6 +31,7 @@
             class="p-4 text-sm text-gray-700 dark:text-gray-300 font-medium space-y-2"
           x-data="{
         openBpjs: '{{ request()->routeIs('bpjs.*') ? 'true' : 'false' }}' === 'true',
+        openDispenNikah: '{{ request()->routeIs('dispencatin.*') ? 'true' : 'false' }}' === 'true',
         openSktm: '{{ request()->routeIs('SKTMs.*') ? 'true' : 'false' }}' === 'true'
     }"
         >
@@ -76,7 +77,50 @@
                     </svg>
                     Riwayat Proses BPJS
                 </a>
+            </div>
+
+             {{-- Dispensasi Nikah Menu --}}
+           <button @click="openDispenNikah = !openDispenNikah"
+                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                :class="openDispenNikah ? 'bg-blu e-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
+                <span class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-400 dark:text-blue-300" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 13l4 4L19 7" />
+                    </svg>
+                   Dispensasi Cerai
+                </span>
+                <svg :class="{ 'rotate-180': openDispenNikah }" class="w-4 h-4 transform transition-transform" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            {{-- Submenu Dispensasi Nikah --}}
+            <div x-show="openDispenNikah"  x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                <a href="{{ route('kasi_kesos.dispencatin.index') }}"
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('kasi_kesos.dispencatin.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📝 Verifikasi Dispensasi Nikah
+                </a>
+                <a href="{{ route('kasi_kesos.dispencatin.proses') }}" 
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('kasi_kesos.dispencatin.proses') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 7l4 0 2-2h6l2 2h4M4 17h6m-6-4h10m-6 8h6M4 21h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Riwayat Proses Dispensasi Nikah
+                </a>
+                <a href="{{ route('kasi_kesos.dispencatin.approveByCamat') }}"
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('kasi_kesos.dispencatin.approveByCamat') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📝 Dispensasi Nikah Approve Camat
+                </a>
             </div>    
+                
             
             {{-- SKTM Menu --}}
            <button @click="openSktm = !openSktm"

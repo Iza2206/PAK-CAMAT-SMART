@@ -11,6 +11,7 @@ use App\Http\Controllers\KasubbagUmpegController;
 use App\Http\Controllers\MejaLayananController;
 use App\Http\Controllers\SekcamController;
 use App\Http\Controllers\AntrianController;
+use App\Http\Controllers\AdminAccountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,10 +28,24 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ===================== SUPER ADMIN DASHBOARD =====================
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-    Route::delete('/delete/{id}', [AdminDashboardController::class, 'destroy'])->name('admin.delete');
-    Route::post('/reset-password/{id}', [AdminDashboardController::class, 'resetPassword'])->name('admin.resetPassword');
-    Route::get('/export', [AdminDashboardController::class, 'export'])->name('admin.export');
+    
+
+    // // Manajemen Akun
+    Route::get('/akun', [AdminAccountController::class, 'index'])->name('admin.accounts.index'); // list akun
+    Route::get('/akun/create', [AdminAccountController::class, 'create'])->name('admin.accounts.create'); // form tambah
+    Route::post('/akun', [AdminAccountController::class, 'store'])->name('admin.accounts.store'); // proses simpan akun
+
+    // // Ubah Password Akun
+    Route::get('/akun/{id}/ubah-password', [AdminAccountController::class, 'editPassword'])->name('admin.accounts.editPassword');
+    Route::post('/akun/{id}/ubah-password', [AdminAccountController::class, 'updatePassword'])->name('admin.accounts.updatePassword');
+
+    // // Hapus Akun
+    Route::delete('/akun/{id}', [AdminAccountController::class, 'destroy'])->name('admin.accounts.destroy');
+
+    // // Export Akun
+    Route::get('/akun-export', [AdminAccountController::class, 'export'])->name('admin.accounts.export');
 });
 // antrian tv
 Route::get('/antrian-tv', [AntrianController::class, 'index']);
@@ -39,6 +54,7 @@ Route::get('/antrian-tv', [AntrianController::class, 'index']);
 // ---------------- Meja Layanan ----------------
 Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(function () {
     Route::get('/dashboard', [MejaLayananController::class, 'index'])->name('meja.dashboard');
+
     // BPJS
     Route::get('/layanan/bpjs', [MejaLayananController::class, 'bpjsList'])->name('bpjs.list'); // List Data
     Route::get('/layanan/bpjs/create', [MejaLayananController::class, 'bpjsCreate'])->name('bpjs.create'); // Tambah
@@ -46,6 +62,14 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::patch('/layanan/bpjs/{id}/kirim-kasi', [MejaLayananController::class, 'kirimKeKasi'])->name('bpjs.kirimkasi'); //kirim ke kasi kesos
     Route::post('/bpjs/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianBpjs'])->name('bpjs.penilaian'); // simpan penilaian ikm bpjs
     Route::get('/bpjs/penilaian', [MejaLayananController::class, 'penilaianIndex'])->name('bpjs.penilaian.index'); // list penilaian bpjs
+
+    // Dispensasi Nikah
+    Route::get('/layanan/dispencatin', [MejaLayananController::class, 'DispencatinList'])->name('dispencatin.list'); // List Data
+    Route::get('/layanan/dispencatin/create', [MejaLayananController::class, 'DispencatinCreate'])->name('dispencatin.create'); // Tambah
+    Route::post('/layanan/dispencatin/store', [MejaLayananController::class, 'DispencatinStore'])->name('dispencatin.store');  // Simpan
+    Route::patch('/layanan/dispencatin/{id}/kirim-kasi', [MejaLayananController::class, 'kirimKeKasidispen'])->name('dispencatin.kirimkasi'); //kirim ke kasi kesos
+    Route::post('/dispencatin/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianDispencatin'])->name('dispencatin.penilaian'); // simpan penilaian ikm Dispencatin
+    Route::get('/dispencatin/penilaian', [MejaLayananController::class, 'DispencatinpenilaianIndex'])->name('dispencatin.penilaian.index'); // list penilaian Dispencatin
 
     // SKTM
     Route::get('/layanan/SKTMs', [MejaLayananController::class, 'SKTMsList'])->name('SKTMs.list'); // List Data
@@ -131,6 +155,21 @@ Route::middleware(['auth', 'role:kasi_kesos'])->prefix('kasi-kesos')->group(func
     Route::post('/bpjs/{id}/approve', [KasiKesosController::class, 'bpjsApprove'])->name('kasi_kesos.bpjs.approve');
     Route::post('/bpjs/{id}/reject', [KasiKesosController::class, 'bpjsReject'])->name('kasi_kesos.bpjs.reject');
     Route::get('/bpjs/proses', [KasiKesosController::class, 'bpjsProses'])->name('kasi_kesos.bpjs.proses');
+
+    // Layanan dispensasi nikah
+    Route::get('/dispencatin', [KasiKesosController::class, 'dispencatinIndex'])->name('kasi_kesos.dispencatin.index');
+    Route::post('/dispencatin/{id}/approve', [KasiKesosController::class, 'dispencatinApprove'])->name('kasi_kesos.dispencatin.approve');
+    Route::post('/dispencatin/{id}/reject', [KasiKesosController::class, 'dispencatinReject'])->name('kasi_kesos.dispencatin.reject');
+    Route::get('/dispencatin/proses', [KasiKesosController::class, 'dispencatinProses'])->name('kasi_kesos.dispencatin.proses');
+    Route::post('/dispensasi-nikah/{id}/upload-surat', [KasiKesosController::class, 'uploadSuratDispensasi'])
+    ->name('dispensasi.uploadSurat');
+     Route::get('/dispencatin/approveByCamat', [KasiKesosController::class, 'dispencatinApproveByCamatIndex'])->name('kasi_kesos.dispencatin.approveByCamat');
+     Route::get('/kasi-kesos/dispencatin/approve/{id}/proses', [KasiKesosController::class, 'proses'])
+    ->name('kasi_kesos.dispencatin.prosesTTD');
+
+Route::post('/kasi-kesos/dispencatin/{id}/proses', [KasiKesosController::class, 'prosesStore'])
+    ->name('kasi_kesos.dispencatin.proses.storeTTD');
+
 
     // Layanan SKTM
     Route::get('/sktm', [KasiKesosController::class, 'sktmIndex'])->name('kasi_kesos.sktm.index');
@@ -250,6 +289,12 @@ Route::middleware(['auth', 'role:sekcam'])->prefix('sekcam')->group(function () 
     Route::post('/skbd/{id}/reject', [SekcamController::class, 'skbdReject'])->name('sekcam.skbd.reject');
     Route::get('/skbd/proses', [SekcamController::class, 'skbdProses'])->name('sekcam.skbd.proses');
 
+    // Layanan dispensasi nikah
+    Route::get('/dispencatin', [SekcamController::class, 'dispencatinIndex'])->name('sekcam.dispencatin.index');
+    Route::post('/dispencatin/{id}/approve', [SekcamController::class, 'dispencatinApprove'])->name('sekcam.dispencatin.approve');
+    Route::post('/dispencatin/{id}/reject', [SekcamController::class, 'dispencatinReject'])->name('sekcam.dispencatin.reject');
+    Route::get('/dispencatin/proses', [SekcamController::class, 'dispencatinProses'])->name('sekcam.dispencatin.proses');
+
 });
 
 
@@ -311,7 +356,11 @@ Route::middleware(['auth', 'role:camat'])->prefix('camat')->group(function () {
     Route::post('/skbd/{id}/reject', [CamatController::class, 'skbdReject'])->name('camat.skbd.reject');
     Route::get('/skbd/proses', [CamatController::class, 'skbdProses'])->name('camat.skbd.proses');
 
-
+    // Layanan dispensasi nikah
+    Route::get('/dispencatin', [CamatController::class, 'dispencatinIndex'])->name('camat.dispencatin.index');
+    Route::post('/dispencatin/{id}/approve', [CamatController::class, 'dispencatinApprove'])->name('camat.dispencatin.approve');
+    Route::post('/dispencatin/{id}/reject', [CamatController::class, 'dispencatinReject'])->name('camat.dispencatin.reject');
+    Route::get('/dispencatin/proses', [CamatController::class, 'dispencatinProses'])->name('camat.dispencatin.proses');
 });
 
 // ---------------- Kasubbag Umpeg ----------------

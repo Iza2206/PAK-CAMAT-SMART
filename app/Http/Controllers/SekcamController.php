@@ -6,6 +6,7 @@ use App\Models\AgunanSubmission;
 use App\Models\AhliwarisSubmission;
 use Illuminate\Http\Request;
 use App\Models\BpjsSubmission;
+use App\Models\CatinSubmission;
 use App\Models\SktmDispensasiSubmission;
 use App\Models\SktSubmission;
 use App\Models\SkbdSubmission;
@@ -507,5 +508,54 @@ class SekcamController extends Controller
         ));
     }
 
+    // ---------------- DISPENSASI CATIN NIKAH ----------------
+    public function dispencatinIndex()
+    {
+        $pengajuan = CatinSubmission::where('status', 'checked_by_kasi')->latest()->get();
+        return view('sekcam.dispencatin.index', compact('pengajuan'));
+    }
 
+
+    public function dispencatinApprove($id)
+    {
+        $item = CatinSubmission::findOrFail($id);
+        $item->status = 'approved_by_sekcam';
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan dispencatin berhasil disetujui oleh Sekcam.');
+    }
+
+
+    public function dispencatinReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = CatinSubmission::findOrFail($id);
+        $item->status = 'rejected_by_sekcam';
+        $item->rejected_sekcam_reason = $request->reason;
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan dispencatin berhasil ditolak oleh Sekcam.');
+    }
+
+    public function dispencatinProses()
+    {
+
+        $pengajuanDiterima  = CatinSubmission::whereIn('status', ['checked_by_kasi', 'approved_by_sekcam', 'rejected_by_sekcam'])->count();
+        $pengajuanDisetujui = CatinSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDitolak   = CatinSubmission::where('status', 'rejected_by_sekcam')->count();
+
+        $pengajuan = CatinSubmission::whereIn('status', ['approved_by_sekcam', 'rejected_by_sekcam'])
+                        ->latest()
+                        ->paginate(10);
+
+        return view('sekcam.dispencatin.proses', compact(
+            'pengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
 }
