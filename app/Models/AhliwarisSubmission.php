@@ -11,6 +11,7 @@ class AhliwarisSubmission extends Model
 {
     use HasFactory, HasQueueNumber, HasNikStatusFilter;
     
+    protected $table = 'ahliwaris_submissions';
     // Menentukan nama field NIK yang digunakan untuk filtering
     protected $nikField = 'nik_pemohon';
     
