@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SengketaSubmission;
 use App\Models\AgunanSubmission;
-use App\Models\AhliWarisSubmission;
+use App\Models\AhliwarisSubmission;
 use App\Models\SppatGrSubmission;
 use App\Models\SktSubmission;
 
@@ -15,7 +15,7 @@ class KasiPemerintahanController extends Controller
     {
         $jumlahSkt       = SktSubmission::count();
         $jumlahSppatGr   = SppatGrSubmission::count();
-        $jumlahAhliWaris = AhliWarisSubmission::count();
+        $jumlahAhliWaris = AhliwarisSubmission::count();
         $jumlahAgunan    = AgunanSubmission::count();
         $jumlahSengketa  = SengketaSubmission::count();
 
