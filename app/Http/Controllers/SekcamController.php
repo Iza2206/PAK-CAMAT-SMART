@@ -13,6 +13,7 @@ use App\Models\SkbdSubmission;
 use App\Models\CatinTniPolriSubmission;
 use App\Models\IumkSubmission;
 use App\Models\SengketaSubmission;
+use App\Models\SkrisetKKNSubmission;
 use App\Models\SppatGrSubmission;
 
 class SekcamController extends Controller
@@ -604,6 +605,57 @@ class SekcamController extends Controller
                         ->paginate(10);
 
         return view('sekcam.iumk.proses', compact(
+            'pengajuan',
+            'pengajuanDiterima',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+    // ---------------- SK Riset KKN ----------------
+    public function skrisetKKNIndex()
+    {
+        $pengajuan = skrisetKKNSubmission::where('status', 'checked_by_kasi')->latest()->get();
+        return view('sekcam.skrisetKKN.index', compact('pengajuan'));
+    }
+
+
+    public function skrisetKKNApprove($id)
+    {
+        $item = skrisetKKNSubmission::findOrFail($id);
+        $item->status = 'approved_by_sekcam';
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan skrisetKKN berhasil disetujui oleh Sekcam.');
+    }
+
+
+    public function skrisetKKNReject(Request $request, $id)
+    {
+        $request->validate(['reason' => 'required|string|max:255']);
+
+        $item = skrisetKKNSubmission::findOrFail($id);
+        $item->status = 'rejected_by_sekcam';
+        $item->rejected_sekcam_reason = $request->reason;
+        $item->approved_sekcam_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan skrisetKKN berhasil ditolak oleh Sekcam.');
+    }
+
+    public function skrisetKKNProses()
+    {
+
+        $pengajuanDiterima  = skrisetKKNSubmission::whereIn('status', ['checked_by_kasi', 'approved_by_sekcam', 'rejected_by_sekcam'])->count();
+        $pengajuanDisetujui = skrisetKKNSubmission::where('status', 'approved_by_sekcam')->count();
+        $pengajuanDitolak   = SkrisetKKNSubmission::where('status', 'rejected_by_sekcam')->count();
+
+        $pengajuan = skrisetKKNSubmission::whereIn('status', ['approved_by_sekcam', 'rejected_by_sekcam'])
+                        ->latest()
+                        ->paginate(10);
+
+        return view('sekcam.skrisetKKN.proses', compact(
             'pengajuan',
             'pengajuanDiterima',
             'pengajuanDisetujui',

@@ -40,7 +40,8 @@
                         openAhliwaris: '{{ request()->routeIs('ahliwaris.*') ? 'true' : 'false' }}' === 'true',
                         openSppatgr: '{{ request()->routeIs('sppat_gr.*') ? 'true' : 'false' }}' === 'true',
                         openSkt: '{{ request()->routeIs('skt.*') ? 'true' : 'false' }}' === 'true',
-                        openIumk: '{{ request()->routeIs('iumk.*') ? 'true' : 'false' }}' === 'true'
+                        openIumk: '{{ request()->routeIs('iumk.*') ? 'true' : 'false' }}' === 'true',
+                        openskrisetKKN: '{{ request()->routeIs('skrisetKKN.*') ? 'true' : 'false' }}' === 'true'
                     }"
         >
             {{-- Dashboard --}}
@@ -423,6 +424,38 @@
                 class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300">
                 📤 Export Laporan IKM
             </a> --}}
+
+
+            {{-- SK RISET KKN --}}
+            <button @click="openskrisetKKN = !openskrisetKKN"
+                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                :class="openskrisetKKN ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300' : 'hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900/20 dark:hover:text-green-300'">
+                <span class="flex items-center gap-2">
+                    🏪 SK Riset KKN
+                </span>
+                <svg :class="{ 'rotate-180': openskrisetKKN }" class="w-4 h-4 transform transition-transform" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <div x-show="openskrisetKKN" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                <a href="{{ route('skrisetKKN.create') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('skrisetKKN.create') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    ➕ Tambah Persyaratan
+                <a href="{{ route('skrisetKKN.list') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('skrisetKKN.list') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📄 List Data 
+                </a>
+                <a href="{{ route('skrisetKKN.penilaian.index') }}"
+                    class="block px-3 py-1 rounded transition-all
+                    {{ request()->routeIs('skrisetKKN.penilaian.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📝 Penilaian
+                </a>
+            </div>
         </nav>
     </aside>
 </div>

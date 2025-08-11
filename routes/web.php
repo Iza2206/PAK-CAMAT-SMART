@@ -146,6 +146,14 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::post('/iumk/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianiumk'])->name('iumk.penilaian');
     Route::get('/iumk/penilaian', [MejaLayananController::class, 'iumkpenilaianIndex'])->name('iumk.penilaian.index');
 
+    // === SK Riset KKN ===
+    Route::get('/layanan/skrisetKKN', [MejaLayananController::class, 'skrisetKKNList'])->name('skrisetKKN.list'); // List Data
+    Route::get('/layanan/skrisetKKN/create', [MejaLayananController::class, 'skrisetKKNCreate'])->name('skrisetKKN.create'); // Tambah
+    Route::post('/layanan/skrisetKKN/store', [MejaLayananController::class, 'skrisetKKNStore'])->name('skrisetKKN.store');  // Simpan
+    Route::patch('/layanan/skrisetKKN/{id}/kirim-kasi', [MejaLayananController::class, 'kirimKeKasidispen'])->name('skrisetKKN.kirimkasi');
+    Route::post('/skrisetKKN/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianskrisetKKN'])->name('skrisetKKN.penilaian');
+    Route::get('/skrisetKKN/penilaian', [MejaLayananController::class, 'skrisetKKNpenilaianIndex'])->name('skrisetKKN.penilaian.index');
+
     // === Export ===
     Route::get('/layanan/export', [MejaLayananController::class, 'export'])->name('mejalayanan.export');
 });
@@ -396,6 +404,19 @@ Route::middleware(['auth', 'role:camat'])->prefix('camat')->group(function () {
 // ---------------- Kasubbag Umpeg ----------------
 Route::middleware(['auth', 'role:kasubbag_umpeg'])->prefix('kasubbag-umpeg')->group(function () {
     Route::get('/dashboard', [KasubbagUmpegController::class, 'index'])->name('kasubbag_umpeg.dashboard');
+
+    // Layanan SK Riset KKN
+    Route::get('/skrisetKKN', [KasubbagUmpegController::class, 'skrisetKKNIndex'])->name('kasubbag_umpeg.skrisetKKN.index');
+    Route::post('/skrisetKKN/{id}/approve', [KasubbagUmpegController::class, 'skrisetKKNApprove'])->name('kasubbag_umpeg.skrisetKKN.approve');
+    Route::post('/skrisetKKN/{id}/reject', [KasubbagUmpegController::class, 'skrisetKKNReject'])->name('kasubbag_umpeg.skrisetKKN.reject');
+    Route::get('/skrisetKKN/proses', [KasubbagUmpegController::class, 'skrisetKKNProses'])->name('kasubbag_umpeg.skrisetKKN.proses');
+    Route::post('/skrisetKKN-nikah/{id}/upload-surat', [KasubbagUmpegController::class, 'uploadSuratskrisetKKN'])
+    ->name('skrisetKKN.uploadSurat');
+     Route::get('/skrisetKKN/approveByCamat', [KasubbagUmpegController::class, 'skrisetKKNApproveByCamatIndex'])->name('kasubbag_umpeg.skrisetKKN.approveByCamat');
+     Route::get('/kasi-kesos/skrisetKKN/approve/{id}/proses', [KasubbagUmpegController::class, 'prosesskrisetKKN'])
+    ->name('kasubbag_umpeg.skrisetKKN.prosesTTD');
+    Route::post('/kasi-kesos/skrisetKKN/{id}/proses', [KasubbagUmpegController::class, 'prosesStoreskrisetKKN'])
+    ->name('kasubbag_umpeg.skrisetKKN.proses.storeFinal');
 });
 
 

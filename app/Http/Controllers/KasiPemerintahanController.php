@@ -13,11 +13,11 @@ class KasiPemerintahanController extends Controller
 {
     public function index()
     {
-        $jumlahSkt       = \App\Models\SktSubmission::count();
-        $jumlahSppatGr   = \App\Models\SppatGrSubmission::count();
-        $jumlahAhliWaris = \App\Models\AhliWarisSubmission::count();
-        $jumlahAgunan    = \App\Models\AgunanSubmission::count();
-        $jumlahSengketa  = \App\Models\SengketaSubmission::count();
+        $jumlahSkt       = SktSubmission::count();
+        $jumlahSppatGr   = SppatGrSubmission::count();
+        $jumlahAhliWaris = AhliWarisSubmission::count();
+        $jumlahAgunan    = AgunanSubmission::count();
+        $jumlahSengketa  = SengketaSubmission::count();
 
         return view('kasi_pemerintahan.dashboard', compact(
             'jumlahSkt',

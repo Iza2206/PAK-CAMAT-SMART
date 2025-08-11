@@ -259,7 +259,7 @@ class KasiKesosController extends Controller
         ));
     }
 
-       // ---------------- DISPENSASI IUMK ----------------
+       // ----------------  IUMK ----------------
 
     public function iumkIndex()
     {
