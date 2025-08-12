@@ -107,32 +107,33 @@ class KasiKesosController extends Controller
         ]);
 
         $item = CatinSubmission::findOrFail($id);
-        $item->status = 'rejected_by_kasi';
+        $item->status = 'rejected';
         $item->rejected_reason = $request->reason;
+        $item->verified_at = now();  // <-- tambah ini supaya waktu tolak tercatat
         $item->save();
 
         return redirect()->back()->with('success', 'Pengajuan berhasil ditolak oleh Kasi Kesos.');
     }
 
-    public function dispencatinProses()
-    {
-        $jumlahPengajuan      = CatinSubmission::count();
-        $pengajuanDiajukan    = CatinSubmission::where('status', 'diajukan')->count();
-        $pengajuanDisetujui   = CatinSubmission::where('status', 'checked_by_kasi')->count();
-        $pengajuanDitolak     = CatinSubmission::where('status', 'rejected_by_kasi')->count();
 
-        $pengajuan = CatinSubmission::whereIn('status', ['checked_by_kasi', 'rejected_by_kasi'])
-            ->latest()
-            ->paginate(10);
+  public function dispencatinProses()
+{
+    $jumlahPengajuan      = CatinSubmission::count();
+    $pengajuanDiajukan    = CatinSubmission::where('status', 'diajukan')->count();
+    $pengajuanDisetujui   = CatinSubmission::where('status', 'checked_by_kasi')->count();
+    $pengajuanDitolak     = CatinSubmission::where('status', 'rejected')->count();
 
-        return view('kasi_kesos.dispencatin.proses', compact(
-            'pengajuan',
-            'jumlahPengajuan',
-            'pengajuanDiajukan',
-            'pengajuanDisetujui',
-            'pengajuanDitolak'
-        ));
-    }
+    $pengajuan = CatinSubmission::latest()->paginate(10);
+
+    return view('kasi_kesos.dispencatin.proses', compact(
+        'pengajuan',
+        'jumlahPengajuan',
+        'pengajuanDiajukan',
+        'pengajuanDisetujui',
+        'pengajuanDitolak'
+    ));
+}
+
 
     public function uploadSuratDispensasi(Request $request, $id)
     {
@@ -205,6 +206,7 @@ class KasiKesosController extends Controller
 
         return redirect()->route('kasi_kesos.dispencatin.approveByCamat')->with('success', 'Surat final berhasil diunggah.');
     }
+    
 
 
     // ---------------- SKTM ----------------

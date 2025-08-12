@@ -23,13 +23,17 @@
         {{-- Tanda Tangan Camat Card --}}
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-200">🖋️ Tanda Tangan Camat</h3>
-            @if ($item->camat->ttd)
-                <a href="{{ asset('storage/' . $item->camat->ttd) }}" class="inline-block text-blue-600 dark:text-blue-400 hover:underline font-medium">
-                    Klik untuk download tanda tangan
-                </a>
+            @if ($item->camat && $item->camat->ttd)
+                <a href="{{ asset('storage/ttd/' . $item->camat->ttd) }}" 
+   download="{{ $item->camat->ttd }}" 
+   class="inline-block text-blue-600 dark:text-blue-400 hover:underline font-medium">
+    Klik untuk download tanda tangan
+</a>
+
             @else
                 <p class="text-red-600 dark:text-red-400 font-semibold">⚠️ Tanda tangan Camat belum tersedia.</p>
             @endif
+
         </div>
 
         {{-- Upload Surat Final Card --}}
