@@ -66,7 +66,7 @@
                             
                             @if ($item->file_surat)
                                 <a href="{{ asset('storage/' . $item->file_surat) }}" target="_blank" class="block text-blue-500 hover:underline text-sm">
-                                    <button class="bg-indigo-600 hover:bg-green-800 text-white px-4 py-2 rounded text-sm shadow">
+                                    <button class="bg-blue-600 hover:bg-green-800 text-white px-4 py-2 rounded text-sm shadow">
                                         Lihat Surat
                                     </button>
                                 </a>
