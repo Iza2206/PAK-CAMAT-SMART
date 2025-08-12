@@ -12,6 +12,7 @@ use App\Http\Controllers\MejaLayananController;
 use App\Http\Controllers\SekcamController;
 use App\Http\Controllers\AntrianController;
 use App\Http\Controllers\AdminAccountController;
+use App\Http\Controllers\AccountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -411,6 +412,13 @@ Route::middleware(['auth', 'role:camat'])->prefix('camat')->group(function () {
     Route::post('/skrisetKKN/{id}/approve', [CamatController::class, 'skrisetKKNApprove'])->name('camat.skrisetKKN.approve');
     Route::post('/skrisetKKN/{id}/reject', [CamatController::class, 'skrisetKKNReject'])->name('camat.skrisetKKN.reject');
     Route::get('/skrisetKKN/proses', [CamatController::class, 'skrisetKKNProses'])->name('camat.skrisetKKN.proses');
+
+    // Account (Manajemen Akun)
+    Route::get('/account', [CamatController::class, 'edit'])->name('camat.account.edit');
+    Route::put('/account', [CamatController::class, 'update'])->name('camat.account.update');
+    Route::delete('/account/ttd', [CamatController::class, 'deleteTtd'])->name('camat.account.ttd.delete');
+    Route::put('/account/password', [CamatController::class, 'updatePassword'])->name('camat.account.password.update');
+
 });
 
 // ---------------- Kasubbag Umpeg ----------------
@@ -430,6 +438,5 @@ Route::middleware(['auth', 'role:kasubbag_umpeg'])->prefix('kasubbag-umpeg')->gr
     Route::post('/kasi-kesos/skrisetKKN/{id}/proses', [KasubbagUmpegController::class, 'prosesStoreskrisetKKN'])
     ->name('kasubbag_umpeg.skrisetKKN.proses.storeFinal');
 });
-
 
 

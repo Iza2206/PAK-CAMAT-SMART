@@ -31,6 +31,7 @@
             class="p-4 text-sm text-gray-700 dark:text-gray-300 font-medium space-y-2"
             x-data="{
                 openBpjs: {{ request()->routeIs('camat.bpjs.*') ? 'true' : 'false' }},
+                openDispenNikah: {{ request()->routeIs('camat.dispensasi.*') ? 'true' : 'false' }},
                 openSktm: {{ request()->routeIs('camat.sktm.*') ? 'true' : 'false' }},
                 openSkt: {{ request()->routeIs('camat.skt.*') ? 'true' : 'false' }},
                 openAhliWaris: {{ request()->routeIs('camat.ahliwaris.*') ? 'true' : 'false' }},
@@ -39,7 +40,7 @@
                 openSengketa: {{ request()->routeIs('camat.silang_sengketa.*') ? 'true' : 'false' }},
                 openCatin: {{ request()->routeIs('camat.catin.*') ? 'true' : 'false' }},
                 openSkbd: {{ request()->routeIs('camat.skbd.*') ? 'true' : 'false' }},
-                 openDispenNikah: {{ request()->routeIs('camat.dispensasi.*') ? 'true' : 'false' }},
+                
                  openiumk: {{ request()->routeIs('camat.iumk.*') ? 'true' : 'false' }},
             }"
         >
@@ -76,6 +77,38 @@
                     🗂️ Riwayat Proses BPJS
                 </a>
             </div>
+
+            {{-- Dispensasi Nikah Menu --}}
+            <div x-data="{ openDispenNikah: {{ request()->routeIs('camat.dispencatin.*') ? 'true' : 'false' }} }">
+                <button @click="openDispenNikah = !openDispenNikah"
+                    class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                    :class="openDispenNikah ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
+                    <span class="flex items-center gap-2">
+                        👫
+                        <span>Dispensasi Nikah</span>
+                    </span>
+                    <svg :class="{ 'rotate-180': openDispenNikah }" class="w-4 h-4 transform transition-transform" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                {{-- Submenu Dispensasi Nikah --}}
+                <div x-show="openDispenNikah" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                    <a href="{{ route('camat.dispencatin.index') }}"
+                        class="block px-3 py-1 rounded transition-all
+                        {{ request()->routeIs('camat.dispencatin.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                        📝 Verifikasi Dispensasi Nikah
+                    </a>
+                    <a href="{{ route('camat.dispencatin.proses') }}"
+                        class="block px-3 py-1 rounded transition-all
+                        {{ request()->routeIs('camat.dispencatin.proses') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                        🗂️ Riwayat Proses Dispensasi Nikah
+                    </a>
+                </div>
+            </div>
+
 
             {{-- SKTM Menu --}}
             <button @click="openSktm = !openSktm"
@@ -291,43 +324,6 @@
                     {{ request()->routeIs('camat.skbd.proses') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
                     🗂️ Riwayat Proses SKBD
                 </a>
-            </div>
-
-            {{-- Dispensasi Nikah Menu --}}
-           <button @click="openDispenNikah = !openDispenNikah"
-                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
-                :class="openDispenNikah ? 'bg-blu e-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'">
-                <span class="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-400 dark:text-blue-300" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M5 13l4 4L19 7" />
-                    </svg>
-                   Dispensasi Cerai
-                </span>
-                <svg :class="{ 'rotate-180': openDispenNikah }" class="w-4 h-4 transform transition-transform" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 9l-7 7-7-7" />
-                </svg>
-            </button>
-
-            {{-- Submenu Dispensasi Nikah --}}
-            <div x-show="openDispenNikah"  x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                <a href="{{ route('camat.dispencatin.index') }}"
-                    class="block px-3 py-1 rounded transition-all 
-                    {{ request()->routeIs('camat.dispencatin.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
-                    📝 Verifikasi Dispensasi Nikah
-                </a>
-                <a href="{{ route('camat.dispencatin.proses') }}" 
-                    class="block px-3 py-1 rounded transition-all 
-                    {{ request()->routeIs('camat.dispencatin.proses') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
-                    <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M3 7l4 0 2-2h6l2 2h4M4 17h6m-6-4h10m-6 8h6M4 21h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    Riwayat Proses Dispensasi Nikah
-                </a>
             </div>  
 
             {{-- Izin Usaha Mikro --}}
@@ -366,6 +362,13 @@
                     Riwayat Proses Izin Usaha Mikro
                 </a>
             </div>  
+           {{-- Pengaturan Akun --}}
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-6">
+                <a href="{{ route('camat.account.edit') }}" 
+                class="block px-4 py-2 text-gray-700 hover:bg-blue-100 hover:text-blue-700 rounded transition duration-150 font-semibold">
+                    🛠️ Manajemen Akun
+                </a>
+            </div>
         </nav>
     </aside>
 </div>

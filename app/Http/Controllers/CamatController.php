@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Hash;
 use App\Models\AgunanSubmission;
 use App\Models\AhliwarisSubmission;
 use Illuminate\Http\Request;
@@ -16,6 +16,9 @@ use App\Models\SengketaSubmission;
 use App\Models\SkrisetKKNSubmission;
 use App\Models\SppatGrSubmission;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use App\Models\User;  // pastikan import model User
+
 
 class CamatController extends Controller
 {
@@ -644,4 +647,79 @@ class CamatController extends Controller
             'pengajuanDitolak'
         ));
     }
+
+   // ==================== ACCOUNT ====================
+
+    public function edit()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        return view('camat.account.edit', compact('user'));
+    }
+
+    public function update(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'ttd' => 'nullable|image|max:2048',
+        ]);
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        if ($request->hasFile('ttd')) {
+            if ($user->ttd && Storage::exists('public/ttd/' . $user->ttd)) {
+                Storage::delete('public/ttd/' . $user->ttd);
+            }
+
+            $file = $request->file('ttd');
+            $filename = 'ttd_' . $user->id . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/ttd', $filename);
+            $user->ttd = $filename;
+        }
+
+        $user->save();
+
+        return redirect()->route('camat.account.edit')->with('success', 'Profil berhasil diperbarui.');
+    }
+
+    public function deleteTtd()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if ($user->ttd && Storage::exists('public/ttd/' . $user->ttd)) {
+            Storage::delete('public/ttd/' . $user->ttd);
+        }
+
+        $user->ttd = null;
+        $user->save();
+
+        return redirect()->route('camat.account.edit')->with('success', 'Tanda tangan berhasil dihapus.');
+    }
+    public function updatePassword(Request $request)
+{
+     /** @var \App\Models\User $user */
+    $user = Auth::user();
+
+    $request->validate([
+        'current_password' => ['required', 'string'],
+        'password' => ['required', 'string', 'min:8', 'confirmed'],
+    ]);
+
+    // Cek password lama
+    if (!Hash::check($request->current_password, $user->password)) {
+        return redirect()->back()->withErrors(['current_password' => 'Password lama salah']);
+    }
+
+    // Update password baru
+    $user->password = Hash::make($request->password);
+    $user->save();
+
+    return redirect()->back()->with('success', 'Password berhasil diubah.');
+}
 }
