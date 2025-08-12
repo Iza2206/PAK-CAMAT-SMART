@@ -8,8 +8,8 @@
     <style>
         .logo-circle {
             background: linear-gradient(to right, #0ea5e9, #22d3ee);
-            width: 64px;
-            height: 64px;
+            width: 150px;
+            height: 150px;
             border-radius: 9999px;
             display: flex;
             align-items: center;
@@ -25,7 +25,7 @@
     <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md animate-fade-in">
         <div class="flex flex-col items-center mb-6">
             <div class="logo-circle mb-3 shadow">
-                PAK CAMAT SMART
+              <img src="{{asset('images/bupati_wakil.png')}}" alt="bupati dan wakil" width="100%">
             </div>
             <h1 class="text-2xl font-semibold text-gray-800 text-center">
                 Login Aplikasi PAK CAMAT SMART
