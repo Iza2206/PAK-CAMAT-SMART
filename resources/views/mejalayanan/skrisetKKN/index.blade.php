@@ -48,7 +48,7 @@
 
                             if ($item->rejected_reason) {
                                 $totalAkhir = $verified;
-                                $ditolakOleh = 'Kasi kesos';
+                                $ditolakOleh = 'Kasi Umpeg';
                             } elseif ($item->rejected_sekcam_reason) {
                                 $totalAkhir = $sekcam;
                                 $ditolakOleh = 'Sekcam';
@@ -78,7 +78,7 @@
                             </td>
                             <td class="px-4 py-3 border text-sm space-y-1">
                                 <div>📥 Diajukan: {{ $created->diffForHumans() }}</div>
-                                <div>✅ Kasi Kesos: {{ $verified ? $verified->diffForHumans($created, true) : 'menunggu' }}</div>
+                                <div>✅ Kasi Umpeg: {{ $verified ? $verified->diffForHumans($created, true) : 'menunggu' }}</div>
                                 <div>📝 Sekcam: {{ $sekcam ? $sekcam->diffForHumans($verified ?? $created, true) : 'menunggu' }}</div>
                                 <div>🖋️ Camat: {{ $camat ? $camat->diffForHumans($sekcam ?? $verified ?? $created, true) : 'menunggu' }}</div>
 

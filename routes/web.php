@@ -12,7 +12,7 @@ use App\Http\Controllers\MejaLayananController;
 use App\Http\Controllers\SekcamController;
 use App\Http\Controllers\AntrianController;
 use App\Http\Controllers\AdminAccountController;
-use App\Http\Controllers\AccountController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -27,10 +27,10 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+
+
 // ===================== SUPER ADMIN DASHBOARD =====================
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-    // Dashboard
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     
 
     // // Manajemen Akun
