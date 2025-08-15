@@ -46,10 +46,10 @@ class MejaLayananController extends Controller
     ];
 
     $nilaiMapping = [
-        'sangat puas' => 4,
+        'sangat_puas' => 4,
         'puas'        => 3,
         'cukup'       => 2,
-        'tidak puas'  => 1,
+        'tidak_puas'  => 1,
     ];
 
     $allData = collect();
