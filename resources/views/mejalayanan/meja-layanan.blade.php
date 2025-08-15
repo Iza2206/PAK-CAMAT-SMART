@@ -13,16 +13,24 @@
         {{-- Ringkasan Data --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 text-center">
-                <p class="text-sm text-gray-500 dark:text-gray-400">Total Nilai IKM</p>
-                <p class="text-2xl font-bold">{{ number_format($ikm, 2) }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Total Responden</p>
+                <p class="text-2xl font-bold">{{ $statistik['total_responden'] }}</p>
             </div>
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 text-center">
-                <p class="text-sm text-gray-500 dark:text-gray-400">Jumlah Responden</p>
-                <p class="text-2xl font-bold">{{ $jumlahRespondenTotal }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Rata-rata Durasi ke Sekcam</p>
+                <p class="text-2xl font-bold">{{ $statistik['avg_durasi_sekcam'] }} menit</p>
             </div>
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 text-center">
-                <p class="text-sm text-gray-500 dark:text-gray-400">Rata-rata Lama Pengisian</p>
-                <p class="text-2xl font-bold">{{ gmdate('i \m\i\n s \d\k', $avgDurasi) }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Rata-rata Durasi ke Camat</p>
+                <p class="text-2xl font-bold">{{ $statistik['avg_durasi_camat'] }} menit</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 text-center">
+                <p class="text-sm text-gray-500 dark:text-gray-400">NRR</p>
+                <p class="text-2xl font-bold">{{ number_format($statistik['nrr'], 2) }}</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 text-center">
+                <p class="text-sm text-gray-500 dark:text-gray-400">IKM</p>
+                <p class="text-2xl font-bold">{{ number_format($statistik['ikm'], 2) }}</p>
             </div>
         </div>
 
@@ -31,56 +39,37 @@
             <table class="min-w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg">
                 <thead class="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold">
                     <tr>
-                        <th class="px-4 py-3 border border-gray-300 dark:border-gray-600">No</th>
-                        <th class="px-4 py-3 border border-gray-300 dark:border-gray-600 text-left">Nama Pemohon</th>
-                        <th class="px-4 py-3 border border-gray-300 dark:border-gray-600 text-center">Nilai Penilaian</th>
-                        <th class="px-4 py-3 border border-gray-300 dark:border-gray-600 text-center">Nilai Angka</th>
-                        <th class="px-4 py-3 border border-gray-300 dark:border-gray-600 text-center">Status</th>
-                        <th class="px-4 py-3 border border-gray-300 dark:border-gray-600 text-center">Durasi Approve</th>
-                        <th class="px-4 py-3 border border-gray-300 dark:border-gray-600 text-center">Layanan</th>
+                        <th class="px-4 py-2">ID</th>
+                        <th class="px-4 py-2">Nama Pemohon</th>
+                        <th class="px-4 py-2">Layanan</th>
+                        <th class="px-4 py-2">Penilaian</th>
+                        <th class="px-4 py-2">Status</th>
+                        <th class="px-4 py-2">Verified At</th>
+                        <th class="px-4 py-2">Approved Sekcam</th>
+                        <th class="px-4 py-2">Approved Camat</th>
+                        <th class="px-4 py-2">Durasi ke Sekcam (menit)</th>
+                        <th class="px-4 py-2">Durasi ke Camat (menit)</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
-                    @forelse ($submissions as $index => $item)
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 border-t border-gray-200 dark:border-gray-600">
-                            <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">
-                                {{ $loop->iteration + ($submissions->currentPage() - 1) * $submissions->perPage() }}
-                            </td>
-                            <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">
-                                {{ $item->nama_pemohon }}
-                            </td>
-                            <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">
-                                {{ $item->nilai }}
-                            </td>
-                            <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">
-                                {{ $item->nilaiAngka }}
-                            </td>
-                            <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">
-                                {{ $item->status }}
-                            </td>
-                            <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center whitespace-nowrap">
-                                @php
-                                    $created = \Carbon\Carbon::parse($item->created_at);
-                                    $approved = $item->approved_camat_at ?? $item->approved_sekcam_at ?? $item->verified_at;
-                                @endphp
-
-                                @if ($approved)
-                                    ⏱️ {{ \Carbon\Carbon::parse($approved)->diffForHumans($created, true) }}
-                                @else
-                                    <span class="text-gray-400">-</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">
-                                {{ ucfirst(str_replace('_', ' ', $item->layanan)) }}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
-                                Belum ada data pengisian.
-                            </td>
-                        </tr>
-                    @endforelse
+                    @forelse ($submissions as $item)
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="px-4 py-2">{{ $item->id }}</td>
+                        <td class="px-4 py-2">{{ $item->nama_pemohon }}</td>
+                        <td class="px-4 py-2">{{ ucwords(str_replace('_', ' ', $item->layanan)) }}</td>
+                        <td class="px-4 py-2">{{ $item->penilaian }}</td>
+                        <td class="px-4 py-2">{{ $item->status }}</td>
+                        <td class="px-4 py-2">{{ $item->verified_at ? \Carbon\Carbon::parse($item->verified_at)->format('d-m-Y H:i') : '-' }}</td>
+                        <td class="px-4 py-2">{{ $item->approved_sekcam_at ? \Carbon\Carbon::parse($item->approved_sekcam_at)->format('d-m-Y H:i') : '-' }}</td>
+                        <td class="px-4 py-2">{{ $item->approved_camat_at ? \Carbon\Carbon::parse($item->approved_camat_at)->format('d-m-Y H:i') : '-' }}</td>
+                        <td class="px-4 py-2 text-center">{{ $item->durasi_sekcam }}</td>
+                        <td class="px-4 py-2 text-center">{{ $item->durasi_camat }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="10" class="text-center py-4 text-gray-500">Tidak ada data</td>
+                    </tr>
+                @endforelse
                 </tbody>
             </table>
 

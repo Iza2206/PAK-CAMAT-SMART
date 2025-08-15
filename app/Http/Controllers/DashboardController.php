@@ -28,47 +28,99 @@ class DashboardController extends Controller
 
         $nilaiMapping = [
             'sangat puas' => 4,
-            'puas'       => 3,
-            'cukup'      => 2,
-            'tidak puas' => 1,
+            'puas'        => 3,
+            'cukup'       => 2,
+            'tidak puas'  => 1,
         ];
 
         $totalResponden = 0;
         $totalPenilaian = 0;
         $allSubmissions = collect();
 
+        $durations = [
+            'rejected' => [],
+            'sekcam'   => [],
+            'camat'    => [],
+        ];
+
         foreach ($tables as $table) {
             $records = DB::table($table)
-                ->select('id', 'user_id', 'penilaian', 'status', 'submitted_at', 'duration_seconds')
+                ->select(
+                    'id',
+                    'user_id',
+                    'penilaian',
+                    'status',
+                    'verified_at',
+                    'approved_sekcam_at',
+                    'approved_camat_at',
+                    'rejected_at',
+                    'created_at'
+                )
                 ->get();
 
             foreach ($records as $record) {
                 $totalResponden++;
+
                 $penilaianStr = strtolower(trim($record->penilaian ?? ''));
                 $nilai = $nilaiMapping[$penilaianStr] ?? 0;
-
                 $totalPenilaian += $nilai;
 
-                $user = null;
-                if ($record->user_id) {
-                    $user = User::find($record->user_id);
+                $user = $record->user_id ? User::find($record->user_id) : null;
+
+                $start = $record->verified_at ? strtotime($record->verified_at) : null;
+                $end = null;
+                $duration = 0;
+                $statusKategori = '-';
+
+                if ($start) {
+                    if ($record->status === 'rejected' && $record->rejected_at) {
+                        $end = strtotime($record->rejected_at);
+                        $statusKategori = 'rejected';
+                    } elseif ($record->approved_camat_at) {
+                        $end = strtotime($record->approved_camat_at);
+                        $statusKategori = 'camat';
+                    } elseif ($record->approved_sekcam_at) {
+                        $end = strtotime($record->approved_sekcam_at);
+                        $statusKategori = 'sekcam';
+                    }
+
+                    if ($end) {
+                        $duration = $end - $start;
+                        $durations[$statusKategori][] = $duration;
+                    }
                 }
 
                 $allSubmissions->push((object)[
                     'id' => $record->id,
                     'user' => $user,
+                    'penilaian' => $record->penilaian ?? '-',
                     'nilai' => $nilai,
                     'status' => $record->status ?? '-',
-                    'submitted_at' => $record->submitted_at,
-                    'duration_seconds' => $record->duration_seconds ?? 0,
+                    'submitted_at' => $record->verified_at,
+                    'duration_seconds' => $duration,
+                    'created_at' => $record->created_at,
+                    'layanan' => $table,
                 ]);
             }
         }
 
-        $totalNilai = $totalResponden > 0 ? $totalPenilaian / $totalResponden : 0;
-        $avgDuration = $totalResponden > 0 ? intval($allSubmissions->avg('duration_seconds')) : 0;
+        $avgRejected = count($durations['rejected']) > 0
+            ? intval(array_sum($durations['rejected']) / count($durations['rejected']))
+            : 0;
 
-        // Manual pagination for collection
+        $avgSekcam = count($durations['sekcam']) > 0
+            ? intval(array_sum($durations['sekcam']) / count($durations['sekcam']))
+            : 0;
+
+        $avgCamat = count($durations['camat']) > 0
+            ? intval(array_sum($durations['camat']) / count($durations['camat']))
+            : 0;
+
+        $totalNilai = $totalResponden > 0
+            ? $totalPenilaian / $totalResponden
+            : 0;
+
+        // Pagination manual
         $perPage = 10;
         $page = $request->get('page', 1);
         $paginated = new LengthAwarePaginator(
@@ -79,10 +131,13 @@ class DashboardController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        return view('dashboard.index', [
-            'totalNilai' => $totalNilai,
-            'jumlahResponden' => $totalResponden,
-            'avgDuration' => $avgDuration,
+        return view('mejalayanan.meja-layanan', [
+            'ikm' => $totalNilai,
+            'jumlahRespondenTotal' => $totalResponden,
+            'avgRejected' => $avgRejected,
+            'avgSekcam' => $avgSekcam,
+            'avgCamat' => $avgCamat,
+            'avgDurasi' => $avgCamat,
             'submissions' => $paginated,
         ]);
     }

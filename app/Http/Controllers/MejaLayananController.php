@@ -12,7 +12,7 @@ use App\Models\CatinTniPolriSubmission;
 use App\Models\SengketaSubmission;
 use App\Models\AgunanSubmission;
 use App\Models\AhliwarisSubmission;
-use App\Models\CatinSubmission;
+    use App\Models\CatinSubmission;
 use App\Models\IumkSubmission;
 use App\Models\SkrisetKKNSubmission;
 use App\Models\SppatGrSubmission;
@@ -28,9 +28,9 @@ class MejaLayananController extends Controller
 {
     use HasNikStatusFilter;
 
-public function index(Request $request)
-{
-    $tables = [
+    public function index(Request $request)
+    {
+        $tables = [
         'agunan_submissions',
         'ahliwaris_submissions',
         'bpjs_submissions',
@@ -47,122 +47,85 @@ public function index(Request $request)
 
     $nilaiMapping = [
         'sangat puas' => 4,
-        'puas'       => 3,
-        'cukup'      => 2,
-        'tidak puas' => 1,
+        'puas'        => 3,
+        'cukup'       => 2,
+        'tidak puas'  => 1,
     ];
 
-    $allSubmissions = collect();
-    $durasiTotal = 0;
-    $jumlahRespondenTotal = 0;
-
-    // Ini untuk menyimpan per layanan
-    $dataPerLayanan = [];
+    $allData = collect();
+    $totalResponden = 0;
+    $totalPenilaian = 0;
+    $totalDurasiSekcam = 0;
+    $totalDurasiCamat = 0;
 
     foreach ($tables as $table) {
         $records = DB::table($table)
-            ->select(
-                'id',
-                'nama_pemohon',
-                'penilaian',
-                'status',
-                'verified_at',
-                'approved_sekcam_at',
-                'approved_camat_at',
-                'created_at'
-            )
-            ->whereNotNull('penilaian') // abaikan yang penilaian null
+            ->select('id', 'nama_pemohon', 'penilaian', 'verified_at', 'approved_sekcam_at', 'approved_camat_at', 'status', 'created_at')
+            ->whereNotNull('approved_camat_at')
+            ->whereNotNull('penilaian')
             ->get();
 
-        $jumlahResponden = 0;
-        $sumPenilaian = 0;
-        $durasiLayanan = 0;
+        foreach ($records as $r) {
+            $nilai = $nilaiMapping[strtolower(trim($r->penilaian))] ?? 0;
+            if ($nilai <= 0) continue;
 
-        foreach ($records as $record) {
-            $penilaianStr = strtolower(trim($record->penilaian));
-            $nilaiAngka = $nilaiMapping[$penilaianStr] ?? 0;
+            $durasiSekcam = $r->verified_at && $r->approved_sekcam_at
+                ? Carbon::parse($r->verified_at)->diffInMinutes(Carbon::parse($r->approved_sekcam_at))
+                : 0;
 
-            if ($nilaiAngka > 0) {
-                $jumlahResponden++;
-                $sumPenilaian += $nilaiAngka;
+            $durasiCamat = $r->approved_sekcam_at && $r->approved_camat_at
+                ? Carbon::parse($r->approved_sekcam_at)->diffInMinutes(Carbon::parse($r->approved_camat_at))
+                : 0;
 
-                // Hitung durasi approve - created
-                $created = isset($record->created_at) ? Carbon::parse($record->created_at) : null;
-                $approved = $record->approved_camat_at ?? $record->approved_sekcam_at ?? $record->verified_at ?? null;
+            $allData->push((object) [
+                'id' => $r->id,
+                'nama_pemohon' => $r->nama_pemohon ?? '-',
+                'layanan' => $table,
+                'penilaian' => $r->penilaian,
+                'nilai' => $nilai,
+                'status' => $r->status ?? '-',
+                'verified_at' => $r->verified_at,
+                'approved_sekcam_at' => $r->approved_sekcam_at,
+                'approved_camat_at' => $r->approved_camat_at,
+                'durasi_sekcam' => $durasiSekcam,
+                'durasi_camat' => $durasiCamat,
+                'created_at' => $r->created_at,
+            ]);
 
-                if ($created && $approved) {
-                    $diffInSeconds = Carbon::parse($approved)->diffInSeconds($created);
-                } else {
-                    $diffInSeconds = 0;
-                }
-                $durasiLayanan += $diffInSeconds;
-
-                $allSubmissions->push((object)[
-                    'id' => $record->id,
-                    'nama_pemohon' => $record->nama_pemohon ?? '-',
-                    'nilai' => $record->penilaian ?? '-',
-                    'nilaiAngka' => $nilaiAngka,
-                    'status' => $record->status ?? '-',
-                    'verified_at' => $record->verified_at ?? null,
-                    'approved_sekcam_at' => $record->approved_sekcam_at ?? null,
-                    'approved_camat_at' => $record->approved_camat_at ?? null,
-                    'created_at' => $record->created_at ?? null,
-                    'durasi_approve_detik' => $diffInSeconds,
-                    'layanan' => $table,
-                ]);
-            }
+            $totalResponden++;
+            $totalPenilaian += $nilai;
+            $totalDurasiSekcam += $durasiSekcam;
+            $totalDurasiCamat += $durasiCamat;
         }
-
-        // Hitung NRR unsur per layanan
-        $nrrUnsur = $sumPenilaian > 0 ? ($jumlahResponden / $sumPenilaian) : 0;
-
-        // NRR tertimbang
-        $nrrTertimbang = $nrrUnsur * 0.1111;
-
-        // Simpan data layanan
-        $dataPerLayanan[$table] = [
-            'jumlahResponden' => $jumlahResponden,
-            'sumPenilaian' => $sumPenilaian,
-            'nrrUnsur' => $nrrUnsur,
-            'nrrTertimbang' => $nrrTertimbang,
-            'durasiTotalDetik' => $durasiLayanan,
-        ];
-
-        // Akumulasi total
-        $jumlahRespondenTotal += $jumlahResponden;
-        $durasiTotal += $durasiLayanan;
     }
 
-    // Hitung total sum NRR tertimbang dari semua layanan
-    $totalNrrTertimbang = collect($dataPerLayanan)->sum('nrrTertimbang');
+    $nrr = $totalResponden > 0 ? $totalPenilaian / $totalResponden : 0;
+    $ikm = $nrr * 25;
 
-    // Hitung IKM
-    $ikm = $totalNrrTertimbang * 25;
-
-    // Hitung rata-rata durasi (detik) dari seluruh layanan
-    $avgDurasi = $jumlahRespondenTotal > 0 ? intval($durasiTotal / $jumlahRespondenTotal) : 0;
+    $statistik = [
+        'total_responden' => $totalResponden,
+        'avg_durasi_sekcam' => $totalResponden > 0 ? round($totalDurasiSekcam / $totalResponden, 2) : 0,
+        'avg_durasi_camat' => $totalResponden > 0 ? round($totalDurasiCamat / $totalResponden, 2) : 0,
+        'nrr' => round($nrr, 2),
+        'ikm' => round($ikm, 2),
+    ];
 
     // Pagination manual
     $perPage = 10;
     $page = $request->get('page', 1);
-    $paginated = new \Illuminate\Pagination\LengthAwarePaginator(
-        $allSubmissions->forPage($page, $perPage),
-        $allSubmissions->count(),
+    $paginated = new LengthAwarePaginator(
+        $allData->forPage($page, $perPage),
+        $allData->count(),
         $perPage,
         $page,
         ['path' => $request->url(), 'query' => $request->query()]
     );
 
     return view('mejalayanan.meja-layanan', [
-        'dataPerLayanan' => $dataPerLayanan,
-        'totalNrrTertimbang' => $totalNrrTertimbang,
-        'ikm' => $ikm,
-        'jumlahRespondenTotal' => $jumlahRespondenTotal,
-        'avgDurasi' => $avgDurasi,
+        'statistik' => $statistik,
         'submissions' => $paginated,
     ]);
-}
-
+    }
 
     // ---------------- BPJS ----------------
 
@@ -1671,4 +1634,3 @@ public function index(Request $request)
 
     
 }
-
