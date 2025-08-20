@@ -20,6 +20,8 @@ use App\Models\SktSubmission;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Helpers\PenilaianHelper;
 
 
 use App\Traits\HasNikStatusFilter;
@@ -30,7 +32,7 @@ class MejaLayananController extends Controller
 
     public function index(Request $request)
     {
-        $tables = [
+         $tables = [
         'agunan_submissions',
         'ahliwaris_submissions',
         'bpjs_submissions',
@@ -77,11 +79,15 @@ class MejaLayananController extends Controller
                 ? Carbon::parse($r->approved_sekcam_at)->diffInMinutes(Carbon::parse($r->approved_camat_at))
                 : 0;
 
+            // emoji dari helper
+            $emoji = \App\Helpers\PenilaianHelper::numericWithEmoji($nilai);
+
             $allData->push((object) [
                 'id' => $r->id,
                 'nama_pemohon' => $r->nama_pemohon ?? '-',
                 'layanan' => $table,
                 'penilaian' => $r->penilaian,
+                'emoji' => $emoji,
                 'nilai' => $nilai,
                 'status' => $r->status ?? '-',
                 'verified_at' => $r->verified_at,
@@ -100,13 +106,17 @@ class MejaLayananController extends Controller
     }
 
     $nrr = $totalResponden > 0 ? $totalPenilaian / $totalResponden : 0;
-    $ikm = $nrr * 25;
+    $nilaiunsur = $totalPenilaian;
+    $nrrtertbg = ($nrr * 0.111) * 9;
+    $ikm = $nrrtertbg * 25;
 
     $statistik = [
         'total_responden' => $totalResponden,
         'avg_durasi_sekcam' => $totalResponden > 0 ? round($totalDurasiSekcam / $totalResponden, 2) : 0,
         'avg_durasi_camat' => $totalResponden > 0 ? round($totalDurasiCamat / $totalResponden, 2) : 0,
+        'nilaiunsur' => round($nilaiunsur, 2),
         'nrr' => round($nrr, 2),
+        'nrrtertbg' => round($nrrtertbg, 2),
         'ikm' => round($ikm, 2),
     ];
 
@@ -242,25 +252,27 @@ class MejaLayananController extends Controller
         return back();
     }
 
-    public function simpanPenilaianBpjs(Request $request, $id)
+public function simpanPenilaianBpjs(Request $request, $id)
 {
+    // 1. Validasi request
     $request->validate([
-        'penilaian'     => 'required|in:tidak_puas,cukup,puas,sangat_puas',
-        'saran_kritik'  => 'nullable|string|max:1000', // tambahkan validasi saran
+        'penilaian' => PenilaianHelper::validationRule(),
+        'saran_kritik' => 'nullable|string|max:1000',
     ]);
 
-    $data = \App\Models\BpjsSubmission::findOrFail($id);
+    // 2. Ambil data submission
+    $submission = BpjsSubmission::findOrFail($id);
 
-    // Cek status dan apakah sudah pernah dinilai
-    if ($data->status !== 'approved_by_camat' || $data->penilaian) {
-        return back()->with('error', 'Pengajuan tidak valid untuk dinilai.');
+    // 3. Cek apakah boleh dinilai
+    if ($submission->status !== 'approved_by_camat' || !is_null($submission->penilaian)) {
+        return back()->with('error', 'Pengajuan tidak valid atau sudah pernah dinilai.');
     }
 
-    $data->update([
-        'penilaian'     => $request->penilaian,
-        'saran_kritik'  => $request->saran_kritik, // simpan saran
-        'diambil_at'    => now(),
-    ]);
+    // 4. Simpan penilaian
+    $submission->penilaian    = PenilaianHelper::labelToNumeric($request->penilaian);
+    $submission->saran_kritik = $request->saran_kritik;
+    $submission->diambil_at   = now();
+    $submission->save();
 
     return back()->with('success', 'Penilaian berhasil dikirim.');
 }
@@ -270,14 +282,53 @@ class MejaLayananController extends Controller
     {
         $filters = $request->only(['nik', 'penilaian']);
 
-        $data = \App\Models\BpjsSubmission::where('status', 'approved_by_camat')
-            ->filterNikStatus($filters) // ✅ menggunakan trait
-            ->latest('updated_at')
+        $query = \App\Models\BpjsSubmission::where('status', 'approved_by_camat')
+            ->filterNikStatus($filters);  // ✅ menggunakan trait
+
+        // -------------------------------
+        // Filter tanggal (created_at)
+        // -------------------------------
+        if ($request->start_date) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->end_date) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+        // -------------------------------
+
+        $data = $query->latest('updated_at')
             ->paginate(10)
             ->withQueryString(); // agar pagination tetap bawa filter
 
         return view('mejalayanan.bpjs.penilaian', compact('data'));
     }
+
+    // print out pdf
+    public function penilaianPdf(Request $request)
+    {
+        $query = \App\Models\BpjsSubmission::where('status','approved_by_camat')
+            ->when($request->nik, function($q) use ($request){
+                $q->where('nik_pemohon','like','%'.$request->nik.'%');
+            })
+            ->when($request->penilaian, function($q) use ($request){
+                $q->where('penilaian', $request->penilaian);   // filter angka langsung
+            });
+
+        if ($request->start_date) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->end_date) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $data = $query->latest('created_at')->get();
+
+        $pdf = Pdf::loadView('mejalayanan.bpjs.penilaianPdf', compact('data'))
+                ->setPaper('a4', 'landscape');
+
+        return $pdf->download('Laporan-Penilaian-BPJS.pdf');
+    }
+
 
     // ---------------- Dispensasi ----------------
 

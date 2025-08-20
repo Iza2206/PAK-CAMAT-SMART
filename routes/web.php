@@ -63,6 +63,8 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::patch('/layanan/bpjs/{id}/kirim-kasi', [MejaLayananController::class, 'kirimKeKasi'])->name('bpjs.kirimkasi'); //kirim ke kasi kesos
     Route::post('/bpjs/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianBpjs'])->name('bpjs.penilaian'); // simpan penilaian ikm bpjs
     Route::get('/bpjs/penilaian', [MejaLayananController::class, 'penilaianIndex'])->name('bpjs.penilaian.index'); // list penilaian bpjs
+    Route::get('/bpjs/penilaian/pdf', [MejaLayananController::class, 'penilaianPdf'])->name('bpjs.penilaian.pdf');
+
 
     // Dispensasi Nikah
     Route::get('/layanan/dispencatin', [MejaLayananController::class, 'DispencatinList'])->name('dispencatin.list'); // List Data

@@ -13,11 +13,7 @@
             this.modalOpen = true;
         }
     }"
-    x-init="
-        if (showToast) {
-            setTimeout(() => showToast = false, 4000);
-        }
-    "
+    x-init="if (showToast) { setTimeout(() => showToast = false, 4000) }"
     class="flex flex-col md:flex-row min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100"
 >
     @include('mejalayanan.layouts.sidebar')
@@ -27,41 +23,40 @@
 
         {{-- Filter --}}
         <form method="GET" action="{{ route('bpjs.penilaian.index') }}" class="mb-4 flex flex-wrap gap-3 items-center">
-            <input type="text" name="nik" value="{{ request('nik') }}"
-                placeholder="🔍 Cari NIK"
-                class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white">
-
-            <select name="penilaian" onchange="this.form.submit()"
-                class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white">
+            <input type="text" name="nik" value="{{ request('nik') }}" placeholder="🔍 Cari NIK" class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white">
+            <select name="penilaian" onchange="this.form.submit()" class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white">
                 <option value="">📋 Semua Penilaian</option>
-                <option value="belum" {{ request('penilaian') == 'belum' ? 'selected' : '' }}>🕓 Belum Dinilai</option>
-                <option value="tidak_puas" {{ request('penilaian') == 'tidak_puas' ? 'selected' : '' }}>😠 Tidak Puas</option>
-                <option value="cukup" {{ request('penilaian') == 'cukup' ? 'selected' : '' }}>😐 Cukup</option>
-                <option value="puas" {{ request('penilaian') == 'puas' ? 'selected' : '' }}>🙂 Puas</option>
-                <option value="sangat_puas" {{ request('penilaian') == 'sangat_puas' ? 'selected' : '' }}>🤩 Sangat Puas</option>
+                <option value="0" {{ request('penilaian') == '0' ? 'selected' : '' }}>🕓 Belum Dinilai</option>
+                <option value="1" {{ request('penilaian') == '1' ? 'selected' : '' }}>😠 Tidak Puas</option>
+                <option value="2" {{ request('penilaian') == '2' ? 'selected' : '' }}>😐 Cukup</option>
+                <option value="3" {{ request('penilaian') == '3' ? 'selected' : '' }}>🙂 Puas</option>
+                <option value="4" {{ request('penilaian') == '4' ? 'selected' : '' }}>🤩 Sangat Puas</option>
             </select>
-
-            @if(request('nik') || request('penilaian'))
+            <input type="date" name="start_date" value="{{ request('start_date') }}" class="px-3 py-2 border rounded dark:bg-gray-800 dark:text-white">
+            <input type="date" name="end_date" value="{{ request('end_date') }}" class="px-3 py-2 border rounded dark:bg-gray-800 dark:text-white">
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Filter 🔎</button>
+            @if(request('nik') || request('penilaian') || request('start_date') || request('end_date'))
                 <a href="{{ route('bpjs.penilaian.index') }}" class="text-sm text-red-600 hover:underline">❌ Reset</a>
             @endif
         </form>
 
-        {{-- Toast --}}
-        <div 
-            x-show="showToast"
-            x-transition.duration.500ms
-            x-text="toastMessage"
-            :class="toastType"
-            class="fixed top-6 right-6 px-4 py-3 rounded shadow-lg z-50"
-        ></div>
+        {{-- Tombol Cetak PDF --}}
+        <a href="{{ route('bpjs.penilaian.pdf', request()->query()) }}" target="_blank"
+           class="inline-block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded mb-4">
+            🖨️ Cetak PDF
+        </a>
 
-        {{-- Table --}}
+        {{-- Toast --}}
+        <div x-show="showToast" x-transition.duration.500ms x-text="toastMessage"
+            :class="toastType" class="fixed top-6 right-6 px-4 py-3 rounded shadow-lg z-50"></div>
+
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 overflow-auto">
             <table class="min-w-full text-sm border-collapse">
                 <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 uppercase">
                     <tr>
                         <th class="px-4 py-3 border">Nama Pemohon</th>
                         <th class="px-4 py-3 border">NIK Pemohon</th>
+                        <th class="px-4 py-3 border">Tanggal Masuk</th>
                         <th class="px-4 py-3 border">Total Durasi</th>
                         <th class="px-4 py-3 border">Status</th>
                         <th class="px-4 py-3 border">Penilaian</th>
@@ -69,130 +64,91 @@
                 </thead>
                 <tbody>
                     @forelse ($data as $item)
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
-                            <td class="px-4 py-3 border">{{ $item->nama_pemohon }}</td>
-                            <td class="px-4 py-3 border">{{ $item->nik_pemohon }}</td>
-                            <td class="px-4 py-3 border text-sm text-gray-800 dark:text-gray-200">
-                                @php
-                                    $created = \Carbon\Carbon::parse($item->created_at);
-                                    $approved = $item->approved_camat_at 
-                                                ?? $item->approved_sekcam_at 
-                                                ?? $item->verified_at;
-                                @endphp
-
-                                @if ($approved)
-                                    ⏱️ {{ \Carbon\Carbon::parse($approved)->diffForHumans($created, true) }}
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
+                        <td class="px-4 py-3 border">{{ $item->nama_pemohon }}</td>
+                        <td class="px-4 py-3 border">{{ $item->nik_pemohon }}</td>
+                        <td class="px-4 py-3 border">
+                            {{ $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('d-m-Y') : '-' }}
+                        </td>
+                        <td class="px-4 py-3 border text-sm">
+                            @php
+                                $created = \Carbon\Carbon::parse($item->created_at);
+                                $approved = $item->approved_camat_at ?? $item->approved_sekcam_at ?? $item->verified_at;
+                            @endphp
+                            @if ($approved)
+                                ⏱️ {{ \Carbon\Carbon::parse($approved)->diffForHumans($created, true) }}
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td class="px-4 py-3 border">
+                            @if ($item->status === 'approved_by_camat')
+                                <span class="text-green-600 font-semibold">Disetujui Camat</span>
+                            @else
+                                <span class="text-gray-500">Belum Disetujui</span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-3 border text-sm" x-data="{ showFull: false }">
+                            @if ($item->status === 'approved_by_camat')
+                                @if (!$item->penilaian)
+                                    <button @click="openModal({{ $item->id }})" class="bg-yellow-500 hover:bg-yellow-600 !text-white px-4 py-2 rounded text-sm font-semibold shadow">
+                                        ✨ Beri Penilaian
+                                    </button>
                                 @else
-                                    <span class="text-gray-400">-</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 border">
-                                @if ($item->status === 'approved_by_camat')
-                                    <span class="text-green-600 font-semibold">Disetujui Camat</span>
-                                @else
-                                    <span class="text-gray-500">Belum Disetujui</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 border text-sm" x-data="{ showFull: false }">
-                                @if ($item->status === 'approved_by_camat')
-                                    @if (!$item->penilaian)
-                                        <button 
-                                            @click="openModal({{ $item->id }})"
-                                            class="bg-yellow-500 hover:bg-yellow-600 !text-white px-4 py-2 rounded text-sm font-semibold shadow"
-                                        >
-                                            ✨ Beri Penilaian
-                                        </button>
-                                    @else
-                                        @php
-                                            $emoji = ['tidak_puas'=>'😠', 'cukup'=>'😐', 'puas'=>'🙂', 'sangat_puas'=>'🤩'];
-                                            $warna = ['tidak_puas'=>'text-red-500', 'cukup'=>'text-yellow-500', 'puas'=>'text-green-500', 'sangat_puas'=>'text-blue-500'];
-                                        @endphp
-                                        <div class="{{ $warna[$item->penilaian] ?? 'text-gray-500' }} font-semibold">
-                                            {{ $emoji[$item->penilaian] ?? '' }} {{ ucfirst(str_replace('_', ' ', $item->penilaian)) }}
-                                        </div>
-
-                                        {{-- Saran & Kritik --}}
-                                        @if(!empty($item->saran_kritik))
-                                            <div class="mt-1 text-sm text-gray-700 dark:text-gray-300 italic">
-                                                <span x-show="!showFull" class="line-clamp-2">{{ $item->saran_kritik }}</span>
-                                                <span x-show="showFull">{{ $item->saran_kritik }}</span>
-                                                <button type="button" @click="showFull = !showFull" class="text-blue-500 hover:underline text-xs ml-1">
-                                                    <span x-show="!showFull">Lihat Selengkapnya</span>
-                                                    <span x-show="showFull">Tutup</span>
-                                                </button>
-                                            </div>
-                                        @endif
-
-                                        <div class="text-sm text-blue-600 dark:text-blue-300 font-semibold mt-1">
-                                            📦 Sudah diambil masyarakat
+                                    @php
+                                        $emoji=['tidak_puas'=>'😠','cukup'=>'😐','puas'=>'🙂','sangat_puas'=>'🤩'];
+                                        $warna=['tidak_puas'=>'text-red-500','cukup'=>'text-yellow-500','puas'=>'text-green-500','sangat_puas'=>'text-blue-500'];
+                                    @endphp
+                                    <div class="{{ $warna[$item->penilaian] ?? 'text-gray-500' }} font-semibold">
+                                        {{ $emoji[$item->penilaian] ?? '' }} {{ ucfirst(str_replace('_',' ',$item->penilaian)) }}
+                                    </div>
+                                    @if(!empty($item->saran_kritik))
+                                        <div class="mt-1 text-sm italic">
+                                            <span x-show="!showFull" class="line-clamp-2">{{ $item->saran_kritik }}</span>
+                                            <span x-show="showFull">{{ $item->saran_kritik }}</span>
+                                            <button type="button" @click="showFull = !showFull" class="text-blue-500 hover:underline text-xs ml-1">
+                                                <span x-show="!showFull">Lihat Selengkapnya</span>
+                                                <span x-show="showFull">Tutup</span>
+                                            </button>
                                         </div>
                                     @endif
-                                @else
-                                    <span class="text-gray-400">-</span>
                                 @endif
-                            </td>
-                        </tr>
+                            @else
+                                -
+                            @endif
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="5" class="text-center text-gray-500 dark:text-gray-400 py-10">
-                                <div class="text-2xl mb-2">😕</div>
-                                <div>Data tidak tersedia atau tidak ditemukan.</div>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="6" class="py-10 text-center text-gray-500">Data tidak tersedia.</td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
 
             <div class="mt-4">
                 {{ $data->links('vendor.pagination.tailwind') }}
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                    Total: {{ $data->total() }} | Halaman: {{ $data->currentPage() }} dari {{ $data->lastPage() }}
-                </p>
             </div>
         </div>
     </main>
 
-    {{-- MODAL --}}
-    <div 
-        x-show="modalOpen"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 scale-90"
-        x-transition:enter-end="opacity-100 scale-100"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 scale-100"
-        x-transition:leave-end="opacity-0 scale-90"
-        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-        style="display: none;"
-    >
+    {{-- Modal --}}
+    <div x-show="modalOpen" x-transition class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" style="display:none;">
         <div @click.outside="modalOpen = false" class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-sm shadow-lg">
             <h2 class="text-lg font-bold mb-4 text-center text-blue-600 dark:text-blue-300">📝 Pilih Penilaian</h2>
-            
             <form method="POST" :action="`/meja-layanan/bpjs/${selectedId}/penilaian`">
                 @csrf
-                {{-- Pilihan Penilaian --}}
                 <div class="grid grid-cols-2 gap-3 mb-4">
-                    @foreach (['tidak_puas'=>'😠 Tidak Puas', 'cukup'=>'😐 Cukup', 'puas'=>'🙂 Puas', 'sangat_puas'=>'🤩 Sangat Puas'] as $value => $label)
+                    @foreach(['tidak_puas'=>'😠 Tidak Puas','cukup'=>'😐 Cukup','puas'=>'🙂 Puas','sangat_puas'=>'🤩 Sangat Puas'] as $v=>$l)
                         <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded">
-                            <input type="radio" name="penilaian" value="{{ $value }}" required>
-                            <span class="{{ $value == 'tidak_puas' ? 'text-red-600' : '' }}
-                                         {{ $value == 'cukup' ? 'text-yellow-600' : '' }}
-                                         {{ $value == 'puas' ? 'text-green-600' : '' }}
-                                         {{ $value == 'sangat_puas' ? 'text-blue-600' : '' }}">
-                                {{ $label }}
-                            </span>
+                            <input type="radio" name="penilaian" value="{{ $v }}" required>
+                            <span>{{ $l }}</span>
                         </label>
                     @endforeach
                 </div>
-
-                {{-- Saran & Kritik --}}
-                <textarea name="saran_kritik" rows="3" placeholder="💬 Tulis saran dan kritik Anda..."
-                    class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"></textarea>
-
+                <textarea name="saran_kritik" rows="3" placeholder="💬 Saran & kritik..." class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"></textarea>
                 <div class="mt-4 text-center">
-                    <button type="submit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow font-semibold">
-                        ✅ Simpan Penilaian
-                    </button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold">✅ Simpan</button>
                 </div>
             </form>
         </div>

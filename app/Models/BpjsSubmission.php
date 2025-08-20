@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasQueueNumber;
 use App\Traits\HasNikStatusFilter;
+use App\Traits\HasPenilaian;
 
 class BpjsSubmission extends Model
 {
-    use HasFactory, HasQueueNumber, HasNikStatusFilter;
+    use HasFactory, HasQueueNumber, HasNikStatusFilter,HasPenilaian;
 
     // Menentukan nama field NIK yang digunakan untuk filtering
     protected $nikField = 'nik_pemohon';
