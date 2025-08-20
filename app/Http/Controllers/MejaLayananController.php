@@ -1429,13 +1429,11 @@ public function simpanPenilaianBpjs(Request $request, $id)
             'pendidikan' => 'required|in:SD,SMP,SMA,D1,D2,D3,S1,S2,S3',
             'nik_pemohon' => 'required|digits:16',
             'alamat_usaha' => 'required|string|max:500',
-
             'surat_keterangan_usaha' => 'required|file|mimes:pdf',
             'foto_tempat_usaha' => 'required|file|image|mimes:jpeg,png,jpg',
             'file_kk' => 'required|file|mimes:pdf',
             'file_ktp' => 'required|file|mimes:pdf',
             'pasphoto_3x4_1' => 'required|file|image|mimes:jpeg,png,jpg',
-            'pasphoto_3x4_2' => 'required|file|image|mimes:jpeg,png,jpg',
             'file_pbb' => 'required|file|mimes:pdf',
         ]);
 
@@ -1447,7 +1445,6 @@ public function simpanPenilaianBpjs(Request $request, $id)
             'file_kk' => $request->file('file_kk')->storeAs($folder, Str::uuid() . '.pdf', 'public'),
             'file_ktp' => $request->file('file_ktp')->storeAs($folder, Str::uuid() . '.pdf', 'public'),
             'pasphoto_3x4_1' => $request->file('pasphoto_3x4_1')->storeAs($folder, Str::uuid() . '.' . $request->file('pasphoto_3x4_1')->extension(), 'public'),
-            'pasphoto_3x4_2' => $request->file('pasphoto_3x4_2')->storeAs($folder, Str::uuid() . '.' . $request->file('pasphoto_3x4_2')->extension(), 'public'),
             'file_pbb' => $request->file('file_pbb')->storeAs($folder, Str::uuid() . '.pdf', 'public'),
         ];
 
@@ -1463,14 +1460,13 @@ public function simpanPenilaianBpjs(Request $request, $id)
             'file_kk' => $paths['file_kk'],
             'file_ktp' => $paths['file_ktp'],
             'pasphoto_3x4_1' => $paths['pasphoto_3x4_1'],
-            'pasphoto_3x4_2' => $paths['pasphoto_3x4_2'],
             'file_pbb' => $paths['file_pbb'],
 
             'status' => 'diajukan',
         ]);
 
         return redirect()
-            ->route('dispencatin.list') // sesuaikan nama route list IUMK
+            ->route('iumk.list') // sesuaikan nama route list IUMK
             ->with('success', 'Pengajuan Izin Usaha Mikro berhasil disimpan.');
     }
 

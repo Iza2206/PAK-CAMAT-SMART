@@ -79,7 +79,6 @@
                     'file_kk' => 'Fotokopi Kartu Keluarga',
                     'file_ktp' => 'Fotokopi KTP',
                     'pasphoto_3x4_1' => 'Pasphoto 3x4 Warna 1',
-                    'pasphoto_3x4_2' => 'Pasphoto 3x4 Warna 2',
                     'file_pbb' => 'Tanda Lunas PBB',
                 ] as $field => $label)
                     <div>

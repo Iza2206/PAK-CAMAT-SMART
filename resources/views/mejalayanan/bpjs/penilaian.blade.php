@@ -96,11 +96,13 @@
                                     </button>
                                 @else
                                     @php
-                                        $emoji=['tidak_puas'=>'😠','cukup'=>'😐','puas'=>'🙂','sangat_puas'=>'🤩'];
-                                        $warna=['tidak_puas'=>'text-red-500','cukup'=>'text-yellow-500','puas'=>'text-green-500','sangat_puas'=>'text-blue-500'];
+                                        // Jika penilaian angka (1-4)
+                                        $emoji = [1=>'😠', 2=>'😐', 3=>'🙂', 4=>'🤩'];
+                                        $warna = [1=>'text-red-500', 2=>'text-yellow-500', 3=>'text-green-500', 4=>'text-blue-500'];
+                                        $label = [1=>'Tidak Puas', 2=>'Cukup', 3=>'Puas', 4=>'Sangat Puas'];
                                     @endphp
                                     <div class="{{ $warna[$item->penilaian] ?? 'text-gray-500' }} font-semibold">
-                                        {{ $emoji[$item->penilaian] ?? '' }} {{ ucfirst(str_replace('_',' ',$item->penilaian)) }}
+                                        {{ $emoji[$item->penilaian] ?? '' }} {{ $label[$item->penilaian] ?? '-' }}
                                     </div>
                                     @if(!empty($item->saran_kritik))
                                         <div class="mt-1 text-sm italic">
@@ -119,9 +121,12 @@
                         </td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="6" class="py-10 text-center text-gray-500">Data tidak tersedia.</td>
-                    </tr>
+                        <tr>
+                            <td colspan="5" class="text-center text-gray-500 dark:text-gray-400 py-10">
+                                <div class="text-2xl mb-2">😕</div>
+                                <div>Data tidak tersedia atau tidak ditemukan.</div>
+                            </td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
