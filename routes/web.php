@@ -80,7 +80,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::patch('/layanan/iumk/{id}/kirim-kasi', [MejaLayananController::class, 'kirimKeKasidispen'])->name('iumk.kirimkasi');
     Route::post('/iumk/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianiumk'])->name('iumk.penilaian');
     Route::get('/iumk/penilaian', [MejaLayananController::class, 'iumkpenilaianIndex'])->name('iumk.penilaian.index');
-    Route::get('/iumk/penilaian/pdf', [MejaLayananController::class, 'penilaianPdf'])->name('iumk.penilaian.pdf');
+    Route::get('/iumk/penilaian/pdf', [MejaLayananController::class, 'penilaianIUMKPdf'])->name('iumk.penilaian.pdf');
 
     // SKTM
     Route::get('/layanan/SKTMs', [MejaLayananController::class, 'SKTMsList'])->name('SKTMs.list'); // List Data
@@ -185,7 +185,7 @@ Route::middleware(['auth', 'role:kasi_kesos'])->prefix('kasi-kesos')->group(func
     Route::post('/kasi-kesos/dispencatin/{id}/proses', [KasiKesosController::class, 'prosesStore'])
     ->name('kasi_kesos.dispencatin.proses.storeFinal');
 
-        // Layanan IUMK
+    // Layanan IUMK
     Route::get('/iumk', [KasiKesosController::class, 'iumkIndex'])->name('kasi_kesos.iumk.index');
     Route::post('/iumk/{id}/approve', [KasiKesosController::class, 'iumkApprove'])->name('kasi_kesos.iumk.approve');
     Route::post('/iumk/{id}/reject', [KasiKesosController::class, 'iumkReject'])->name('kasi_kesos.iumk.reject');

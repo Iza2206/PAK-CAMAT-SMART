@@ -19,10 +19,10 @@
     @include('mejalayanan.layouts.sidebar')
 
     <main class="flex-1 p-6">
-        <h1 class="text-2xl font-bold mb-6 text-blue-700 dark:text-blue-300">📝 Daftar Penilaian Layanan BPJS</h1>
+        <h1 class="text-2xl font-bold mb-6 text-blue-700 dark:text-blue-300">📝 Daftar Penilaian Layanan Izin Usaha Mikro</h1>
 
         {{-- Filter --}}
-        <form method="GET" action="{{ route('bpjs.penilaian.index') }}" class="mb-4 flex flex-wrap gap-3 items-center">
+        <form method="GET" action="{{ route('iumk.penilaian.index') }}" class="mb-4 flex flex-wrap gap-3 items-center">
             <input type="text" name="nik" value="{{ request('nik') }}" placeholder="🔍 Cari NIK" class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white">
             <select name="penilaian" onchange="this.form.submit()" class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white">
                 <option value="">📋 Semua Penilaian</option>
@@ -36,12 +36,12 @@
             <input type="date" name="end_date" value="{{ request('end_date') }}" class="px-3 py-2 border rounded dark:bg-gray-800 dark:text-white">
             <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Filter 🔎</button>
             @if(request('nik') || request('penilaian') || request('start_date') || request('end_date'))
-                <a href="{{ route('bpjs.penilaian.index') }}" class="text-sm text-red-600 hover:underline">❌ Reset</a>
+                <a href="{{ route('iumk.penilaian.index') }}" class="text-sm text-red-600 hover:underline">❌ Reset</a>
             @endif
         </form>
 
         {{-- Tombol Cetak PDF --}}
-        <a href="{{ route('bpjs.penilaian.pdf', request()->query()) }}" target="_blank"
+        <a href="{{ route('iumk.penilaian.pdf', request()->query()) }}" target="_blank"
            class="inline-block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded mb-4">
             🖨️ Cetak PDF
         </a>
@@ -141,7 +141,7 @@
     <div x-show="modalOpen" x-transition class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" style="display:none;">
         <div @click.outside="modalOpen = false" class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-sm shadow-lg">
             <h2 class="text-lg font-bold mb-4 text-center text-blue-600 dark:text-blue-300">📝 Pilih Penilaian</h2>
-            <form method="POST" :action="`/meja-layanan/bpjs/${selectedId}/penilaian`">
+            <form method="POST" :action="`/meja-layanan/iumk/${selectedId}/penilaian`">
                 @csrf
                 <div class="grid grid-cols-2 gap-3 mb-4">
                     @foreach(['tidak_puas'=>'😠 Tidak Puas','cukup'=>'😐 Cukup','puas'=>'🙂 Puas','sangat_puas'=>'🤩 Sangat Puas'] as $v=>$l)
