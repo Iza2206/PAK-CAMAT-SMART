@@ -206,62 +206,8 @@ class KasiKesosController extends Controller
 
         return redirect()->route('kasi_kesos.dispencatin.approveByCamat')->with('success', 'Surat final berhasil diunggah.');
     }
-    
 
-
-    // ---------------- SKTM ----------------
-    public function sktmIndex()
-    {
-        $pengajuan = SktmDispensasiSubmission::where('status', 'diajukan')->get();
-
-        return view('kasi_kesos.sktm.index', compact('pengajuan'));
-    }
-
-    public function sktmApprove($id)
-    {
-        $item = SktmDispensasiSubmission::findOrFail($id);
-        $item->status = 'checked_by_kasi';
-        $item->verified_at = now();
-        $item->save();
-
-        return redirect()->back()->with('success', 'Pengajuan berhasil diverifikasi oleh Kasi Kesos.');
-    }
-
-    public function sktmReject(Request $request, $id)
-    {
-        $request->validate([
-            'reason' => 'required|string|max:255',
-        ]);
-
-        $item = SktmDispensasiSubmission::findOrFail($id);
-        $item->status = 'rejected_by_kasi';
-        $item->rejected_reason = $request->reason;
-        $item->save();
-
-        return redirect()->back()->with('success', 'Pengajuan berhasil ditolak oleh Kasi Kesos.');
-    }
-
-    public function sktmProses()
-    {
-        $jumlahPengajuan      = SktmDispensasiSubmission::count();
-        $pengajuanDiajukan    = SktmDispensasiSubmission::where('status', 'diajukan')->count();
-        $pengajuanDisetujui   = SktmDispensasiSubmission::where('status', 'checked_by_kasi')->count();
-        $pengajuanDitolak     = SktmDispensasiSubmission::where('status', 'rejected_by_kasi')->count();
-
-        $pengajuan = SktmDispensasiSubmission::whereIn('status', ['checked_by_kasi', 'rejected_by_kasi'])
-            ->latest()
-            ->paginate(10);
-
-        return view('kasi_kesos.sktm.proses', compact(
-            'pengajuan',
-            'jumlahPengajuan',
-            'pengajuanDiajukan',
-            'pengajuanDisetujui',
-            'pengajuanDitolak'
-        ));
-    }
-
-       // ----------------  IUMK ----------------
+    // ----------------  IUMK ----------------
 
     public function iumkIndex()
     {
@@ -301,9 +247,7 @@ class KasiKesosController extends Controller
         $pengajuanDisetujui   = IumkSubmission::where('status', 'checked_by_kasi')->count();
         $pengajuanDitolak     = IumkSubmission::where('status', 'rejected_by_kasi')->count();
 
-        $pengajuan = IumkSubmission::whereIn('status', ['checked_by_kasi', 'rejected_by_kasi'])
-            ->latest()
-            ->paginate(10);
+        $pengajuan = IumkSubmission::latest()->paginate(10);
 
         return view('kasi_kesos.iumk.proses', compact(
             'pengajuan',
@@ -385,4 +329,60 @@ class KasiKesosController extends Controller
 
         return redirect()->route('kasi_kesos.iumk.approveByCamat')->with('success', 'Surat final berhasil diunggah.');
     }
+    
+
+
+    // ---------------- SKTM ----------------
+    public function sktmIndex()
+    {
+        $pengajuan = SktmDispensasiSubmission::where('status', 'diajukan')->get();
+
+        return view('kasi_kesos.sktm.index', compact('pengajuan'));
+    }
+
+    public function sktmApprove($id)
+    {
+        $item = SktmDispensasiSubmission::findOrFail($id);
+        $item->status = 'checked_by_kasi';
+        $item->verified_at = now();
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan berhasil diverifikasi oleh Kasi Kesos.');
+    }
+
+    public function sktmReject(Request $request, $id)
+    {
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
+
+        $item = SktmDispensasiSubmission::findOrFail($id);
+        $item->status = 'rejected_by_kasi';
+        $item->rejected_reason = $request->reason;
+        $item->save();
+
+        return redirect()->back()->with('success', 'Pengajuan berhasil ditolak oleh Kasi Kesos.');
+    }
+
+    public function sktmProses()
+    {
+        $jumlahPengajuan      = SktmDispensasiSubmission::count();
+        $pengajuanDiajukan    = SktmDispensasiSubmission::where('status', 'diajukan')->count();
+        $pengajuanDisetujui   = SktmDispensasiSubmission::where('status', 'checked_by_kasi')->count();
+        $pengajuanDitolak     = SktmDispensasiSubmission::where('status', 'rejected_by_kasi')->count();
+
+        $pengajuan = SktmDispensasiSubmission::whereIn('status', ['checked_by_kasi', 'rejected_by_kasi'])
+            ->latest()
+            ->paginate(10);
+
+        return view('kasi_kesos.sktm.proses', compact(
+            'pengajuan',
+            'jumlahPengajuan',
+            'pengajuanDiajukan',
+            'pengajuanDisetujui',
+            'pengajuanDitolak'
+        ));
+    }
+
+    
 }

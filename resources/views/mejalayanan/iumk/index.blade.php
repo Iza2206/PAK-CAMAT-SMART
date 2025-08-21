@@ -101,7 +101,6 @@
                                     'file_kk' => 'KK',
                                     'file_ktp' => 'KTP',
                                     'pasphoto_3x4_1' => 'Pasphoto 3x4 (1)',
-                                    'pasphoto_3x4_2' => 'Pasphoto 3x4 (2)',
                                     'file_pbb' => 'Tanda Lunas PBB',
                                     'file_surat' => 'File Surat',
                                     'surat_final' => 'Surat Final',

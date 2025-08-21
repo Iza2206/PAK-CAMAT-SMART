@@ -65,7 +65,6 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::get('/bpjs/penilaian', [MejaLayananController::class, 'penilaianIndex'])->name('bpjs.penilaian.index'); // list penilaian bpjs
     Route::get('/bpjs/penilaian/pdf', [MejaLayananController::class, 'penilaianPdf'])->name('bpjs.penilaian.pdf');
 
-
     // Dispensasi Nikah
     Route::get('/layanan/dispencatin', [MejaLayananController::class, 'DispencatinList'])->name('dispencatin.list'); // List Data
     Route::get('/layanan/dispencatin/create', [MejaLayananController::class, 'DispencatinCreate'])->name('dispencatin.create'); // Tambah
@@ -73,6 +72,15 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::patch('/layanan/dispencatin/{id}/kirim-kasi', [MejaLayananController::class, 'kirimKeKasidispen'])->name('dispencatin.kirimkasi'); //kirim ke kasi kesos
     Route::post('/dispencatin/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianDispencatin'])->name('dispencatin.penilaian'); // simpan penilaian ikm Dispencatin
     Route::get('/dispencatin/penilaian', [MejaLayananController::class, 'DispencatinpenilaianIndex'])->name('dispencatin.penilaian.index'); // list penilaian Dispencatin
+
+    // === IUMK ===
+    Route::get('/layanan/iumk', [MejaLayananController::class, 'iumkList'])->name('iumk.list'); // List Data
+    Route::get('/layanan/iumk/create', [MejaLayananController::class, 'iumkCreate'])->name('iumk.create'); // Tambah
+    Route::post('/layanan/iumk/store', [MejaLayananController::class, 'iumkStore'])->name('iumk.store');  // Simpan
+    Route::patch('/layanan/iumk/{id}/kirim-kasi', [MejaLayananController::class, 'kirimKeKasidispen'])->name('iumk.kirimkasi');
+    Route::post('/iumk/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianiumk'])->name('iumk.penilaian');
+    Route::get('/iumk/penilaian', [MejaLayananController::class, 'iumkpenilaianIndex'])->name('iumk.penilaian.index');
+    Route::get('/iumk/penilaian/pdf', [MejaLayananController::class, 'penilaianPdf'])->name('iumk.penilaian.pdf');
 
     // SKTM
     Route::get('/layanan/SKTMs', [MejaLayananController::class, 'SKTMsList'])->name('SKTMs.list'); // List Data
@@ -141,14 +149,6 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     // === Dispensasi ===
     Route::get('/layanan/dispensasi', [MejaLayananController::class, 'dispensasi'])->name('layanan.dispensasi');
 
-    // === IUMK ===
-    Route::get('/layanan/iumk', [MejaLayananController::class, 'iumkList'])->name('iumk.list'); // List Data
-    Route::get('/layanan/iumk/create', [MejaLayananController::class, 'iumkCreate'])->name('iumk.create'); // Tambah
-    Route::post('/layanan/iumk/store', [MejaLayananController::class, 'iumkStore'])->name('iumk.store');  // Simpan
-    Route::patch('/layanan/iumk/{id}/kirim-kasi', [MejaLayananController::class, 'kirimKeKasidispen'])->name('iumk.kirimkasi');
-    Route::post('/iumk/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianiumk'])->name('iumk.penilaian');
-    Route::get('/iumk/penilaian', [MejaLayananController::class, 'iumkpenilaianIndex'])->name('iumk.penilaian.index');
-
     // === SK Riset KKN ===
     Route::get('/layanan/skrisetKKN', [MejaLayananController::class, 'skrisetKKNList'])->name('skrisetKKN.list'); // List Data
     Route::get('/layanan/skrisetKKN/create', [MejaLayananController::class, 'skrisetKKNCreate'])->name('skrisetKKN.create'); // Tambah
@@ -182,16 +182,8 @@ Route::middleware(['auth', 'role:kasi_kesos'])->prefix('kasi-kesos')->group(func
      Route::get('/dispencatin/approveByCamat', [KasiKesosController::class, 'dispencatinApproveByCamatIndex'])->name('kasi_kesos.dispencatin.approveByCamat');
      Route::get('/kasi-kesos/dispencatin/approve/{id}/proses', [KasiKesosController::class, 'proses'])
     ->name('kasi_kesos.dispencatin.prosesTTD');
-
-Route::post('/kasi-kesos/dispencatin/{id}/proses', [KasiKesosController::class, 'prosesStore'])
+    Route::post('/kasi-kesos/dispencatin/{id}/proses', [KasiKesosController::class, 'prosesStore'])
     ->name('kasi_kesos.dispencatin.proses.storeFinal');
-
-
-    // Layanan SKTM
-    Route::get('/sktm', [KasiKesosController::class, 'sktmIndex'])->name('kasi_kesos.sktm.index');
-    Route::post('/sktm/{id}/approve', [KasiKesosController::class, 'sktmApprove'])->name('kasi_kesos.sktm.approve');
-    Route::post('/sktm/{id}/reject', [KasiKesosController::class, 'sktmReject'])->name('kasi_kesos.sktm.reject');
-    Route::get('/sktm/proses', [KasiKesosController::class, 'sktmProses'])->name('kasi_kesos.sktm.proses');
 
         // Layanan IUMK
     Route::get('/iumk', [KasiKesosController::class, 'iumkIndex'])->name('kasi_kesos.iumk.index');
@@ -205,6 +197,15 @@ Route::post('/kasi-kesos/dispencatin/{id}/proses', [KasiKesosController::class, 
     ->name('kasi_kesos.iumk.prosesTTD');
     Route::post('/kasi-kesos/iumk/{id}/proses', [KasiKesosController::class, 'prosesStoreIumk'])
     ->name('kasi_kesos.iumk.proses.storeFinal');
+
+
+    // Layanan SKTM
+    Route::get('/sktm', [KasiKesosController::class, 'sktmIndex'])->name('kasi_kesos.sktm.index');
+    Route::post('/sktm/{id}/approve', [KasiKesosController::class, 'sktmApprove'])->name('kasi_kesos.sktm.approve');
+    Route::post('/sktm/{id}/reject', [KasiKesosController::class, 'sktmReject'])->name('kasi_kesos.sktm.reject');
+    Route::get('/sktm/proses', [KasiKesosController::class, 'sktmProses'])->name('kasi_kesos.sktm.proses');
+
+
 
 });
 

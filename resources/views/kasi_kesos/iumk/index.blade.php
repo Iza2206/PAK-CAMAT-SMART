@@ -37,9 +37,6 @@
                             @if ($item->pasphoto_3x4_1)
                                 <li><a href="{{ asset('storage/' . $item->pasphoto_3x4_1) }}" target="_blank">📄 Pasphoto 3x4 Warna (1)</a></li>
                             @endif
-                            @if ($item->pasphoto_3x4_2)
-                                <li><a href="{{ asset('storage/' . $item->pasphoto_3x4_2) }}" target="_blank">📄 Pasphoto 3x4 Warna (2)</a></li>
-                            @endif
                             @if ($item->file_pbb)
                                 <li><a href="{{ asset('storage/' . $item->file_pbb) }}" target="_blank">📄 Tanda Lunas PBB</a></li>
                             @endif

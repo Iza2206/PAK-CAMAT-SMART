@@ -42,5 +42,6 @@ class BpjsSubmission extends Model
         'verified_at' => 'datetime',
         'approved_sekcam_at' => 'datetime',
         'approved_camat_at' => 'datetime',
+        'diambil_at' => 'datetime',
     ];
 }

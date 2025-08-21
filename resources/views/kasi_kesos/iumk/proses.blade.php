@@ -82,6 +82,9 @@
                                     'diajukan' => 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-300',
                                     'checked_by_kasi' => 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300',
                                     'rejected' => 'bg-red-200 text-red-800 dark:bg-red-600/20 dark:text-red-400',
+                                    'rejected_by_sekcam' => 'bg-red-300 text-red-900 dark:bg-red-700/30 dark:text-red-400',
+                                    'rejected_by_camat' => 'bg-red-500 text-red-900 dark:bg-red-900/50 dark:text-red-600',
+                                    'approved_by_camat' => 'bg-blue-100 text-blue-700 dark:bg-blue-600/20 dark:text-blue-300',
                                     default => 'bg-gray-100 text-gray-700 dark:bg-gray-700/50 dark:text-gray-300',
                                 };
                             @endphp
@@ -127,28 +130,28 @@
                                     @if ($item->pasphoto_3x4_1)
                                         <div>📄 <a href="{{ asset('storage/' . $item->pasphoto_3x4_1) }}" target="_blank">Pasphoto 3x4 (1)</a></div>
                                     @endif
-                                    @if ($item->pasphoto_3x4_2)
-                                        <div>📄 <a href="{{ asset('storage/' . $item->pasphoto_3x4_2) }}" target="_blank">Pasphoto 3x4 (2)</a></div>
-                                    @endif
                                     @if ($item->file_pbb)
                                         <div>📄 <a href="{{ asset('storage/' . $item->file_pbb) }}" target="_blank">Tanda Lunas PBB</a></div>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 border">
                                 {{-- Upload Surat --}}
-                                <form action="{{ route('iumk.uploadSurat', $item->id) }}" method="POST" enctype="multipart/form-data" class="space-y-2">
-                                    @csrf
-                                    <input type="file" name="file_surat" class="text-sm border rounded p-1 w-full" required>
-                                    <button type="submit" class="px-2 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
-                                        Upload Surat
-                                    </button>
-                                </form>
-
+                                @if ($item->status === 'checked_by_kasi')
+                                    <form action="{{ route('iumk.uploadSurat', $item->id) }}" method="POST" enctype="multipart/form-data" class="space-y-2">
+                                        @csrf
+                                        <input type="file" name="file_surat" class="text-sm border rounded p-1 w-full" required>
+                                        <button type="submit" class="px-2 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+                                            Upload Surat
+                                        </button>
+                                    </form>
+                                @endif
                                 {{-- Lihat Surat jika ada --}}
                                 @if ($item->file_surat)
                                     <a href="{{ asset('storage/' . $item->file_surat) }}" target="_blank" class="block mt-2 text-blue-500 hover:underline text-sm">
                                         📄 Lihat Surat
                                     </a>
+                                @else
+                                    <span class="text-red-600 font-semibold italic">Tidak ada surat</span>
                                 @endif
                             </td>
                             </tr>
