@@ -1823,7 +1823,7 @@ public function simpanPenilaianBpjs(Request $request, $id)
             return redirect()->back()->with('error', 'Pengajuan belum disetujui oleh Camat.');
         }
 
-        return view('mejalayanan.ttdcamat.IUMK.formapproveByCamat', compact('item'));
+        return view('mejalayanan.ttdcamat.IUMK.formapprovebyCamat', compact('item'));
     }
 
     // === SIMPAN surat final hasil TTD Camat (IUMK) ===
