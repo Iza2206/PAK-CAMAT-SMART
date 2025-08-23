@@ -164,48 +164,48 @@ class KasiKesosController extends Controller
         }
     }
 
-    public function dispencatinApproveByCamatIndex()
-    {
-        $pengajuan = CatinSubmission::with('camat')
-            ->where('status', 'approved_by_camat')
-            ->get();
+    // public function dispencatinApproveByCamatIndex()
+    // {
+    //     $pengajuan = CatinSubmission::with('camat')
+    //         ->where('status', 'approved_by_camat')
+    //         ->get();
 
-        return view('kasi_kesos.dispencatin.approveByCamat', compact('pengajuan'));
-    }
+    //     return view('kasi_kesos.dispencatin.approveByCamat', compact('pengajuan'));
+    // }
 
-    public function proses($id)
-    {
-        $item = CatinSubmission::with('camat')->findOrFail($id);
+    // public function proses($id)
+    // {
+    //     $item = CatinSubmission::with('camat')->findOrFail($id);
 
-        // Pastikan pengajuan sudah disetujui Camat
-        if ($item->status !== 'approved_by_camat') {
-            return redirect()->back()->with('error', 'Pengajuan belum disetujui oleh Camat.');
-        }
+    //     // Pastikan pengajuan sudah disetujui Camat
+    //     if ($item->status !== 'approved_by_camat') {
+    //         return redirect()->back()->with('error', 'Pengajuan belum disetujui oleh Camat.');
+    //     }
 
-        return view('kasi_kesos.dispencatin.formapprovebyCamat', compact('item'));
-    }
+    //     return view('kasi_kesos.dispencatin.formapprovebyCamat', compact('item'));
+    // }
 
-    public function prosesStore(Request $request, $id)
-    {
-        $item = CatinSubmission::findOrFail($id);
+    // public function prosesStore(Request $request, $id)
+    // {
+    //     $item = CatinSubmission::findOrFail($id);
 
-        // Validasi input file surat_final
-        $request->validate([
-            'surat_final' => 'required|file|mimes:pdf,doc,docx|max:5120', // max 5MB
-        ]);
+    //     // Validasi input file surat_final
+    //     $request->validate([
+    //         'surat_final' => 'required|file|mimes:pdf,doc,docx|max:5120', // max 5MB
+    //     ]);
 
-        // Simpan file ke storage (misal folder 'surat_final')
-        if ($request->hasFile('surat_final')) {
-            $file = $request->file('surat_final');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('surat_final', $filename, 'public'); // simpan di storage/app/public/surat_final
-            $item->surat_final = $path; // simpan path relatif
-        }
+    //     // Simpan file ke storage (misal folder 'surat_final')
+    //     if ($request->hasFile('surat_final')) {
+    //         $file = $request->file('surat_final');
+    //         $filename = time() . '_' . $file->getClientOriginalName();
+    //         $path = $file->storeAs('surat_final', $filename, 'public'); // simpan di storage/app/public/surat_final
+    //         $item->surat_final = $path; // simpan path relatif
+    //     }
 
-        $item->save();
+    //     $item->save();
 
-        return redirect()->route('kasi_kesos.dispencatin.approveByCamat')->with('success', 'Surat final berhasil diunggah.');
-    }
+    //     return redirect()->route('kasi_kesos.dispencatin.approveByCamat')->with('success', 'Surat final berhasil diunggah.');
+    // }
 
     // ----------------  IUMK ----------------
 

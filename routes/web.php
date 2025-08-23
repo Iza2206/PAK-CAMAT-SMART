@@ -157,9 +157,42 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::post('/skrisetKKN/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianskrisetKKN'])->name('skrisetKKN.penilaian');
     Route::get('/skrisetKKN/penilaian', [MejaLayananController::class, 'skrisetKKNpenilaianIndex'])->name('skrisetKKN.penilaian.index');
 
+    
+    // === TTD Camat Dispensasi Catin ===
+    Route::get('/mejalayanan/ttdcamat/dispencatin', [MejaLayananController::class, 'dispencatinApproveByCamatIndex'])
+        ->name('mejalayanan.ttdcamat.dispencatin.index');
+
+    Route::get('/mejalayanan/ttdcamat/dispencatin/{id}/proses', [MejaLayananController::class, 'dispencatinProses'])
+        ->name('mejalayanan.ttdcamat.dispencatin.dispencatinProses');
+
+    Route::post('/mejalayanan/ttdcamat/dispencatin/{id}/proses', [MejaLayananController::class, 'dispencatinProsesStore'])
+        ->name('mejalayanan.ttdcamat.dispencatin.proses.store');
+        
+    
+    // === TTD Camat IUMK ===
+    Route::get('/mejalayanan/ttdcamat/IUMK', [MejaLayananController::class, 'iumkApproveByCamatIndex'])
+        ->name('mejalayanan.ttdcamat.IUMK.index');
+
+    Route::get('/mejalayanan/ttdcamat/IUMK/{id}/proses', [MejaLayananController::class, 'iumkProses'])
+        ->name('mejalayanan.ttdcamat.IUMK.proses');
+
+    Route::post('/mejalayanan/ttdcamat/IUMK/{id}/proses', [MejaLayananController::class, 'iumkProsesStore'])
+        ->name('mejalayanan.ttdcamat.IUMK.proses.store');
+
+
+    // === TTD Camat SK Riset KKN ===
+    Route::get('/mejalayanan/ttdcamat/KKN', [MejaLayananController::class, 'kknApproveByCamatIndex'])
+        ->name('mejalayanan.ttdcamat.KKN.index');
+
+    Route::get('/mejalayanan/ttdcamat/KKN/{id}/proses', [MejaLayananController::class, 'kknProses'])
+        ->name('mejalayanan.ttdcamat.KKN.proses');
+
+    Route::post('/mejalayanan/ttdcamat/KKN/{id}/proses', [MejaLayananController::class, 'kknProsesStore'])
+        ->name('mejalayanan.ttdcamat.KKN.proses.store');
+
     // === Export ===
     Route::get('/layanan/export', [MejaLayananController::class, 'export'])->name('mejalayanan.export');
-});
+    });
 
 
 // ---------------- Kasi Kesos ----------------
@@ -180,8 +213,6 @@ Route::middleware(['auth', 'role:kasi_kesos'])->prefix('kasi-kesos')->group(func
     Route::post('/dispensasi-nikah/{id}/upload-surat', [KasiKesosController::class, 'uploadSuratDispensasi'])
     ->name('dispensasi.uploadSurat');
      Route::get('/dispencatin/approveByCamat', [KasiKesosController::class, 'dispencatinApproveByCamatIndex'])->name('kasi_kesos.dispencatin.approveByCamat');
-     Route::get('/kasi-kesos/dispencatin/approve/{id}/proses', [KasiKesosController::class, 'proses'])
-    ->name('kasi_kesos.dispencatin.prosesTTD');
     Route::post('/kasi-kesos/dispencatin/{id}/proses', [KasiKesosController::class, 'prosesStore'])
     ->name('kasi_kesos.dispencatin.proses.storeFinal');
 

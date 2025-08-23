@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="flex min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-    @include('kasi_kesos.layouts.sidebar')
+    @include('mejalayanan.layouts.sidebar')
 
     <div class="p-6 w-full max-w-4xl mx-auto space-y-6">
         <h2 class="text-2xl font-bold mb-6 text-blue-700 dark:text-blue-400">✍️ Tanda Tangani Surat</h2>
@@ -36,7 +36,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-200">📤 Unggah Surat Final (Disetujui Camat)</h3>
 
-            <form method="POST" action="{{ route('kasi_kesos.dispencatin.proses.storeFinal', $item->id) }}" enctype="multipart/form-data" class="space-y-4">
+            <form method="POST" action="{{ route('mejalayanan.ttdcamat.KKN.proses', $item->id) }}" enctype="multipart/form-data" class="space-y-4">
                 @csrf
                 <div>
                     <label for="surat_final" class="block font-semibold mb-2 text-gray-800 dark:text-gray-100">Pilih File Surat Final:</label>

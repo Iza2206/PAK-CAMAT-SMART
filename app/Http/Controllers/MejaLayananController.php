@@ -12,7 +12,7 @@ use App\Models\CatinTniPolriSubmission;
 use App\Models\SengketaSubmission;
 use App\Models\AgunanSubmission;
 use App\Models\AhliwarisSubmission;
-    use App\Models\CatinSubmission;
+use App\Models\CatinSubmission;
 use App\Models\IumkSubmission;
 use App\Models\SkrisetKKNSubmission;
 use App\Models\SppatGrSubmission;
@@ -1754,6 +1754,146 @@ public function simpanPenilaianBpjs(Request $request, $id)
 
         return back()->with('success', 'Penilaian berhasil dikirim.');
     }
+
+    // TTD CAMAT  DISPENCATIN
+    // === INDEX daftar pengajuan yang sudah disetujui Camat (Dispensasi Catin) ===
+    public function dispencatinApproveByCamatIndex()
+    {
+        $pengajuan = CatinSubmission::with('camat')
+            ->where('status', 'approved_by_camat')
+            ->latest() // urut dari yang terbaru
+            ->paginate(10); // paginate 10 data per halaman
+
+        return view('mejalayanan.ttdcamat.Dispencatin.approveByCamat', compact('pengajuan'));
+    }
+
+
+    // === FORM upload surat final ===
+    public function dispencatinProses($id)
+    {
+        $item = CatinSubmission::with('camat')->findOrFail($id);
+
+        if ($item->status !== 'approved_by_camat') {
+            return redirect()->back()->with('error', 'Pengajuan belum disetujui oleh Camat.');
+        }
+
+        return view('mejalayanan.ttdcamat.Dispencatin.formApproveByCamat', compact('item'));
+    }
+
+    // === SIMPAN surat final hasil TTD Camat ===
+    public function dispencatinProsesStore(Request $request, $id)
+    {
+        $item = CatinSubmission::findOrFail($id);
+
+        $request->validate([
+            'surat_final' => 'required|file|mimes:pdf,doc,docx|max:5120',
+        ]);
+
+        if ($request->hasFile('surat_final')) {
+            $file = $request->file('surat_final');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('surat_final', $filename, 'public');
+            $item->surat_final = $path;
+        }
+
+        $item->save();
+
+        return redirect()->route('mejalayanan.ttdcamat.dispencatin.index')
+            ->with('success', 'Surat final berhasil diunggah.');
+    }
+
+    // TTD CAMAT IUMK
+    // === INDEX daftar pengajuan yang sudah disetujui Camat (IUMK) ===
+    public function iumkApproveByCamatIndex()
+    {
+        $pengajuan = IumkSubmission::with('camat')
+            ->where('status', 'approved_by_camat')
+            ->latest() // urut dari yang terbaru
+            ->paginate(10); // paginate 10 data per halaman
+
+        return view('mejalayanan.ttdcamat.IUMK.approveByCamat', compact('pengajuan'));
+    }
+
+    // === FORM upload surat final (IUMK) ===
+    public function iumkProses($id)
+    {
+        $item = IumkSubmission::with('camat')->findOrFail($id);
+
+        if ($item->status !== 'approved_by_camat') {
+            return redirect()->back()->with('error', 'Pengajuan belum disetujui oleh Camat.');
+        }
+
+        return view('mejalayanan.ttdcamat.IUMK.formApproveByCamat', compact('item'));
+    }
+
+    // === SIMPAN surat final hasil TTD Camat (IUMK) ===
+    public function iumkProsesStore(Request $request, $id)
+    {
+        $item = IumkSubmission::findOrFail($id);
+
+        $request->validate([
+            'surat_final' => 'required|file|mimes:pdf,doc,docx|max:5120',
+        ]);
+
+        if ($request->hasFile('surat_final')) {
+            $file = $request->file('surat_final');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('surat_final/iumk', $filename, 'public');
+            $item->surat_final = $path;
+        }
+
+        $item->save();
+
+        return redirect()->route('mejalayanan.ttdcamat.IUMK.index')
+            ->with('success', 'Surat final berhasil diunggah.');
+    }
+    
+    // TTD CAMAT KKN
+    // === INDEX daftar pengajuan yang sudah disetujui Camat (KKN) ===
+    public function kknApproveByCamatIndex()
+    {
+        $pengajuan = SkrisetKknSubmission::with('camat')
+            ->where('status', 'approved_by_camat')
+            ->latest() // urut dari yang terbaru
+            ->paginate(10); // paginate 10 data per halaman
+
+        return view('mejalayanan.ttdcamat.KKN.approveByCamat', compact('pengajuan'));
+    }
+
+    // === FORM upload surat final (KKN) ===
+    public function kknProses($id)
+    {
+        $item = SkrisetKknSubmission::with('camat')->findOrFail($id);
+
+        if ($item->status !== 'approved_by_camat') {
+            return redirect()->back()->with('error', 'Pengajuan belum disetujui oleh Camat.');
+        }
+
+        return view('mejalayanan.ttdcamat.KKN.formApproveByCamat', compact('item'));
+    }
+
+    // === SIMPAN surat final hasil TTD Camat (KKN) ===
+    public function kknProsesStore(Request $request, $id)
+    {
+        $item = SkrisetKknSubmission::findOrFail($id);
+
+        $request->validate([
+            'surat_final' => 'required|file|mimes:pdf,doc,docx|max:5120',
+        ]);
+
+        if ($request->hasFile('surat_final')) {
+            $file = $request->file('surat_final');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('surat_final/kkn', $filename, 'public');
+            $item->surat_final = $path;
+        }
+
+        $item->save();
+
+        return redirect()->route('mejalayanan.ttdcamat.KKN.index')
+            ->with('success', 'Surat final berhasil diunggah.');
+    }
+
 
     
 }
