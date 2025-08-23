@@ -40,7 +40,7 @@
                 openSengketa: {{ request()->routeIs('camat.silang_sengketa.*') ? 'true' : 'false' }},
                 openCatin: {{ request()->routeIs('camat.catin.*') ? 'true' : 'false' }},
                 openSkbd: {{ request()->routeIs('camat.skbd.*') ? 'true' : 'false' }},
-                
+                openskrisetKKN: '{{ request()->routeIs('skrisetKKN.*') ? 'true' : 'false' }}' === 'true',
                  openiumk: {{ request()->routeIs('camat.iumk.*') ? 'true' : 'false' }},
             }"
         >
@@ -360,6 +360,36 @@
                             d="M3 7l4 0 2-2h6l2 2h4M4 17h6m-6-4h10m-6 8h6M4 21h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     Riwayat Proses Izin Usaha Mikro
+                </a>
+            </div>
+            {{-- SK RISET KKN --}}
+            <button @click="openskrisetKKN = !openskrisetKKN"
+                class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                :class="openskrisetKKN ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300' : 'hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900/20 dark:hover:text-green-300'">
+                <span class="flex items-center gap-2">
+                    🏪 SK Riset KKN
+                </span>
+                <svg :class="{ 'rotate-180': openskrisetKKN }" class="w-4 h-4 transform transition-transform" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <div x-show="openskrisetKKN" x-collapse class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                <a href="{{ route('camat.skrisetKKN.index') }}"
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('camat.skrisetKKN.index') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    📝 Verifikasi SK Riset KKN
+                </a>
+                <a href="{{ route('camat.skrisetKKN.proses') }}" 
+                    class="block px-3 py-1 rounded transition-all 
+                    {{ request()->routeIs('camat.skrisetKKN.proses') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                    <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 7l4 0 2-2h6l2 2h4M4 17h6m-6-4h10m-6 8h6M4 21h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Riwayat Proses SK Riset KKN
                 </a>
             </div>  
            {{-- Pengaturan Akun --}}

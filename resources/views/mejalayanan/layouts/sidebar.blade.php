@@ -459,59 +459,57 @@
             </div>
 
             {{-- Penanda Tanganan --}}
-<div x-data="{ openttdcamat: {{ request()->is('mejalayanan/ttdcamat/*') ? 'true' : 'false' }} }">
+            <div x-data="{ openttdcamat: {{ request()->is('mejalayanan/ttdcamat/*') ? 'true' : 'false' }} }">
 
-    {{-- Tombol utama --}}
-    <button @click="openttdcamat = !openttdcamat"
-        class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
-        :class="openttdcamat 
-            ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300' 
-            : 'hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900/20 dark:hover:text-green-300'">
-        <span class="flex items-center gap-2">
-            ✍️ Penanda Tanganan
-        </span>
-        <svg :class="{ 'rotate-180': openttdcamat }"
-            class="w-4 h-4 transform transition-transform"
-            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M19 9l-7 7-7-7" />
-        </svg>
-    </button>
+                {{-- Tombol utama --}}
+                <button @click="openttdcamat = !openttdcamat"
+                    class="flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all"
+                    :class="openttdcamat 
+                        ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300' 
+                        : 'hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900/20 dark:hover:text-green-300'">
+                    <span class="flex items-center gap-2">
+                        ✍️ Penanda Tanganan
+                    </span>
+                    <svg :class="{ 'rotate-180': openttdcamat }"
+                        class="w-4 h-4 transform transition-transform"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
 
-    {{-- Submenu --}}
-    <div x-show="openttdcamat" x-collapse 
-        class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                {{-- Submenu --}}
+                <div x-show="openttdcamat" x-collapse 
+                    class="ml-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
 
-        {{-- Dispensasi Catin --}}
-        <a href="{{ route('mejalayanan.ttdcamat.dispencatin.index') }}"
-            class="block px-3 py-1 rounded transition-all 
-            {{ request()->routeIs('mejalayanan.ttdcamat.dispencatin.*') 
-                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
-                : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
-            📝 Dispensasi Nikah
-        </a>
+                    {{-- Dispensasi Catin --}}
+                    <a href="{{ route('mejalayanan.ttdcamat.dispencatin.index') }}"
+                        class="block px-3 py-1 rounded transition-all 
+                        {{ request()->routeIs('mejalayanan.ttdcamat.dispencatin.*') 
+                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
+                            : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                        📝 Dispensasi Nikah
+                    </a>
 
-        {{-- IUMK --}}
-        <a href="{{ route('mejalayanan.ttdcamat.IUMK.index') }}"
-            class="block px-3 py-1 rounded transition-all 
-            {{ request()->routeIs('mejalayanan.ttdcamat.IUMK.*') 
-                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
-                : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
-            🏪 Izin Usaha Mikro
-        </a>
+                    {{-- IUMK --}}
+                    <a href="{{ route('mejalayanan.ttdcamat.IUMK.index') }}"
+                        class="block px-3 py-1 rounded transition-all 
+                        {{ request()->routeIs('mejalayanan.ttdcamat.IUMK.*') 
+                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
+                            : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                        🏪 Izin Usaha Mikro
+                    </a>
 
-        {{-- SK Riset KKN --}}
-        <a href="{{ route('mejalayanan.ttdcamat.KKN.index') }}"
-            class="block px-3 py-1 rounded transition-all 
-            {{ request()->routeIs('mejalayanan.ttdcamat.KKN.*') 
-                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
-                : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
-            🎓 SK Riset KKN
-        </a>
-    </div>
-</div>
-
-
+                    {{-- SK Riset KKN --}}
+                    <a href="{{ route('mejalayanan.ttdcamat.KKN.index') }}"
+                        class="block px-3 py-1 rounded transition-all 
+                        {{ request()->routeIs('mejalayanan.ttdcamat.KKN.*') 
+                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 font-semibold' 
+                            : 'hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300' }}">
+                        🎓 SK Riset KKN
+                    </a>
+                </div>
+            </div>
         </nav>
     </aside>
 </div>
