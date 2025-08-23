@@ -22,6 +22,8 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Helpers\PenilaianHelper;
+use Illuminate\Support\Facades\Log;
+
 
 
 use App\Traits\HasNikStatusFilter;
@@ -1817,13 +1819,23 @@ public function simpanPenilaianBpjs(Request $request, $id)
     // === FORM upload surat final (IUMK) ===
     public function iumkProses($id)
     {
-        $item = IumkSubmission::with('camat')->findOrFail($id);
+        try {
+            $item = IumkSubmission::with('camat')->findOrFail($id);
 
-        if ($item->status !== 'approved_by_camat') {
-            return redirect()->back()->with('error', 'Pengajuan belum disetujui oleh Camat.');
+            if ($item->status !== 'approved_by_camat') {
+                return redirect()->back()->with('error', 'Pengajuan belum disetujui oleh Camat.');
+            }
+
+            return view('mejalayanan.ttdcamat.IUMK.formApproveByCamat', compact('item'));
+
+        } catch (\Exception $e) {
+            Log::error('Error iumkProses: ' . $e->getMessage(), [
+                'id' => $id,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        return view('mejalayanan.ttdcamat.IUMK.formApproveByCamat', compact('item'));
     }
 
     // === SIMPAN surat final hasil TTD Camat (IUMK) ===
