@@ -73,7 +73,7 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-2 border text-center">
-                                    <form method="GET" action="{{ route('mejalayanan.ttdcamat.iumk.proses', $item->id) }}" class="inline">
+                                    <form method="GET" action="{{ route('mejalayanan.ttdcamat.IUMK.proses', $item->id) }}" class="inline">
                                         <button type="submit"
                                             class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs shadow disabled:opacity-50 disabled:cursor-not-allowed"
                                             @if($item->surat_final) disabled @endif>
