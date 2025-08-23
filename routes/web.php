@@ -171,7 +171,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     
     // === TTD Camat IUMK ===
     Route::get('/mejalayanan/ttdcamat/iumk', [MejaLayananController::class, 'iumkApproveByCamatIndex'])
-        ->name('mejalayanan.ttdcamat.IUMK.index');
+        ->name('mejalayanan.ttdcamat.iumk.index');
 
     Route::get('/mejalayanan/ttdcamat/iumk/{id}/proses', [MejaLayananController::class, 'iumkProses'])
         ->name('mejalayanan.ttdcamat.iumk.proses');
