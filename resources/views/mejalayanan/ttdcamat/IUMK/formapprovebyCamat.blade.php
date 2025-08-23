@@ -36,7 +36,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-200">📤 Unggah Surat Final (Disetujui Camat)</h3>
 
-            <form method="POST" action="{{ route('mejalayanan.ttdcamat.IUMK.proses', $item->id) }}" enctype="multipart/form-data" class="space-y-4">
+            <form method="POST" action="{{ route('mejalayanan.ttdcamat.IUMK.proses.store', $item->id) }}" enctype="multipart/form-data" class="space-y-4">
                 @csrf
                 <div>
                     <label for="surat_final" class="block font-semibold mb-2 text-gray-800 dark:text-gray-100">Pilih File Surat Final:</label>
