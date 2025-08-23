@@ -1811,7 +1811,7 @@ public function simpanPenilaianBpjs(Request $request, $id)
             ->latest() // urut dari yang terbaru
             ->paginate(10); // paginate 10 data per halaman
 
-        return view('mejalayanan.ttdcamat.IUMK.approveByCamat', compact('pengajuan'));
+        return view('mejalayanan.ttdcamat.iumk.approveByCamat', compact('pengajuan'));
     }
 
     // === FORM upload surat final (IUMK) ===
@@ -1823,7 +1823,7 @@ public function simpanPenilaianBpjs(Request $request, $id)
             return redirect()->back()->with('error', 'Pengajuan belum disetujui oleh Camat.');
         }
 
-        return view('mejalayanan.ttdcamat.IUMK.formApproveByCamat', compact('item'));
+        return view('mejalayanan.ttdcamat.iumk.formApproveByCamat', compact('item'));
     }
 
     // === SIMPAN surat final hasil TTD Camat (IUMK) ===
@@ -1844,7 +1844,7 @@ public function simpanPenilaianBpjs(Request $request, $id)
 
         $item->save();
 
-        return redirect()->route('mejalayanan.ttdcamat.IUMK.index')
+        return redirect()->route('mejalayanan.ttdcamat.iumk.index')
             ->with('success', 'Surat final berhasil diunggah.');
     }
     
