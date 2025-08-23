@@ -436,10 +436,10 @@ Route::middleware(['auth', 'role:camat'])->prefix('camat')->group(function () {
     Route::get('/dispencatin/proses', [CamatController::class, 'dispencatinProses'])->name('camat.dispencatin.proses');
 
     // Layanan Izin Usaha Mikro
-    Route::get('/iumk', [CamatController::class, 'iumkIndex'])->name('camat.iumk.index');
-    Route::post('/iumk/{id}/approve', [CamatController::class, 'iumkApprove'])->name('camat.iumk.approve');
-    Route::post('/iumk/{id}/reject', [CamatController::class, 'iumkReject'])->name('camat.iumk.reject');
-    Route::get('/iumk/proses', [CamatController::class, 'iumkProses'])->name('camat.iumk.proses');
+    Route::get('/IUMK', [CamatController::class, 'iumkIndex'])->name('camat.IUMK.index');
+    Route::post('/IUMK/{id}/approve', [CamatController::class, 'iumkApprove'])->name('camat.IUMK.approve');
+    Route::post('/IUMK/{id}/reject', [CamatController::class, 'iumkReject'])->name('camat.IUMK.reject');
+    Route::get('/IUMK/proses', [CamatController::class, 'iumkProses'])->name('camat.IUMK.proses');
 
     // Layanan SK Riset KKN
     Route::get('/skrisetKKN', [CamatController::class, 'skrisetKKNIndex'])->name('camat.skrisetKKN.index');
