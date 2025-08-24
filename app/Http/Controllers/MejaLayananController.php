@@ -90,7 +90,8 @@ public function index(Request $request)
             $record->layanan = $name;
         }
 
-        $avgDurasiCamatPerLayanan[$name] = $countDurasi > 0 ? $totalDurasi / $countDurasi : 0;
+    $avgDurasiCamatPerLayanan[$name] = $countDurasi > 0 ? round($totalDurasi / $countDurasi, 2) : 0;
+
 
         $data[$name] = [
             'rows'      => $countRows,
