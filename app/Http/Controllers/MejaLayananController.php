@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Helpers\PenilaianHelper;
+use Illuminate\Support\Collection;
 
 
 use App\Traits\HasNikStatusFilter;
@@ -30,23 +31,8 @@ class MejaLayananController extends Controller
 {
     use HasNikStatusFilter;
 
-    public function index(Request $request)
-    {
-         $tables = [
-        'agunan_submissions',
-        'ahliwaris_submissions',
-        'bpjs_submissions',
-        'catin_submissions',
-        'catin_tni_polri_submissions',
-        'iumk_submissions',
-        'sengketa_submissions',
-        'skbd_submissions',
-        'skriset_kkn_submissions',
-        'skt_submissions',
-        'sppat_gr_submissions',
-        'sktm_dispensasi_submissions',
-    ];
-
+public function index(Request $request)
+{
     $nilaiMapping = [
         'sangat_puas' => 4,
         'puas'        => 3,
@@ -54,88 +40,116 @@ class MejaLayananController extends Controller
         'tidak_puas'  => 1,
     ];
 
-    $allData = collect();
-    $totalResponden = 0;
-    $totalPenilaian = 0;
-    $totalDurasiSekcam = 0;
-    $totalDurasiCamat = 0;
-
-    foreach ($tables as $table) {
-        $records = DB::table($table)
-            ->select('id', 'nama_pemohon', 'penilaian', 'verified_at', 'approved_sekcam_at', 'approved_camat_at', 'status', 'created_at')
-            ->whereNotNull('approved_camat_at')
-            ->whereNotNull('penilaian')
-            ->get();
-
-        foreach ($records as $r) {
-            $nilai = $nilaiMapping[strtolower(trim($r->penilaian))] ?? 0;
-            if ($nilai <= 0) continue;
-
-            $durasiSekcam = $r->verified_at && $r->approved_sekcam_at
-                ? Carbon::parse($r->verified_at)->diffInMinutes(Carbon::parse($r->approved_sekcam_at))
-                : 0;
-
-            $durasiCamat = $r->approved_sekcam_at && $r->approved_camat_at
-                ? Carbon::parse($r->approved_sekcam_at)->diffInMinutes(Carbon::parse($r->approved_camat_at))
-                : 0;
-
-            // emoji dari helper
-            $emoji = \App\Helpers\PenilaianHelper::numericWithEmoji($nilai);
-
-            $allData->push((object) [
-                'id' => $r->id,
-                'nama_pemohon' => $r->nama_pemohon ?? '-',
-                'layanan' => $table,
-                'penilaian' => $r->penilaian,
-                'emoji' => $emoji,
-                'nilai' => $nilai,
-                'status' => $r->status ?? '-',
-                'verified_at' => $r->verified_at,
-                'approved_sekcam_at' => $r->approved_sekcam_at,
-                'approved_camat_at' => $r->approved_camat_at,
-                'durasi_sekcam' => $durasiSekcam,
-                'durasi_camat' => $durasiCamat,
-                'created_at' => $r->created_at,
-            ]);
-
-            $totalResponden++;
-            $totalPenilaian += $nilai;
-            $totalDurasiSekcam += $durasiSekcam;
-            $totalDurasiCamat += $durasiCamat;
-        }
-    }
-
-    $nrr = $totalResponden > 0 ? $totalPenilaian / $totalResponden : 0;
-    $nilaiunsur = $totalPenilaian;
-    $nrrtertbg = ($nrr * 0.111) * 9;
-    $ikm = $nrrtertbg * 25;
-
-    $statistik = [
-        'total_responden' => $totalResponden,
-        'avg_durasi_sekcam' => $totalResponden > 0 ? round($totalDurasiSekcam / $totalResponden, 2) : 0,
-        'avg_durasi_camat' => $totalResponden > 0 ? round($totalDurasiCamat / $totalResponden, 2) : 0,
-        'nilaiunsur' => round($nilaiunsur, 2),
-        'nrr' => round($nrr, 2),
-        'nrrtertbg' => round($nrrtertbg, 2),
-        'ikm' => round($ikm, 2),
+    $services = [
+        'AgunanSubmission'         => \App\Models\AgunanSubmission::class,
+        'AhliwarisSubmission'      => \App\Models\AhliwarisSubmission::class,
+        'BpjsSubmission'           => \App\Models\BpjsSubmission::class,
+        'CatinSubmission'          => \App\Models\CatinSubmission::class,
+        'CatinTniPolriSubmission'  => \App\Models\CatinTniPolriSubmission::class,
+        'IumkSubmission'           => \App\Models\IumkSubmission::class,
+        'SengketaSubmission'       => \App\Models\SengketaSubmission::class,
+        'SkbdSubmission'           => \App\Models\SkbdSubmission::class,
+        'SkrisetKknSubmission'     => \App\Models\SkrisetKknSubmission::class,
+        'SktSubmission'            => \App\Models\SktSubmission::class,
+        'SktmDispensasiSubmission' => \App\Models\SktmDispensasiSubmission::class,
+        'SppatGrSubmission'        => \App\Models\SppatGrSubmission::class,
     ];
 
+    $data = [];
+    $grandTotalRows = 0;
+    $grandTotalPenilaian = 0;
+
+    $avgDurasiCamatPerLayanan = [];
+    $allSubmissions = collect();
+
+    foreach ($services as $name => $model) {
+
+        // Hanya ambil record dengan penilaian
+        $records = $model::whereNotNull('penilaian')->get();
+
+        $countRows = $records->count();
+        $totalPenilaian = 0;
+
+        $totalDurasi = 0;
+        $countDurasi = 0;
+
+        foreach ($records as $record) {
+            $penilaian = strtolower(trim($record->penilaian));
+            $nilai = is_numeric($penilaian) ? (int)$penilaian : ($nilaiMapping[$penilaian] ?? 0);
+            $totalPenilaian += $nilai;
+
+            // Durasi ke Camat
+            if ($record->approved_camat_at && $record->created_at) {
+                $durasi = \Carbon\Carbon::parse($record->approved_camat_at)
+                           ->diffInMinutes(\Carbon\Carbon::parse($record->created_at));
+                $totalDurasi += $durasi;
+                $countDurasi++;
+            }
+
+            // Tambahkan info layanan
+            $record->layanan = $name;
+        }
+
+        $avgDurasiCamatPerLayanan[$name] = $countDurasi > 0 ? $totalDurasi / $countDurasi : 0;
+
+        $data[$name] = [
+            'rows'      => $countRows,
+            'penilaian' => $totalPenilaian,
+        ];
+
+        $grandTotalRows += $countRows;
+        $grandTotalPenilaian += $totalPenilaian;
+
+        // Hitung NRR unsur
+        $nrrUnsur = $grandTotalPenilaian / $grandTotalRows;
+
+        // Bulatkan hasilnya ke 3 desimal
+        $nrrUnsurBulat = round($nrrUnsur, 3);
+
+        // Hitung NRR tertimbang
+        $NRRtertimbang = $nrrUnsurBulat * 0.111;
+
+        // Bulatkan hasilnya ke 3 desimal
+        $NRRtertimbangbulat = round($NRRtertimbang, 3);
+
+        $totalnrrtertimbang = $NRRtertimbangbulat*9;
+
+        $totalIKM = $totalnrrtertimbang * 25;
+        // Bulatkan hasilnya ke 3 desimal
+        $totalIKMbulat = round($totalIKM, 1);
+
+
+        $allSubmissions = $allSubmissions->concat($records);
+    }
+
     // Pagination manual
-    $perPage = 10;
     $page = $request->get('page', 1);
-    $paginated = new LengthAwarePaginator(
-        $allData->forPage($page, $perPage),
-        $allData->count(),
+    $perPage = 10;
+    $submissions = new \Illuminate\Pagination\LengthAwarePaginator(
+        $allSubmissions->forPage($page, $perPage),
+        $allSubmissions->count(),
         $perPage,
         $page,
         ['path' => $request->url(), 'query' => $request->query()]
     );
 
     return view('mejalayanan.meja-layanan', [
-        'statistik' => $statistik,
-        'submissions' => $paginated,
+        'data' => $data,
+        'grand_total_rows' => $grandTotalRows,
+        'grand_total_penilaian' => $grandTotalPenilaian,
+        'submissions' => $submissions,
+        'avg_durasi_camat_per_layanan' => $avgDurasiCamatPerLayanan,
+        'nrrUnsurBulat' => $nrrUnsurBulat,
+        'NRRtertimbangbulat' => $NRRtertimbangbulat,
+        'totalnrrtertimbang' => $totalnrrtertimbang,
+        'totalIKMbulat' => $totalIKMbulat,
+
     ]);
-    }
+}
+
+
+
+
 
     // ---------------- BPJS ----------------
 
