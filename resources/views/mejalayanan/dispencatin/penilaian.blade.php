@@ -41,10 +41,18 @@
                 <option value="sangat_puas" {{ request('penilaian') == 'sangat_puas' ? 'selected' : '' }}>🤩 Sangat Puas</option>
             </select>
 
-            @if(request('nik') || request('penilaian'))
-                <a href="{{ route('dispencatin.penilaian.index') }}" class="text-sm text-red-600 hover:underline">❌ Reset</a>
+             <input type="date" name="start_date" value="{{ request('start_date') }}" class="px-3 py-2 border rounded dark:bg-gray-800 dark:text-white">
+            <input type="date" name="end_date" value="{{ request('end_date') }}" class="px-3 py-2 border rounded dark:bg-gray-800 dark:text-white">
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Filter 🔎</button>
+            @if(request('nik') || request('penilaian') || request('start_date') || request('end_date'))
+                <a href="{{ route('bpjs.penilaian.index') }}" class="text-sm text-red-600 hover:underline">❌ Reset</a>
             @endif
         </form>
+         {{-- Tombol Cetak PDF --}}
+        <a href="{{ route('dispencatin.penilaian.pdf', request()->query()) }}" target="_blank"
+           class="inline-block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded mb-4">
+            🖨️ Cetak PDF
+        </a>
 
         {{-- Toast --}}
         <div 
@@ -62,6 +70,7 @@
                     <tr>
                         <th class="px-4 py-3 border">Nama Pemohon</th>
                         <th class="px-4 py-3 border">NIK Pemohon</th>
+                        <th class="px-4 py-3 border">Tanggal Masuk</th>
                         <th class="px-4 py-3 border">Total Durasi</th>
                         <th class="px-4 py-3 border">Status</th>
                         <th class="px-4 py-3 border">Penilaian</th>
@@ -72,6 +81,9 @@
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
                             <td class="px-4 py-3 border">{{ $item->nama_pemohon }}</td>
                             <td class="px-4 py-3 border">{{ $item->nik_pemohon }}</td>
+                             <td class="px-4 py-3 border">
+                            {{ $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('d-m-Y') : '-' }}
+                        </td>
                             <td class="px-4 py-3 border text-sm text-gray-800 dark:text-gray-200">
                                 @php
                                     $created = \Carbon\Carbon::parse($item->created_at);

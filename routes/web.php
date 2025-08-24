@@ -72,6 +72,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::patch('/layanan/dispencatin/{id}/kirim-kasi', [MejaLayananController::class, 'kirimKeKasidispen'])->name('dispencatin.kirimkasi'); //kirim ke kasi kesos
     Route::post('/dispencatin/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianDispencatin'])->name('dispencatin.penilaian'); // simpan penilaian ikm Dispencatin
     Route::get('/dispencatin/penilaian', [MejaLayananController::class, 'DispencatinpenilaianIndex'])->name('dispencatin.penilaian.index'); // list penilaian Dispencatin
+    Route::get('/dispencatin/penilaian/pdf', [MejaLayananController::class, 'penilaianDispencatinPdf'])->name('dispencatin.penilaian.pdf');
 
     // === IUMK ===
     Route::get('/layanan/iumk', [MejaLayananController::class, 'iumkList'])->name('iumk.list'); // List Data
@@ -89,6 +90,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::patch('/layanan/SKTMs/{id}/kirim-kasi', [MejaLayananController::class, 'SKTMkirimKeKasi'])->name('SKTMs.kirimkasi'); // kirim ke kasi kesos
     Route::post('/sktm/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianSktm'])->name('sktm.penilaian'); // simpan penilaian ikm sktm
     Route::get('/sktm/penilaian', [MejaLayananController::class, 'sktmPenilaianIndex'])->name('sktm.penilaian.index'); // list penilaian sktm
+    Route::get('/sktm/penilaian/pdf', [MejaLayananController::class, 'penilaianSktmPdf'])->name('sktm.penilaian.pdf');
 
     // SKT (Surat Keterangan Tanah)
     Route::get('/layanan/skt', [MejaLayananController::class, 'sktList'])->name('skt.list'); // List Data
@@ -97,6 +99,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::patch('/layanan/skt/{id}/kirim-kasi', [MejaLayananController::class, 'sktKirimKeKasi'])->name('skt.kirimkasi'); // Kirim ke Kasi
     Route::post('/skt/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianSkt'])->name('skt.penilaian');
     Route::get('/skt/penilaian', [MejaLayananController::class, 'sktPenilaianIndex'])->name('skt.penilaian.index'); // list penilaian skt
+    Route::get('/skt/penilaian/pdf', [MejaLayananController::class, 'penilaianSktPdf'])->name('skt.penilaian.pdf');
 
     // SPPAT-GR (Surat Penyerahan Penguasaan Tanah Ganti Rugi)
     Route::get('/layanan/sppat-gr', [MejaLayananController::class, 'sppatGrList'])->name('sppat_gr.list'); // List Data
@@ -105,6 +108,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::patch('/layanan/sppat-gr/{id}/kirim-kasi', [MejaLayananController::class, 'sppatGrKirimKeKasi'])->name('sppat_gr.kirimkasi'); // Kirim ke Kasi
     Route::post('/sppat_gr/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaiansppatgr'])->name('sppat_gr.penilaian');
     Route::get('/sppat_gr/penilaian', [MejaLayananController::class, 'sppatgrPenilaianIndex'])->name('sppat_gr.penilaian.index'); // list penilaian skt
+    Route::get('/sppat_gr/penilaian/pdf', [MejaLayananController::class, 'penilaiansppatgrPdf'])->name('sppat_gr.penilaian.pdf');
 
     // ---------------- Ahli Waris ----------------
     Route::get('/meja/ahliwaris', [MejaLayananController::class, 'ahliWarisList'])->name('ahliwaris.list');
@@ -113,6 +117,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::post('/meja/ahliwaris/{id}/kirim-kasi', [MejaLayananController::class, 'ahliWarisKirimKasi'])->name('ahliwaris.kirimkasi');
     Route::post('/ahliwaris/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianahliwaris'])->name('ahliwaris.penilaian');
     Route::get('/ahliwaris/penilaian', [MejaLayananController::class, 'ahliwarisPenilaianIndex'])->name('ahliwaris.penilaian.index'); // list penilaian skt
+    Route::get('/ahliwaris/penilaian/pdf', [MejaLayananController::class, 'penilaianahliwarisPdf'])->name('ahliwaris.penilaian.pdf');
 
     // Agunan ke Bank
     Route::get('/meja/agunan', [MejaLayananController::class, 'agunanList'])->name('agunan.list');
@@ -121,6 +126,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::post('/meja/agunan/{id}/kirim-kasi', [MejaLayananController::class, 'agunanKirimKasi'])->name('agunan.kirimkasi');
     Route::post('/agunan/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianagunan'])->name('agunan.penilaian'); // simpan penilaian ikm agunan
     Route::get('/agunan/penilaian', [MejaLayananController::class, 'penilaianIndexagunan'])->name('agunan.penilaian.index'); // list penilaian agunan
+    Route::get('/agunan/penilaian/pdf', [MejaLayananController::class, 'penilaiananagunanPdf'])->name('agunan.penilaian.pdf');
 
     // Sengketa
     Route::get('/meja/sengketa', [MejaLayananController::class, 'sengketaList'])->name('sengketa.list');
@@ -129,6 +135,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::post('/meja/sengketa/{id}/kirim-kasi', [MejaLayananController::class, 'sengketaKirimKasi'])->name('sengketa.kirimkasi');
     Route::post('/sengketa/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaiansengketa'])->name('sengketa.penilaian'); // simpan penilaian ikm sengketa
     Route::get('/sengketa/penilaian', [MejaLayananController::class, 'penilaianIndexSENGKETA'])->name('sengketa.penilaian.index'); // list penilaian bpjs
+    Route::get('/sengketa/penilaian/pdf', [MejaLayananController::class, 'penilaianSENGKETAPdf'])->name('sengketa.penilaian.pdf');
 
     // CATIN TNI/Polri
     Route::get('/layanan/catin-tni-polri', [MejaLayananController::class, 'catinTniList'])->name('catin.tni.list');
@@ -137,6 +144,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::patch('/layanan/catin-tni-polri/{id}/kirim-kasi', [MejaLayananController::class, 'catinTniKirimKasi'])->name('catin.tni.kirimkasi');
     Route::post('/catin/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaiancatin'])->name('catin.penilaian'); // simpan penilaian ikm catin
     Route::get('/catin/penilaian', [MejaLayananController::class, 'penilaianIndexcatin'])->name('catins.penilaian.index'); // list penilaian catin
+    Route::get('/catin/penilaian/pdf', [MejaLayananController::class, 'penilaiacatinPdf'])->name('catins.penilaian.pdf');
 
     // SKBD (Surat Keterangan Bersih Diri)
     Route::get('/layanan/SKBDs', [MejaLayananController::class, 'SKBDsList'])->name('SKBDs.list'); // List Data
@@ -145,6 +153,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::patch('/layanan/SKBDs/{id}/kirim-kasi', [MejaLayananController::class, 'SKBDkirimKeKasi'])->name('SKBDs.kirimkasi');
     Route::post('/skbd/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianskbd'])->name('skbd.penilaian'); // simpan penilaian ikm skbd
     Route::get('/skbd/penilaian', [MejaLayananController::class, 'penilaianIndexSKBD'])->name('SKBDs.penilaian.index'); // list penilaian skbd
+    Route::get('/skbd/penilaian/pdf', [MejaLayananController::class, 'penilaiaSKBDPdf'])->name('SKBDs.penilaian.pdf');
 
     // === Dispensasi ===
     Route::get('/layanan/dispensasi', [MejaLayananController::class, 'dispensasi'])->name('layanan.dispensasi');
@@ -156,7 +165,7 @@ Route::middleware(['auth', 'role:meja_layanan'])->prefix('meja-layanan')->group(
     Route::patch('/layanan/skrisetKKN/{id}/kirim-kasi', [MejaLayananController::class, 'kirimKeKasidispen'])->name('skrisetKKN.kirimkasi');
     Route::post('/skrisetKKN/{id}/penilaian', [MejaLayananController::class, 'simpanPenilaianskrisetKKN'])->name('skrisetKKN.penilaian');
     Route::get('/skrisetKKN/penilaian', [MejaLayananController::class, 'skrisetKKNpenilaianIndex'])->name('skrisetKKN.penilaian.index');
-
+    Route::get('/skrisetKKN/penilaian/pdf', [MejaLayananController::class, 'penilaiaskrisetKKNPdf'])->name('skrisetKKN.penilaian.pdf');
     
     // === TTD Camat Dispensasi Catin ===
     Route::get('/mejalayanan/ttdcamat/dispencatin', [MejaLayananController::class, 'dispencatinApproveByCamatIndex'])

@@ -40,12 +40,18 @@
                 <option value="puas" {{ request('penilaian') == 'puas' ? 'selected' : '' }}>🙂 Puas</option>
                 <option value="sangat_puas" {{ request('penilaian') == 'sangat_puas' ? 'selected' : '' }}>🤩 Sangat Puas</option>
             </select>
-
+            <input type="date" name="start_date" value="{{ request('start_date') }}" class="px-3 py-2 border rounded dark:bg-gray-800 dark:text-white">
+            <input type="date" name="end_date" value="{{ request('end_date') }}" class="px-3 py-2 border rounded dark:bg-gray-800 dark:text-white">
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Filter 🔎</button>
             @if(request('nik') || request('penilaian'))
                 <a href="{{ route('sengketa.penilaian.index') }}" class="text-sm text-red-600 hover:underline">❌ Reset</a>
             @endif
         </form>
-
+        {{-- Tombol Cetak PDF --}}
+        <a href="{{ route('sengketa.penilaian.pdf', request()->query()) }}" target="_blank"
+           class="inline-block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded mb-4">
+            🖨️ Cetak PDF
+        </a>
         {{-- Toast --}}
         <div 
             x-show="showToast"

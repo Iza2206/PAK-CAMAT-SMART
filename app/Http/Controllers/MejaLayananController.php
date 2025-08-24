@@ -501,6 +501,32 @@ public function simpanPenilaianBpjs(Request $request, $id)
         return back()->with('success', 'Penilaian berhasil dikirim.');
     }
 
+    // print out pdf
+    public function penilaianDispencatinPdf(Request $request)
+    {
+        $query = \App\Models\CatinSubmission::where('status','approved_by_camat')
+            ->when($request->nik, function($q) use ($request){
+                $q->where('nik_pemohon','like','%'.$request->nik.'%');
+            })
+            ->when($request->penilaian, function($q) use ($request){
+                $q->where('penilaian', $request->penilaian);   // filter angka langsung
+            });
+
+        if ($request->start_date) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->end_date) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $data = $query->latest('created_at')->get();
+
+        $pdf = Pdf::loadView('mejalayanan.Dispencatin.penilaianPdf', compact('data'))
+                ->setPaper('a4', 'landscape');
+
+        return $pdf->download('Laporan-Penilaian-Dispencatin.pdf');
+    }
+
     // ---------------- IUMK ----------------
 
      public function iumkList(Request $request)
@@ -858,6 +884,32 @@ public function simpanPenilaianBpjs(Request $request, $id)
         return back()->with('success', 'Penilaian berhasil dikirim.');
     }
 
+    // print out pdf
+    public function penilaianSktmPdf(Request $request)
+    {
+        $query = \App\Models\SktmDispensasiSubmission::where('status','approved_by_camat')
+            ->when($request->nik, function($q) use ($request){
+                $q->where('nik_pemohon','like','%'.$request->nik.'%');
+            })
+            ->when($request->penilaian, function($q) use ($request){
+                $q->where('penilaian', $request->penilaian);   // filter angka langsung
+            });
+
+        if ($request->start_date) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->end_date) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $data = $query->latest('created_at')->get();
+
+        $pdf = Pdf::loadView('mejalayanan.sktm.penilaianPdf', compact('data'))
+                ->setPaper('a4', 'landscape');
+
+        return $pdf->download('Laporan-Penilaian-sktm.pdf');
+    }
+
 
     // ------------------- SKT -------------------
 
@@ -969,6 +1021,32 @@ public function simpanPenilaianBpjs(Request $request, $id)
         ]);
 
         return back()->with('success', 'Penilaian berhasil dikirim.');
+    }
+
+     // print out pdf
+    public function penilaianSktPdf(Request $request)
+    {
+        $query = \App\Models\SktSubmission::where('status','approved_by_camat')
+            ->when($request->nik, function($q) use ($request){
+                $q->where('nik_pemohon','like','%'.$request->nik.'%');
+            })
+            ->when($request->penilaian, function($q) use ($request){
+                $q->where('penilaian', $request->penilaian);   // filter angka langsung
+            });
+
+        if ($request->start_date) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->end_date) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $data = $query->latest('created_at')->get();
+
+        $pdf = Pdf::loadView('mejalayanan.skt.penilaianPdf', compact('data'))
+                ->setPaper('a4', 'landscape');
+
+        return $pdf->download('Laporan-Penilaian-skt.pdf');
     }
 
 
@@ -1088,7 +1166,30 @@ public function simpanPenilaianBpjs(Request $request, $id)
         return back()->with('success', 'Penilaian berhasil dikirim.');
     }
 
+    public function penilaiansppatgrPdf(Request $request)
+    {
+        $query = \App\Models\SppatGrSubmission::where('status','approved_by_camat')
+            ->when($request->nik, function($q) use ($request){
+                $q->where('nik_pemohon','like','%'.$request->nik.'%');
+            })
+            ->when($request->penilaian, function($q) use ($request){
+                $q->where('penilaian', $request->penilaian);   // filter angka langsung
+            });
 
+        if ($request->start_date) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->end_date) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $data = $query->latest('created_at')->get();
+
+        $pdf = Pdf::loadView('mejalayanan.sppat_gr.penilaianPdf', compact('data'))
+                ->setPaper('a4', 'landscape');
+
+        return $pdf->download('Laporan-Penilaian-sppat_gr.pdf');
+    }
 
     // ---------------- Ahli Waris ----------------
 
@@ -1186,6 +1287,31 @@ public function simpanPenilaianBpjs(Request $request, $id)
         return view('mejalayanan.ahliwaris.penilaian', compact('data'));
     }
 
+    public function penilaianahliwarisPdf(Request $request)
+    {
+        $query = \App\Models\AhliwarisSubmission::where('status','approved_by_camat')
+            ->when($request->nik, function($q) use ($request){
+                $q->where('nik_pemohon','like','%'.$request->nik.'%');
+            })
+            ->when($request->penilaian, function($q) use ($request){
+                $q->where('penilaian', $request->penilaian);   // filter angka langsung
+            });
+
+        if ($request->start_date) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->end_date) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $data = $query->latest('created_at')->get();
+
+        $pdf = Pdf::loadView('mejalayanan.ahliwaris.penilaianPdf', compact('data'))
+                ->setPaper('a4', 'landscape');
+
+        return $pdf->download('Laporan-Penilaian-ahliwaris.pdf');
+    }
+
 
     // ---------------- Angunan Ke Bank----------------
 
@@ -1276,6 +1402,31 @@ public function simpanPenilaianBpjs(Request $request, $id)
         ]);
 
         return back()->with('success', 'Penilaian berhasil dikirim.');
+    }
+
+    public function penilaiananagunanPdf(Request $request)
+    {
+        $query = \App\Models\AgunanSubmission::where('status','approved_by_camat')
+            ->when($request->nik, function($q) use ($request){
+                $q->where('nik_pemohon','like','%'.$request->nik.'%');
+            })
+            ->when($request->penilaian, function($q) use ($request){
+                $q->where('penilaian', $request->penilaian);   // filter angka langsung
+            });
+
+        if ($request->start_date) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->end_date) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $data = $query->latest('created_at')->get();
+
+        $pdf = Pdf::loadView('mejalayanan.agunan.penilaianPdf', compact('data'))
+                ->setPaper('a4', 'landscape');
+
+        return $pdf->download('Laporan-Penilaian-agunan.pdf');
     }
 
 
@@ -1382,6 +1533,31 @@ public function simpanPenilaianBpjs(Request $request, $id)
             ->withQueryString(); // agar pagination tetap bawa filter
 
         return view('mejalayanan.sengketa.penilaian', compact('data'));
+    }
+
+    public function penilaianSENGKETAPdf(Request $request)
+    {
+        $query = \App\Models\SengketaSubmission::where('status','approved_by_camat')
+            ->when($request->nik, function($q) use ($request){
+                $q->where('nik_pemohon','like','%'.$request->nik.'%');
+            })
+            ->when($request->penilaian, function($q) use ($request){
+                $q->where('penilaian', $request->penilaian);   // filter angka langsung
+            });
+
+        if ($request->start_date) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->end_date) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $data = $query->latest('created_at')->get();
+
+        $pdf = Pdf::loadView('mejalayanan.sengketa.penilaianPdf', compact('data'))
+                ->setPaper('a4', 'landscape');
+
+        return $pdf->download('Laporan-Penilaian-sengketa.pdf');
     }
 
 
@@ -1521,7 +1697,30 @@ public function simpanPenilaianBpjs(Request $request, $id)
         return view('mejalayanan.catin_tni.penilaian', compact('data'));
     }
 
+    public function penilaiacatinPdf(Request $request)
+    {
+        $query = \App\Models\SengketaSubmission::where('status','approved_by_camat')
+            ->when($request->nik, function($q) use ($request){
+                $q->where('nik_pemohon','like','%'.$request->nik.'%');
+            })
+            ->when($request->penilaian, function($q) use ($request){
+                $q->where('penilaian', $request->penilaian);   // filter angka langsung
+            });
 
+        if ($request->start_date) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->end_date) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $data = $query->latest('created_at')->get();
+
+        $pdf = Pdf::loadView('mejalayanan.catin_tni.penilaianPdf', compact('data'))
+                ->setPaper('a4', 'landscape');
+
+        return $pdf->download('Laporan-Penilaian-catin_tni.pdf');
+    }
 
     // ---------------- SKBD ----------------
 
@@ -1629,6 +1828,31 @@ public function simpanPenilaianBpjs(Request $request, $id)
             ->withQueryString(); // agar pagination tetap bawa filter
 
         return view('mejalayanan.skbd.penilaian', compact('data'));
+    }
+
+        public function penilaiaSKBDPdf(Request $request)
+    {
+        $query = \App\Models\SkbdSubmission::where('status','approved_by_camat')
+            ->when($request->nik, function($q) use ($request){
+                $q->where('nik_pemohon','like','%'.$request->nik.'%');
+            })
+            ->when($request->penilaian, function($q) use ($request){
+                $q->where('penilaian', $request->penilaian);   // filter angka langsung
+            });
+
+        if ($request->start_date) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->end_date) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $data = $query->latest('created_at')->get();
+
+        $pdf = Pdf::loadView('mejalayanan.skbd.penilaianPdf', compact('data'))
+                ->setPaper('a4', 'landscape');
+
+        return $pdf->download('Laporan-Penilaian-skbd.pdf');
     }
 
 
@@ -1766,6 +1990,31 @@ public function simpanPenilaianBpjs(Request $request, $id)
         ]);
 
         return back()->with('success', 'Penilaian berhasil dikirim.');
+    }
+
+            public function penilaiaskrisetKKNPdf(Request $request)
+    {
+        $query = \App\Models\SkbdSubmission::where('status','approved_by_camat')
+            ->when($request->nik, function($q) use ($request){
+                $q->where('nik_pemohon','like','%'.$request->nik.'%');
+            })
+            ->when($request->penilaian, function($q) use ($request){
+                $q->where('penilaian', $request->penilaian);   // filter angka langsung
+            });
+
+        if ($request->start_date) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->end_date) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $data = $query->latest('created_at')->get();
+
+        $pdf = Pdf::loadView('mejalayanan.skrisetKKN.penilaianPdf', compact('data'))
+                ->setPaper('a4', 'landscape');
+
+        return $pdf->download('Laporan-Penilaian-skrisetKKN.pdf');
     }
 
     // TTD CAMAT  DISPENCATIN

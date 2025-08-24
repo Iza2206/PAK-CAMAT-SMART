@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasQueueNumber;
+use App\Traits\HasNikStatusFilter;
 
 class SkrisetKKNSubmission extends Model
 {
-    use HasFactory;
+    use HasFactory, HasQueueNumber, HasNikStatusFilter;
 
     protected $table = 'skriset_kkn_submissions';
 
