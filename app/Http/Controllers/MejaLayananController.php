@@ -521,7 +521,7 @@ public function simpanPenilaianBpjs(Request $request, $id)
 
         $data = $query->latest('created_at')->get();
 
-        $pdf = Pdf::loadView('mejalayanan.Dispencatin.penilaianPdf', compact('data'))
+        $pdf = Pdf::loadView('mejalayanan.dispencatin.penilaianPdf', compact('data'))
                 ->setPaper('a4', 'landscape');
 
         return $pdf->download('Laporan-Penilaian-Dispencatin.pdf');
