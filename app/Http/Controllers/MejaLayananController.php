@@ -49,7 +49,7 @@ public function index(Request $request)
         'IumkSubmission'           => \App\Models\IumkSubmission::class,
         'SengketaSubmission'       => \App\Models\SengketaSubmission::class,
         'SkbdSubmission'           => \App\Models\SkbdSubmission::class,
-        'SkrisetKknSubmission'     => \App\Models\SkrisetKknSubmission::class,
+        'SkrisetKKNSubmission'     => \App\Models\SkrisetKKNSubmission::class,
         'SktSubmission'            => \App\Models\SktSubmission::class,
         'SktmDispensasiSubmission' => \App\Models\SktmDispensasiSubmission::class,
         'SppatGrSubmission'        => \App\Models\SppatGrSubmission::class,
