@@ -30,7 +30,7 @@ use App\Traits\HasNikStatusFilter;
 class MejaLayananController extends Controller
 {
     use HasNikStatusFilter;
-
+    
 public function index(Request $request)
 {
     $nilaiMapping = [
@@ -63,7 +63,6 @@ public function index(Request $request)
     $allSubmissions = collect();
 
     foreach ($services as $name => $model) {
-
         // Hanya ambil record dengan penilaian
         $records = $model::whereNotNull('penilaian')->get();
 
@@ -81,7 +80,7 @@ public function index(Request $request)
             // Durasi ke Camat
             if ($record->approved_camat_at && $record->created_at) {
                 $durasi = \Carbon\Carbon::parse($record->approved_camat_at)
-                           ->diffInMinutes(\Carbon\Carbon::parse($record->created_at));
+                    ->diffInMinutes(\Carbon\Carbon::parse($record->created_at));
                 $totalDurasi += $durasi;
                 $countDurasi++;
             }
@@ -90,8 +89,7 @@ public function index(Request $request)
             $record->layanan = $name;
         }
 
-    $avgDurasiCamatPerLayanan[$name] = $countDurasi > 0 ? round($totalDurasi / $countDurasi, 2) : 0;
-
+        $avgDurasiCamatPerLayanan[$name] = $countDurasi > 0 ? round($totalDurasi / $countDurasi, 2) : 0;
 
         $data[$name] = [
             'rows'      => $countRows,
@@ -101,26 +99,26 @@ public function index(Request $request)
         $grandTotalRows += $countRows;
         $grandTotalPenilaian += $totalPenilaian;
 
-        // Hitung NRR unsur
-        $nrrUnsur = $grandTotalPenilaian / $grandTotalRows;
+        $allSubmissions = $allSubmissions->concat($records);
+    }
 
-        // Bulatkan hasilnya ke 3 desimal
+    // Hitung NRR & IKM setelah loop (supaya tidak division by zero)
+    if ($grandTotalRows > 0) {
+        $nrrUnsur = $grandTotalPenilaian / $grandTotalRows;
         $nrrUnsurBulat = round($nrrUnsur, 3);
 
-        // Hitung NRR tertimbang
         $NRRtertimbang = $nrrUnsurBulat * 0.111;
-
-        // Bulatkan hasilnya ke 3 desimal
         $NRRtertimbangbulat = round($NRRtertimbang, 3);
 
-        $totalnrrtertimbang = $NRRtertimbangbulat*9;
+        $totalnrrtertimbang = $NRRtertimbangbulat * 9;
 
         $totalIKM = $totalnrrtertimbang * 25;
-        // Bulatkan hasilnya ke 3 desimal
         $totalIKMbulat = round($totalIKM, 1);
-
-
-        $allSubmissions = $allSubmissions->concat($records);
+    } else {
+        $nrrUnsurBulat = 0;
+        $NRRtertimbangbulat = 0;
+        $totalnrrtertimbang = 0;
+        $totalIKMbulat = 0;
     }
 
     // Pagination manual
@@ -144,9 +142,9 @@ public function index(Request $request)
         'NRRtertimbangbulat' => $NRRtertimbangbulat,
         'totalnrrtertimbang' => $totalnrrtertimbang,
         'totalIKMbulat' => $totalIKMbulat,
-
     ]);
 }
+
 
 
 
